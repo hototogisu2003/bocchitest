@@ -282,7 +282,7 @@ function runSolver() {
     output.textContent = "3色いずれでも 6 つ揃えることはできません。";
   } else {
     output.textContent =
-      `--- 押す順番（${colorNames[bestColor]}に揃える） ---\n` +
+      `--- 押す順番 ---\n` +
       best.seq.map(i => `円${i + 1}`).join(" → ");
   }
 }
