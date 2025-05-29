@@ -12,22 +12,22 @@
       padding: 0;
     }
     h2 {
-  margin-top: 10px;
-  font-size: 1.2em;
-}
+      margin-top: 10px;
+      font-size: 1.2em;
+    }
     #description {
-  margin-top: 5px;
-  font-size: 0.9em;
-  padding: 0 1em;
-}
+      margin-top: 5px;
+      font-size: 0.9em;
+      padding: 0 1em;
+    }
     #circle-container {
-  position: relative;
-  width: 90vmin;
-  height: 90vmin;
-  max-width: 400px;
-  max-height: 400px;
-  margin: 5px auto;
-}
+      position: relative;
+      width: 90vmin;
+      height: 90vmin;
+      max-width: 400px;
+      max-height: 400px;
+      margin: 5px auto;
+    }
     .circle {
       width: 14vmin;
       height: 14vmin;
@@ -97,14 +97,13 @@
 <div id="circle-container"></div>
 
 <div class="controls">
-<label><input type="radio" name="mode" value="5"> 5つ揃える</label>
-<label><input type="radio" name="mode" value="6" checked> 6つ揃える</label>
-<select id="targetColor">
-  <option value="-1" selected>自動（最小手）</option>
-  <option value="0">赤 (喜多)</option>
-  <option value="1">青 (リョウ)</option>
-  <option value="2">黄 (虹夏)</option>
-</select>
+  <label><input type="radio" name="mode" value="5"> 5つ揃える</label>
+  <label><input type="radio" name="mode" value="6" checked> 6つ揃える</label>
+  <select id="targetColor">
+    <option value="-1" selected>自動（最小手）</option>
+    <option value="0">赤 (喜多)</option>
+    <option value="1">青 (リョウ)</option>
+    <option value="2">黄 (虹夏)</option>
   </select>
 </div>
 
@@ -117,35 +116,28 @@
 
 <script>
 const colors = ['red', 'blue', 'yellow'];
+const colorNames = ['赤', '青', '黄'];
 const circleStates = [0, 0, 0, 0, 0, 0];
 const container = document.getElementById('circle-container');
-const colorNames = ['赤', '青', '黄'];
 
 function placeCircles() {
   const rect = container.getBoundingClientRect();
   const radius = rect.width / 2.3;
   const compression = 0.70;
   container.innerHTML = '';
-
   for (let i = 0; i < 6; i++) {
     const angle = (i / 6) * 2 * Math.PI - Math.PI / 3;
     const x = 50 + (radius * Math.cos(angle) / rect.width) * 100;
     const y = 50 + (radius * Math.sin(angle) * compression / rect.height) * 100;
-
     const c = document.createElement('div');
     c.className = 'circle ' + colors[circleStates[i]];
     c.style.left = `${x}%`;
     c.style.top = `${y}%`;
-
-    const label = document.createElement('div');
-    label.textContent = i + 1;
-    c.appendChild(label);
-
+    c.textContent = i + 1;
     c.onclick = () => {
       circleStates[i] = (circleStates[i] + 1) % 3;
       c.className = 'circle ' + colors[circleStates[i]];
     };
-
     container.appendChild(c);
   }
 }
@@ -154,19 +146,39 @@ function mod3(n) {
   return ((n % 3) + 3) % 3;
 }
 
+function product(arr, r = [], res = []) {
+  if (r.length === arr.length) return res.push([...r]);
+  for (let i = 0; i < 3; i++) {
+    r.push(i);
+    product(arr, r, res);
+    r.pop();
+  }
+  return res;
+}
+
+function solveSix(colors, target) {
+  const arrangements = product(new Array(6));
+  for (const presses of arrangements) {
+    let newColors = [...colors];
+    for (let i = 0; i < 6; i++) {
+      const t = presses[i];
+      if (t) {
+        newColors[(i + 5) % 6] = mod3(newColors[(i + 5) % 6] + t);
+        newColors[(i + 1) % 6] = mod3(newColors[(i + 1) % 6] + t);
+      }
+    }
+    if (!newColors.every(v => v === target)) continue;
+    const seq = arrangeNonRepeating(presses);
+    if (!seq) continue;
+    return { presses, seq };
+  }
+  return null;
+}
+
 function solveFive(colors) {
   const count = [0, 0, 0];
   for (let c of colors) count[c]++;
   if (count.includes(5)) return "already-solved";
-  const product = (arr, r = [], res = []) => {
-    if (r.length === arr.length) return res.push([...r]);
-    for (let i = 0; i < 3; i++) {
-      r.push(i);
-      product(arr, r, res);
-      r.pop();
-    }
-    return res;
-  };
   const arrangements = product(new Array(6));
   let best = null, bestTotal = Infinity;
   for (const presses of arrangements) {
@@ -192,53 +204,19 @@ function solveFive(colors) {
   return best;
 }
 
-function solveSix(colors, target) {
-  const product = (arr, r = [], res = []) => {
-    if (r.length === arr.length) return res.push([...r]);
-    for (let i = 0; i < 3; i++) {
-      r.push(i);
-      product(arr, r, res);
-      r.pop();
-    }
-    return res;
-  };
-  const arrangements = product(new Array(6));
-  for (const presses of arrangements) {
-    let newColors = [...colors];
-    for (let i = 0; i < 6; i++) {
-      const t = presses[i];
-      if (t) {
-        newColors[(i + 5) % 6] = mod3(newColors[(i + 5) % 6] + t);
-        newColors[(i + 1) % 6] = mod3(newColors[(i + 1) % 6] + t);
-      }
-    }
-    if (!newColors.every(v => v === target)) continue;
-    const seq = arrangeNonRepeating(presses);
-    if (!seq) continue;
-    return { presses, seq };
-  }
-  return null;
-}
-
 function arrangeNonRepeating(presses) {
-  // 改良版：必ず並べ替え可能な場合はシーケンスを返す
   const counts = [];
   for (let i = 0; i < presses.length; i++) {
-    if (presses[i] > 0) counts.push([presses[i], i]); // [remaining, index]
+    if (presses[i] > 0) counts.push([presses[i], i]);
   }
   const result = [];
   let prev = -1;
-
   while (counts.length) {
-    // 残数の多い順にソート
     counts.sort((a, b) => b[0] - a[0]);
-    // 前回と異なる点を探す
     let pickIdx = counts.findIndex(pair => pair[1] !== prev);
-    if (pickIdx === -1) return null; // 作れない
-
+    if (pickIdx === -1) return null;
     const [remain, idx] = counts[pickIdx];
     result.push(idx);
-
     if (remain - 1 > 0) {
       counts[pickIdx][0] = remain - 1;
     } else {
@@ -252,7 +230,8 @@ function arrangeNonRepeating(presses) {
 function runSolver() {
   const output = document.getElementById('output');
   const mode = document.querySelector('input[name="mode"]:checked').value;
-  const targetColor = parseInt(document.getElementById('targetColor').value);
+  const selVal = parseInt(document.getElementById('targetColor').value);
+
   if (mode === "5") {
     const result = solveFive(circleStates);
     if (result === "already-solved") {
@@ -262,37 +241,32 @@ function runSolver() {
     } else {
       output.textContent = "--- 押す順番 ---\n" + result.seq.map(i => `円${i + 1}`).join(" → ");
     }
-  }  else {          // === 6つ揃えるモード ===
-  const selVal = parseInt(document.getElementById('targetColor').value);
-  const candidates = (selVal === -1) ? [0, 1, 2] : [selVal];
+  } else {
+    // 6つ同色か事前チェック
+    if (circleStates.every(x => x === circleStates[0])) {
+      output.textContent = "すでに6つ同じ色が揃っています！";
+      return;
+    }
 
-  let best = null;
-  let bestColor = null;
+    const candidates = selVal === -1 ? [0, 1, 2] : [selVal];
+    let best = null;
+    let bestColor = null;
+    for (const c of candidates) {
+      const res = solveSix(circleStates, c);
+      if (!res) continue;
+      if (!best || res.seq.length < best.seq.length) {
+        best = res;
+        bestColor = c;
+      }
+    }
 
-  for (const c of candidates) {
-    const res = solveSix(circleStates, c);
-    if (!res) continue;
-    if (!best || res.seq.length < best.seq.length) {
-      best = res;
-      bestColor = c;
+    if (!best) {
+      output.textContent = "3色いずれでも 6 つ揃えることはできません。";
+    } else {
+      output.textContent = `--- 押す順番 ---\n` + best.seq.map(i => `円${i + 1}`).join(" → ");
     }
   }
-
-  if (!best) {
-    output.textContent = "3色いずれでも 6 つ揃えることはできません。";
-  } else {
-    output.textContent =
-      `--- 押す順番 ---\n` +
-      best.seq.map(i => `円${i + 1}`).join(" → ");
-  }
 }
-
-}
-
-document.querySelectorAll('input[name="mode"]').forEach(radio => {
-  radio.addEventListener('change', () => {
-  });
-});
 
 window.addEventListener('resize', placeCircles);
 window.addEventListener('load', placeCircles);
