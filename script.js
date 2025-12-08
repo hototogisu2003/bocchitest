@@ -368,7 +368,7 @@ function switchTab(mode) {
 }
 
 /* -------------------------------------------------------
-   ワンパン判定ロジック
+   ワンパン判定ロジック（HP削り対応版）
 ------------------------------------------------------- */
 function checkOneshot() {
     const hpInput = document.getElementById('enemyHp');
@@ -377,27 +377,52 @@ function checkOneshot() {
 
     if (!hpInput || !judgeText) return;
 
-    const enemyHp = parseFloat(hpInput.value);
+    const maxHp = parseFloat(hpInput.value);
 
     // HPが未入力の場合
-    if (isNaN(enemyHp) || enemyHp <= 0) {
+    if (isNaN(maxHp) || maxHp <= 0) {
         judgeText.innerText = "HPを入力してください";
-        resultBox.className = "result-box"; // クラスをリセット
+        resultBox.className = "result-box"; 
         return;
     }
 
-    // 判定
-    if (currentFinalDamage >= enemyHp) {
+    // --- HP削り計算 ---
+    let reduceRate = 0;
+    
+    // アイテムA: 16%
+    if (document.getElementById('chk_reduceA').checked) reduceRate += 0.16;
+    // アイテムB: 17%
+    if (document.getElementById('chk_reduceB').checked) reduceRate += 0.17;
+    // アイテムC: 10%
+    if (document.getElementById('chk_reduceC').checked) reduceRate += 0.10;
+
+    // 削り後の実質HPを計算 (最大HP × (1 - 削減率))
+    // ※HPは整数として扱うためMath.floorを入れています
+    const currentEnemyHp = Math.floor(maxHp * (1 - reduceRate));
+
+    // --- 判定 ---
+    // 実質HPとダメージを比較
+    if (currentFinalDamage >= currentEnemyHp) {
         // ワンパン可能
-        judgeText.innerText = "ワンパンできます";
-        judgeText.innerHTML += `<br><span style="font-size:0.6em">超過ダメージ: ${(currentFinalDamage - enemyHp).toLocaleString()}</span>`;
+        const overKill = currentFinalDamage - currentEnemyHp;
+        
+        judgeText.innerHTML = `ワンパンできます！<br>`;
+        // 削りがある場合のみ実質HPを表示
+        if (reduceRate > 0) {
+            judgeText.innerHTML += `<span style="font-size:0.6em; color:#555;">(実質HP: ${currentEnemyHp.toLocaleString()})</span><br>`;
+        }
+        judgeText.innerHTML += `<span style="font-size:0.6em">超過ダメージ: ${overKill.toLocaleString()}</span>`;
         
         resultBox.className = "result-box judge-success"; // 赤系スタイル
     } else {
         // ワンパン不可
-        const diff = enemyHp - currentFinalDamage;
-        judgeText.innerText = "ワンパンできません";
-        judgeText.innerHTML += `<br><span style="font-size:0.6em">あと ${diff.toLocaleString()} 足りません</span>`;
+        const diff = currentEnemyHp - currentFinalDamage;
+        
+        judgeText.innerHTML = `ワンパンできません…<br>`;
+        if (reduceRate > 0) {
+            judgeText.innerHTML += `<span style="font-size:0.6em; color:#555;">(実質HP: ${currentEnemyHp.toLocaleString()})</span><br>`;
+        }
+        judgeText.innerHTML += `<span style="font-size:0.6em">あと ${diff.toLocaleString()} 足りません</span>`;
         
         resultBox.className = "result-box judge-fail"; // 青系スタイル
     }
