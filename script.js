@@ -104,11 +104,11 @@ function calculate() {
     const ab2Elem = document.getElementById('chk_ab2');
     let ab2Multiplier = (ab2Elem && ab2Elem.checked) ? 3.0 : 1.0;
 
-    // クリティカル (×7.5)
+    // クリティカル
     const ab3Elem = document.getElementById('chk_ab3');
     let ab3Multiplier = (ab3Elem && ab3Elem.checked) ? 7.5 : 1.0;
 
-    // 超パワー型 (初撃x1.2)
+    // 超パワー型
     const ab4Elem = document.getElementById('chk_ab4');
     let ab4Multiplier = (ab4Elem && ab4Elem.checked) ? 1.2 : 1.0;
 
@@ -334,7 +334,7 @@ function calculate() {
         resultElem.innerText = currentFinalDamage.toLocaleString();
     }
 
-    // 2. 判定タブのダメージ表示も更新（★前回抜けていた部分を修正）
+    // 2. 判定タブのダメージ表示も更新
     const verifyDisplay = document.getElementById('verifyDamageDisplay');
     if (verifyDisplay) {
         verifyDisplay.innerText = currentFinalDamage.toLocaleString();
@@ -344,8 +344,9 @@ function calculate() {
     checkOneshot();
 }
 
+
 /* -------------------------------------------------------
-   ワンパン判定ロジック（修正版）
+   ワンパン判定ロジック
 ------------------------------------------------------- */
 function checkOneshot() {
     const hpInput = document.getElementById('enemyHp');
@@ -369,17 +370,15 @@ function checkOneshot() {
     // --- HP削り計算 ---
     let reduceRate = 0;
     
-    // ▼▼▼ ここが修正ポイント ▼▼▼
-    // 1. 将命/兵命 の処理
+    // 1. 将命/兵命 (チェック有効時のみセレクトボックス値を加算)
     const enableAB = document.getElementById('chk_enableAB');
     const selAB = document.getElementById('sel_reduceAB');
 
-    // 「チェックボックスが存在し」かつ「チェックが入っている」場合のみ計算する
     if (enableAB && enableAB.checked && selAB) {
         reduceRate += parseFloat(selAB.value) || 0;
     }
 
-    // 2. 10%削り の処理
+    // 2. 10%削り
     if (document.getElementById('chk_reduceC').checked) {
         reduceRate += 0.10;
     }
@@ -393,7 +392,6 @@ function checkOneshot() {
     }
 
     // --- 判定 ---
-    // グローバル変数 currentFinalDamage と比較
     if (currentFinalDamage >= currentEnemyHp) {
         // ワンパン可能
         judgeText.innerHTML = `ワンパンできます`;
@@ -404,6 +402,7 @@ function checkOneshot() {
         resultBox.className = "result-box judge-fail";
     }
 }
+
 
 /* -------------------------------------------------------
    デバッグ用：最終更新日時を表示
