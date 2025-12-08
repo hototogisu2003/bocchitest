@@ -1,13 +1,40 @@
-// 計算された最終ダメージを保持する変数
-let currentFinalDamage = 0;
-
 // --- ウォールブースト倍率定義 ---
 // 1壁, 2壁, 3壁, 4壁 の順で倍率を定義
 const WALL_BOOST_DATA = {
-    "1.5": { 1: 1.12, 2: 1.25, 3: 1.37, 4: 1.5 }, // 無印
+    "1.5": { 1: 1.125, 2: 1.25, 3: 1.375, 4: 1.5 }, // 無印
     "2.0": { 1: 1.25,  2: 1.5,  3: 1.75,  4: 2.0 }, // M
-    "2.5": { 1: 1.37, 2: 1.75, 3: 2.12, 4: 2.5 }, // L
+    "2.5": { 1: 1.375, 2: 1.75, 3: 2.125, 4: 2.5 }, // L
+    "3.0": { 1: 1.5,   2: 2.0,  3: 2.5,   4: 3.0 }  // EL
 };
+
+// 計算された最終ダメージを保持する変数（判定画面で使用）
+let currentFinalDamage = 0;
+
+
+/* -------------------------------------------------------
+   タブ切り替え処理
+------------------------------------------------------- */
+function switchTab(mode) {
+    const viewCalc = document.getElementById('view-calc');
+    const viewVerify = document.getElementById('view-verify');
+    const btnCalc = document.getElementById('btn-tab-calc');
+    const btnVerify = document.getElementById('btn-tab-verify');
+
+    if (mode === 'calc') {
+        viewCalc.style.display = 'block';
+        viewVerify.style.display = 'none';
+        btnCalc.classList.add('active');
+        btnVerify.classList.remove('active');
+    } else {
+        viewCalc.style.display = 'none';
+        viewVerify.style.display = 'block';
+        btnCalc.classList.remove('active');
+        btnVerify.classList.add('active');
+        // タブを開いたときにも判定を実行
+        checkOneshot();
+    }
+}
+
 
 /* -------------------------------------------------------
    入力欄の有効/無効を切り替える関数
@@ -38,11 +65,12 @@ function togglewboostInputs() {
     }
 }
 
+
 /* -------------------------------------------------------
    計算メイン処理
 ------------------------------------------------------- */
 function calculate() {
-    // --- 1. 攻撃力の計算 (素の攻撃力 + 加撃) ---
+    // --- 1. 攻撃力の計算 ---
     const attackElem = document.getElementById('attack');
     const bonusElem = document.getElementById('attackBonus');
 
@@ -51,23 +79,22 @@ function calculate() {
     
     const actualAttack = baseAttack + bonusAttack;
 
-    // 画面上の合計攻撃力表示を更新
     const totalDisplay = document.getElementById('totalAttackDisplay');
     if (totalDisplay) {
         totalDisplay.innerText = actualAttack.toLocaleString();
     }
 
-    // --- 2. ゲージ (1.2倍) ---
+    // --- 2. ゲージ ---
     const gaugeElem = document.getElementById('chk_gauge');
     const gaugeMultiplier = (gaugeElem && gaugeElem.checked) ? 1.2 : 1.0;
 
     // --- 3. キャラクター倍率 ---
     
-    // 超ADW (x1.3)
+    // 超ADW
     const ab1Elem = document.getElementById('chk_ab1');
     let ab1Multiplier = (ab1Elem && ab1Elem.checked) ? 1.3 : 1.0;
     
-    // 渾身 (x3.0)
+    // 渾身
     const ab2Elem = document.getElementById('chk_ab2');
     let ab2Multiplier = (ab2Elem && ab2Elem.checked) ? 3.0 : 1.0;
 
@@ -75,7 +102,11 @@ function calculate() {
     const ab3Elem = document.getElementById('chk_ab3');
     let ab3Multiplier = (ab3Elem && ab3Elem.checked) ? 7.5 : 1.0;
 
-    // パワーオーラ (直前のHTMLに含まれていたため維持)
+    // 超パワー型 (初撃x1.2)
+    const ab4Elem = document.getElementById('chk_ab4');
+    let ab4Multiplier = (ab4Elem && ab4Elem.checked) ? 1.2 : 1.0;
+
+    // パワーオーラ
     let auraMultiplier = 1.0;
     const auraCheck = document.getElementById('chk_aura');
     const auraSelect = document.getElementById('auraSelect');
@@ -108,16 +139,14 @@ function calculate() {
         sokoMultiplier = parseFloat(sokoSelect.value) || 1.0;
     }
 
-    // ウォールブースト (等級テーブルを使用する方式)
+    // ウォールブースト
     let wboostMultiplier = 1.0;
     const wbCheck = document.getElementById('chk_wboost');
     const wbGrade = document.getElementById('wboostGrade');
     const wbVal = document.getElementById('wboostVal');
-    
     if (wbCheck && wbCheck.checked && wbGrade && wbVal) {
         const gradeKey = wbGrade.value;
         const valKey = wbVal.value;
-        // 定義データから取得 (なければ1.0)
         if (WALL_BOOST_DATA[gradeKey] && WALL_BOOST_DATA[gradeKey][valKey]) {
             wboostMultiplier = WALL_BOOST_DATA[gradeKey][valKey];
         }
@@ -131,11 +160,7 @@ function calculate() {
         mboostMultiplier = parseFloat(mbSelect.value) || 1.0;
     }
 
-    // 超パワー型 (初撃x1.2)
-    const ab4Elem = document.getElementById('chk_ab4');
-    let ab4Multiplier = (ab4Elem && ab4Elem.checked) ? 1.2 : 1.0;
-
-    // キラー倍率
+    // キラー
     let killerMultiplier = 1.0;
     const killerCheck = document.getElementById('chk_killer');
     const killerInput = document.getElementById('killerRate');
@@ -143,7 +168,7 @@ function calculate() {
         killerMultiplier = parseFloat(killerInput.value) || 1.0;
     }
 
-    // バフ倍率
+    // バフ
     let buffMultiplier = 1.0;
     const buffCheck = document.getElementById('chk_buff');
     const buffInput = document.getElementById('buffRate');
@@ -151,7 +176,7 @@ function calculate() {
         buffMultiplier = parseFloat(buffInput.value) || 1.0;
     }
 
-    // 守護獣倍率
+    // 守護獣
     let guardianMultiplier = 1.0;
     const guardCheck = document.getElementById('chk_guardian');
     const guardInput = document.getElementById('guardianRate');
@@ -167,7 +192,7 @@ function calculate() {
         SSMultiplier = parseFloat(ssInput.value) || 1.0;
     }
 
-    // その他倍率
+    // その他
     let otherMultiplier = 1.0;
     const otherCheck = document.getElementById('chk_other');
     const otherInput = document.getElementById('otherRate');
@@ -186,8 +211,6 @@ function calculate() {
     let emb4 = (e4 && e4.checked) ? 1.08 : 1.0;
 
     // --- 5. 敵倍率 ---
-    
-    // 弱点倍率
     let weakMultiplier = 1.0;
     const weakCheck = document.getElementById('chk_weak');
     const weakInput = document.getElementById('weakRate');
@@ -195,7 +218,6 @@ function calculate() {
         weakMultiplier = parseFloat(weakInput.value) || 1.0;
     }
 
-    // 直殴り倍率
     let naguriMultiplier = 1.0;
     const naguriCheck = document.getElementById('chk_naguri');
     const naguriInput = document.getElementById('naguriRate');
@@ -203,7 +225,6 @@ function calculate() {
         naguriMultiplier = parseFloat(naguriInput.value) || 1.0;
     }
 
-    // 本体倍率
     let hontaiMultiplier = 1.0;
     const hontaiCheck = document.getElementById('chk_hontai');
     const hontaiInput = document.getElementById('hontaiRate');
@@ -211,7 +232,6 @@ function calculate() {
         hontaiMultiplier = parseFloat(hontaiInput.value) || 1.0;
     }
 
-    // 防御ダウン倍率
     let defMultiplier = 1.0;
     const defCheck = document.getElementById('chk_def');
     const defInput = document.getElementById('defRate');
@@ -219,7 +239,6 @@ function calculate() {
         defMultiplier = parseFloat(defInput.value) || 1.0;
     }
 
-    // 怒り倍率
     let angryMultiplier = 1.0;
     const angryCheck = document.getElementById('chk_angry');
     const angrySelect = document.getElementById('angrySelect');
@@ -227,7 +246,6 @@ function calculate() {
         angryMultiplier = parseFloat(angrySelect.value) || 1.0;
     }
 
-    // 特殊倍率 (敵カテゴリの追加分)
     let speMultiplier = 1.0;
     const speCheck = document.getElementById('chk_special');
     const speInput = document.getElementById('specialRate');
@@ -235,15 +253,13 @@ function calculate() {
         speMultiplier = parseFloat(speInput.value) || 1.0;
     }
 
-    // ギミック倍率
     let gimmickMultiplier = 1.0;
-    const gimCheck = document.getElementById('chk_gimmick'); 
+    const gimCheck = document.getElementById('chk_gimmick');
     const gimInput = document.getElementById('gimmickRate');
     if (gimCheck && gimCheck.checked && gimInput) {
         gimmickMultiplier = parseFloat(gimInput.value) || 1.0;
     }
 
-    // 地雷倍率
     let mineMultiplier = 1.0;
     const mineCheck = document.getElementById('chk_mine');
     const mineInput = document.getElementById('mineRate');
@@ -254,7 +270,6 @@ function calculate() {
     // --- ステージ倍率 ---
     const stageSelect = document.getElementById('stageEffectSelect');
     const stageCheck = document.getElementById('chk_stageSpecial');
-    
     let stageMultiplier = 1.0;
     
     if (stageSelect && stageCheck) {
@@ -262,17 +277,13 @@ function calculate() {
         const isStageSpecial = stageCheck.checked;
         stageMultiplier = stageBase;
 
-// 超バランス型計算
+        // 超バランス型計算 (丸め処理込み)
         if (isStageSpecial && stageBase !== 1.0) {
-            // 1. まず普通に計算する
             let temp = ((stageBase - 1) / 0.33) * 0.596 + 1;
-            
-            // 2. 小数点以下第6位を四捨五入する（＝小数第5位まで残す）
-            // Math.round(数値 * 100000) / 100000 を使うことで、5桁目で丸めます
+            // 第6位を四捨五入
             stageMultiplier = Math.round(temp * 100000) / 100000;
         }
 
-        // 画面上の実質倍率表示を更新 (小数点第5位まで表示)
         const displayElem = document.getElementById('stageRealRate');
         if (displayElem) {
             displayElem.innerText = Math.floor(stageMultiplier * 100000) / 100000;
@@ -286,7 +297,7 @@ function calculate() {
         * ab2Multiplier
         * ab3Multiplier
         * ab4Multiplier
-        * auraMultiplier // パワーオーラ
+        * auraMultiplier
         * msMultiplier
         * warpMultiplier
         * sokoMultiplier
@@ -307,68 +318,29 @@ function calculate() {
         * gimmickMultiplier
         * mineMultiplier
         * stageMultiplier;
-
-  // ★追加：グローバル変数に保存
-    currentFinalDamage = Math.floor(finalDamage);
     
-    // 結果表示
+    // グローバル変数に保存
+    currentFinalDamage = Math.floor(finalDamage);
+
+    // 1. 計算タブの結果表示を更新
     const resultElem = document.getElementById('result');
     if (resultElem) {
-        resultElem.innerText = Math.floor(finalDamage).toLocaleString();
+        resultElem.innerText = currentFinalDamage.toLocaleString();
     }
-}
 
-// ★追加：判定画面側の数値も更新し、再判定を行う
+    // 2. 判定タブのダメージ表示も更新（★前回抜けていた部分を修正）
     const verifyDisplay = document.getElementById('verifyDamageDisplay');
     if (verifyDisplay) {
         verifyDisplay.innerText = currentFinalDamage.toLocaleString();
     }
-    checkOneshot(); // ダメージが変わったら判定も更新
 
-// 初期化
-calculate();
-
-// --- デバッグ用：最終更新日時を表示（yyyy-mm-dd hh:mm形式） ---
-const debugElem = document.getElementById('debug-timestamp');
-if (debugElem) {
-    const d = new Date(document.lastModified);
-    
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    const hours = String(d.getHours()).padStart(2, '0');
-    const min = String(d.getMinutes()).padStart(2, '0');
-
-    // 秒を省いて表示
-    debugElem.innerText = `最終更新: ${year}-${month}-${day} ${hours}:${min}`;
+    // 3. 判定ロジックを再実行
+    checkOneshot();
 }
 
-/* -------------------------------------------------------
-   タブ切り替え処理
-------------------------------------------------------- */
-function switchTab(mode) {
-    const viewCalc = document.getElementById('view-calc');
-    const viewVerify = document.getElementById('view-verify');
-    const btnCalc = document.getElementById('btn-tab-calc');
-    const btnVerify = document.getElementById('btn-tab-verify');
-
-    if (mode === 'calc') {
-        viewCalc.style.display = 'block';
-        viewVerify.style.display = 'none';
-        btnCalc.classList.add('active');
-        btnVerify.classList.remove('active');
-    } else {
-        viewCalc.style.display = 'none';
-        viewVerify.style.display = 'block';
-        btnCalc.classList.remove('active');
-        btnVerify.classList.add('active');
-        // タブを開いたときにも判定を実行
-        checkOneshot();
-    }
-}
 
 /* -------------------------------------------------------
-   ワンパン判定ロジック（HP削り対応版）
+   ワンパン判定ロジック（表示シンプル化・HP削り対応）
 ------------------------------------------------------- */
 function checkOneshot() {
     const hpInput = document.getElementById('enemyHp');
@@ -396,34 +368,49 @@ function checkOneshot() {
     // アイテムC: 10%
     if (document.getElementById('chk_reduceC').checked) reduceRate += 0.10;
 
-    // 削り後の実質HPを計算 (最大HP × (1 - 削減率))
-    // ※HPは整数として扱うためMath.floorを入れています
+    // 削り後の実質HPを計算
     const currentEnemyHp = Math.floor(maxHp * (1 - reduceRate));
 
     // --- 判定 ---
-    // 実質HPとダメージを比較
+    // 超過・不足ダメージは表示しない（シンプル版）
     if (currentFinalDamage >= currentEnemyHp) {
         // ワンパン可能
-        const overKill = currentFinalDamage - currentEnemyHp;
+        judgeText.innerHTML = `ワンパンできます！`;
         
-        judgeText.innerHTML = `ワンパンできます！<br>`;
-        // 削りがある場合のみ実質HPを表示
+        // 削りがある場合のみ確認用に実質HPを表示
         if (reduceRate > 0) {
-            judgeText.innerHTML += `<span style="font-size:0.6em; color:#555;">(実質HP: ${currentEnemyHp.toLocaleString()})</span><br>`;
+            judgeText.innerHTML += `<br><span style="font-size:0.6em; color:#555;">(実質HP: ${currentEnemyHp.toLocaleString()})</span>`;
         }
-        judgeText.innerHTML += `<span style="font-size:0.6em">超過ダメージ: ${overKill.toLocaleString()}</span>`;
         
-        resultBox.className = "result-box judge-success"; // 赤系スタイル
+        resultBox.className = "result-box judge-success";
     } else {
         // ワンパン不可
-        const diff = currentEnemyHp - currentFinalDamage;
+        judgeText.innerHTML = `ワンパンできません…`;
         
-        judgeText.innerHTML = `ワンパンできません…<br>`;
         if (reduceRate > 0) {
-            judgeText.innerHTML += `<span style="font-size:0.6em; color:#555;">(実質HP: ${currentEnemyHp.toLocaleString()})</span><br>`;
+            judgeText.innerHTML += `<br><span style="font-size:0.6em; color:#555;">(実質HP: ${currentEnemyHp.toLocaleString()})</span>`;
         }
-        judgeText.innerHTML += `<span style="font-size:0.6em">あと ${diff.toLocaleString()} 足りません</span>`;
         
-        resultBox.className = "result-box judge-fail"; // 青系スタイル
+        resultBox.className = "result-box judge-fail";
     }
 }
+
+
+/* -------------------------------------------------------
+   デバッグ用：最終更新日時を表示
+------------------------------------------------------- */
+const debugElem = document.getElementById('debug-timestamp');
+if (debugElem) {
+    const d = new Date(document.lastModified);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    const hours = String(d.getHours()).padStart(2, '0');
+    const min = String(d.getMinutes()).padStart(2, '0');
+
+    // 秒を省いて表示
+    debugElem.innerText = `Update: ${year}-${month}-${day} ${hours}:${min}`;
+}
+
+// 初期化実行
+calculate();
