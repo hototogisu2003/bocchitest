@@ -340,13 +340,13 @@ function calculate() {
 
 
 /* -------------------------------------------------------
-   ワンパン判定ロジック（実質HP表示位置変更版）
+   ワンパン判定ロジック（セレクトボックス対応版）
 ------------------------------------------------------- */
 function checkOneshot() {
     const hpInput = document.getElementById('enemyHp');
     const judgeText = document.getElementById('judge-text');
     const resultBox = document.getElementById('verify-result-box');
-    const realHpElem = document.getElementById('displayRealHp'); // ★新規取得
+    const realHpElem = document.getElementById('displayRealHp');
 
     if (!hpInput || !judgeText) return;
 
@@ -356,8 +356,6 @@ function checkOneshot() {
     if (isNaN(maxHp) || maxHp <= 0) {
         judgeText.innerText = "HPを入力してください";
         resultBox.className = "result-box"; 
-        
-        // 実質HP表示もリセット
         if (realHpElem) realHpElem.innerText = "-";
         return;
     }
@@ -365,17 +363,19 @@ function checkOneshot() {
     // --- HP削り計算 ---
     let reduceRate = 0;
     
-    // アイテムA: 16%
-    if (document.getElementById('chk_reduceA').checked) reduceRate += 0.16;
-    // アイテムB: 17%
-    if (document.getElementById('chk_reduceB').checked) reduceRate += 0.17;
-    // アイテムC: 10%
-    if (document.getElementById('chk_reduceC').checked) reduceRate += 0.10;
+    // 1. セレクトボックス (アイテムA または B) の値を取得
+    const valAB = parseFloat(document.getElementById('sel_reduceAB').value) || 0;
+    reduceRate += valAB;
+
+    // 2. チェックボックス (アイテムC)
+    if (document.getElementById('chk_reduceC').checked) {
+        reduceRate += 0.10;
+    }
 
     // 削り後の実質HPを計算
     const currentEnemyHp = Math.floor(maxHp * (1 - reduceRate));
 
-    // ★実質HPを表示エリアに反映
+    // 実質HPを表示エリアに反映
     if (realHpElem) {
         realHpElem.innerText = currentEnemyHp.toLocaleString();
     }
