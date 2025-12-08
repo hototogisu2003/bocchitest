@@ -367,18 +367,18 @@
                     <div style="display: flex; align-items: center; gap: 5px; background: #f9f9f9; padding: 6px 12px; border: 1px solid #ddd; border-radius: 4px;">
                         <label class="check-label" style="margin: 0; white-space: nowrap;">
                             <input type="checkbox" id="chk_enableAB" onchange="toggleInput('sel_reduceAB', 'chk_enableAB')">
-                            将命削り
+                            将命/兵命削り
                         </label>
                         <select id="sel_reduceAB" onchange="checkOneshot()" disabled style="margin-left: 5px; padding: 4px; border-radius: 4px; border: 1px solid #ccc;">
-                            <option value="0.16">アイテムA (-16%)</option>
-                            <option value="0.17">アイテムB (-17%)</option>
+                            <option value="0.16">L (-16%)</option>
+                            <option value="0.17">EL (-17%)</option>
                         </select>
                     </div>
 
                     <div style="display: flex; align-items: center; background: #f9f9f9; padding: 6px 12px; border: 1px solid #ddd; border-radius: 4px;">
                         <label class="check-label" style="margin: 0; white-space: nowrap;">
                             <input type="checkbox" id="chk_reduceC" onchange="checkOneshot()">
-                            アイテムC (-10%)
+                            10%削り (-10%)
                         </label>
                     </div>
                 </div>
