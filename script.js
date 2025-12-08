@@ -44,7 +44,14 @@ function toggleInput(inputId, checkboxId) {
     
     if (input && checkbox) {
         input.disabled = !checkbox.checked;
-        calculate();
+        
+        // ★重要: 切り替え時に必ず再計算を実行する
+        calculate(); 
+        
+        // 判定画面用の更新も兼ねて checkOneshot も念のため呼ぶ
+        if (typeof checkOneshot === 'function') {
+            checkOneshot();
+        }
     }
 }
 
