@@ -348,7 +348,7 @@
             <span id="result" class="result-value">0</span>
         </div>
     </div> <div id="view-verify" style="display: none;">
-        <div class="category-section">
+<div class="category-section">
             <h3 class="category-title">敵ステータス入力</h3>
             
             <div style="text-align: center; margin-bottom: 20px;">
@@ -359,8 +359,23 @@
             </div>
 
             <div class="main-input" style="text-align: center;">
-                <label for="enemyHp">敵のHP</label>
+                <label for="enemyHp">敵のHP (最大値)</label>
                 <input type="number" id="enemyHp" placeholder="敵のHPを入力" oninput="checkOneshot()" style="font-size: 18px; padding: 10px; width: 80%; max-width: 300px;">
+                
+                <div style="margin-top: 15px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+                    <label class="check-label" style="background: #f0f0f0; padding: 5px 10px; border-radius: 4px;">
+                        <input type="checkbox" id="chk_reduceA" onchange="checkOneshot()">
+                        将命/兵命L (-16%)
+                    </label>
+                    <label class="check-label" style="background: #f0f0f0; padding: 5px 10px; border-radius: 4px;">
+                        <input type="checkbox" id="chk_reduceB" onchange="checkOneshot()">
+                        将命/兵命EL (-17%)
+                    </label>
+                    <label class="check-label" style="background: #f0f0f0; padding: 5px 10px; border-radius: 4px;">
+                        <input type="checkbox" id="chk_reduceC" onchange="checkOneshot()">
+                        10%削り (-10%)
+                    </label>
+                </div>
             </div>
 
             <div id="verify-result-box" class="result-box" style="margin-top: 20px; background-color: #fafafa; border-color: #ccc;">
