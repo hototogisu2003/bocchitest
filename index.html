@@ -16,332 +16,359 @@
 <div class="container">
     <h1>モンストダメ計ツール</h1>
 
-<div class="main-input">
-        <div style="display: flex; flex-direction: column; gap: 5px;">
-            <label>攻撃ステータス</label>
-            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-                <div style="display: flex; flex-direction: column;">
-                    <span style="font-size: 0.8rem;">攻撃力</span>
-                    <input type="number" id="attack"oninput="calculate()" style="width: 120px;">
-                </div>
-
-                <span style="font-weight: bold; padding-top: 15px;">+</span>
-
-                <div style="display: flex; flex-direction: column;">
-                    <span style="font-size: 0.8rem;">加撃量</span>
-                    <input type="number" id="attackBonus" oninput="calculate()" style="width: 120px;">
-                </div>
-
-                <span style="font-weight: bold; padding-top: 15px;">=</span>
-
-                <div style="padding-top: 15px; font-weight: bold;">
-                    <span id="totalAttackDisplay">0</span>
-                </div>
-            </div>
-
-            <div class="input-with-checkbox" style="margin-top: 10px;">
-                <label class="check-label" style="margin-bottom: 0; white-space: nowrap;">
-                    <input type="checkbox" id="chk_gauge" onchange="calculate()">
-                    ゲージ成功 (x1.2)
-                </label>
-            </div>
-        </div>
+    <div class="tab-container">
+        <button id="btn-tab-calc" class="tab-button active" onclick="switchTab('calc')">計算モード</button>
+        <button id="btn-tab-verify" class="tab-button" onclick="switchTab('verify')">ワンパン判定</button>
     </div>
 
-    <div class="category-section">
-        <h3 class="category-title">キャラクター倍率</h3>
-        
-        <div class="grid-4-col">
-            
-            <div class="grid-item">
-                <label class="check-label">
-                    <input type="checkbox" id="chk_ab1" onchange="calculate()">
-                    超ADW (x1.3)
-                </label>
-            </div>
-            
-            <div class="grid-item">
-                <label class="check-label">
-                    <input type="checkbox" id="chk_warp" onchange="toggleInput('warpCount', 'chk_warp')">
-                    超AW
-                </label>
-                <input type="number" id="warpCount" placeholder="ワープ数を入力" oninput="calculate()" disabled>
-            </div>
+    <div id="view-calc">
+        <div class="main-input">
+            <div style="display: flex; flex-direction: column; gap: 5px;">
+                <label>攻撃ステータス</label>
+                <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                    <div style="display: flex; flex-direction: column;">
+                        <span style="font-size: 0.8rem;">攻撃力</span>
+                        <input type="number" id="attack" oninput="calculate()" style="width: 120px;">
+                    </div>
 
-            <div class="grid-item">
-                <label class="check-label">
-                    <input type="checkbox" id="chk_ms" onchange="toggleInput('msSelect', 'chk_ms')">
-                    マインスイーパー
-                </label>
-                <select id="msSelect" onchange="calculate()" disabled>
-                    <option value="1.5" selected>無印 (x1.5)</option>
-                    <option value="2.0" >M (x2.0)</option>
-                    <option value="2.5">L (x2.5)</option>
-                    <option value="3.0">EL (x3.0)</option>
-                </select>
-            </div>
+                    <span style="font-weight: bold; padding-top: 15px;">+</span>
 
-            <div class="grid-item">
-                <label class="check-label">
-                    <input type="checkbox" id="chk_soko" onchange="toggleInput('sokoSelect', 'chk_soko')">
-                    底力
-                </label>
-                <select id="sokoSelect" onchange="calculate()" disabled>
-                    <option value="1.5" selected>無印 (x1.5)</option>
-                    <option value="2.0">M (x2.0)</option>
-                    <option value="2.5">L (x2.5)</option>
-                    <option value="3.0">EL (x3.0)</option>
-                </select>
-            </div>
+                    <div style="display: flex; flex-direction: column;">
+                        <span style="font-size: 0.8rem;">加撃量</span>
+                        <input type="number" id="attackBonus" oninput="calculate()" style="width: 120px;">
+                    </div>
 
-            <div class="grid-item">
-                <label class="check-label">
-                    <input type="checkbox" id="chk_aura" onchange="toggleInput('auraSelect', 'chk_aura')">
-                    パワーオーラ
-                </label>
-                <select id="auraSelect" onchange="calculate()" disabled>
-                    <option value="1.5" selected>無印 (x1.5)</option>
-                    <option value="2.0">M (x2.0)</option>
-                </select>
-            </div>
+                    <span style="font-weight: bold; padding-top: 15px;">=</span>
 
-            <div class="grid-item">
-                <label class="check-label">
-                    <input type="checkbox" id="chk_wboost" onchange="togglewboostInputs()">
-                    ウォールブースト
-                </label>
-                <div class="bottom-stack">
-                    <select id="wboostGrade" onchange="calculate()" disabled>
-                        <option value="1.5" selected>無印 (×1.5)</option>
-                        <option value="2.0">M (×2.0)</option>
-                        <option value="2.5">L (×2.5)</option>
-                    </select>
-                    
-                    <select id="wboostVal" onchange="calculate()" disabled>
-                        <option value="1" selected>1壁</option>
-                        <option value="2">2壁</option>
-                        <option value="3">3壁</option>
-                        <option value="4">4壁</option>
-                    </select>
-                </div>
-            </div>
-            
-            <div class="grid-item">
-                <label class="check-label">
-                    <input type="checkbox" id="chk_mboost" onchange="toggleInput('mboostSelect', 'chk_mboost')">
-                    魔法陣ブースト
-                </label>
-                <select id="mboostSelect" onchange="calculate()" disabled>
-                    <option value="1.5" selected>無印 (x1.5)</option>
-                    <option value="2.0">M (x2.0)</option>
-                    <option value="2.5">L (x2.5)</option>
-                </select>
-            </div>
-
-            <div class="grid-item">
-                <label class="check-label">
-                    <input type="checkbox" id="chk_ab2" onchange="calculate()">
-                    渾身 (x3.0)
-                </label>
-            </div>
-
-            <div class="grid-item">
-                <label class="check-label">
-                    <input type="checkbox" id="chk_ab3" onchange="calculate()">
-                    クリティカル (x7.5)
-                </label>
-            </div>
-
-            <div class="grid-item">
-                <label class="check-label">
-                    <input type="checkbox" id="chk_ab4" onchange="calculate()">
-                    超パワー型（初撃×1.2）
-                </label>
-            </div>
-
-            <div class="grid-item">
-                <label class="check-label">
-                    <input type="checkbox" id="chk_killer" onchange="toggleInput('killerRate', 'chk_killer')">
-                    キラー倍率
-                </label>
-                <input type="number" id="killerRate" step="0.01" oninput="calculate()" disabled>
-            </div>
-
-            <div class="grid-item">
-                <label class="check-label">
-                    <input type="checkbox" id="chk_buff" onchange="toggleInput('buffRate', 'chk_buff')">
-                    バフ倍率
-                </label>
-                <input type="number" id="buffRate" step="0.01" oninput="calculate()" disabled>
-            </div>
-
-            <div class="grid-item">
-                <label class="check-label">
-                    <input type="checkbox" id="chk_guardian" onchange="toggleInput('guardianRate', 'chk_guardian')">
-                    守護獣倍率
-                </label>
-                <input type="number" id="guardianRate" step="0.01" oninput="calculate()" disabled>
-            </div>
-
-            <div class="grid-item">
-                <label class="check-label">
-                    <input type="checkbox" id="chk_SS" onchange="toggleInput('SSRate', 'chk_SS')">
-                    SS倍率
-                </label>
-                <input type="number" id="SSRate" step="0.01" oninput="calculate()" disabled>
-            </div>
-
-            <div class="grid-item">
-                <label class="check-label">
-                    <input type="checkbox" id="chk_other" onchange="toggleInput('otherRate', 'chk_other')">
-                    その他倍率
-                </label>
-                <input type="number" id="otherRate" step="0.01" oninput="calculate()" disabled>
-            </div>
-
-        </div>
-    </div>
-
-    <div class="category-section">
-        <h3 class="category-title">紋章</h3>
-        
-        <div class="grid-4-col">
-            <div class="grid-item">
-                <label class="check-label">
-                    <input type="checkbox" id="chk_emb1" onchange="calculate()">
-                    対属性 (x1.25)
-                </label>
-            </div>
-            <div class="grid-item">
-                <label class="check-label">
-                    <input type="checkbox" id="chk_emb2" onchange="calculate()">
-                    対弱 (x1.10)
-                </label>
-            </div>
-            <div class="grid-item">
-                <label class="check-label">
-                    <input type="checkbox" id="chk_emb3" onchange="calculate()">
-                    対将/対兵 (x1.10)
-                </label>
-            </div>
-            <div class="grid-item">
-                <label class="check-label">
-                    <input type="checkbox" id="chk_emb4" onchange="calculate()">
-                    守護獣加勢 (x1.08)
-                </label>
-            </div>
-        </div>
-    </div>
-
-    <div class="category-section">
-        <h3 class="category-title">敵倍率</h3>
-        
-        <div class="grid-4-col">
-
-            <div class="grid-item">
-                <label class="check-label">
-                    <input type="checkbox" id="chk_weak" onchange="toggleInput('weakRate', 'chk_weak')">
-                    弱点倍率
-                </label>
-                <input type="number" id="weakRate" value="3" step="0.01" oninput="calculate()" disabled>
-            </div>
-
-            <div class="grid-item">
-                <label class="check-label">
-                    <input type="checkbox" id="chk_naguri" onchange="toggleInput('naguriRate', 'chk_naguri')">
-                    直殴り倍率
-                </label>
-                <input type="number" id="naguriRate" step="0.01" oninput="calculate()" disabled>
-            </div>
-
-            <div class="grid-item">
-                <label class="check-label">
-                    <input type="checkbox" id="chk_hontai" onchange="toggleInput('hontaiRate', 'chk_hontai')">
-                    本体倍率
-                </label>
-                <input type="number" id="hontaiRate" step="0.01" oninput="calculate()" disabled>
-            </div>
-
-            <div class="grid-item">
-                <label class="check-label">
-                    <input type="checkbox" id="chk_def" onchange="toggleInput('defRate', 'chk_def')">
-                    防御ダウン倍率
-                </label>
-                <input type="number" id="defRate" step="0.01" oninput="calculate()" disabled>
-            </div>
-
-            <div class="grid-item">
-                <label class="check-label">
-                    <input type="checkbox" id="chk_angry" onchange="toggleInput('angrySelect', 'chk_angry')">
-                    怒り倍率
-                </label>
-                <select id="angrySelect" onchange="calculate()" disabled>
-                    <option value="1.05" selected>小 (x1.05)</option>
-                    <option value="1.10">中 (x1.10)</option>
-                    <option value="1.15">大 (x1.15)</option>
-                </select>
-            </div>
-
-            <div class="grid-item">
-                <label class="check-label">
-                    <input type="checkbox" id="chk_mine" onchange="toggleInput('mineRate', 'chk_mine')">
-                    地雷倍率
-                </label>
-                <input type="number" id="mineRate" step="0.01" oninput="calculate()" disabled>
-            </div>
-
-            <div class="grid-item">
-                <label class="check-label">
-                    <input type="checkbox" id="chk_special" onchange="toggleInput('specialRate', 'chk_special')">
-                    特殊倍率
-                </label>
-                <input type="number" id="specialRate" step="0.01" oninput="calculate()" disabled>
-            </div>
-        </div>
-    </div>
-
-<div class="category-section">
-        <h3 class="category-title">ステージ倍率</h3>
-        
-        <div class="grid-4-col">
-            
-            <div class="grid-item">
-                <label for="stageEffectSelect">有利属性倍率</label>
-                <select id="stageEffectSelect" onchange="calculate()">
-                    <option value="1.0" selected>なし (x1.0)</option>
-                    <option value="1.33">通常(x1.33)</option>
-                    <option value="1.5016">属性効果UP (x1.5016)</option>
-                    <option value="1.99">属性効果超UP (x1.99)</option>
-                    <option value="2.9998">属性効果超絶UP (x2.9998)</option>
-                </select>
-
-                <div style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed #ccc;">
-                    <label class="check-label">
-                        <input type="checkbox" id="chk_stageSpecial" onchange="calculate()">
-                        超バランス型
-                    </label>
-                    <div style="font-size: 0.85rem; color: #555; margin-top: 5px;">
-                        倍率: x<span id="stageRealRate">1.00</span>
+                    <div style="padding-top: 15px; font-weight: bold;">
+                        <span id="totalAttackDisplay">0</span>
                     </div>
                 </div>
+
+                <div class="input-with-checkbox" style="margin-top: 10px;">
+                    <label class="check-label" style="margin-bottom: 0; white-space: nowrap;">
+                        <input type="checkbox" id="chk_gauge" onchange="calculate()">
+                        ゲージ成功 (x1.2)
+                    </label>
+                </div>
             </div>
+        </div>
+
+        <div class="category-section">
+            <h3 class="category-title">キャラクター倍率</h3>
             
-            <div class="grid-item">
-                <label class="check-label">
-                    <input type="checkbox" id="chk_gimmick" onchange="toggleInput('gimmickRate', 'chk_gimmick')">
-                    ギミック倍率
-                </label>
-                <input type="number" id="gimmickRate" step="0.01" oninput="calculate()" disabled>
+            <div class="grid-4-col">
+                
+                <div class="grid-item">
+                    <label class="check-label">
+                        <input type="checkbox" id="chk_ab1" onchange="calculate()">
+                        超ADW (x1.3)
+                    </label>
+                </div>
+                
+                <div class="grid-item">
+                    <label class="check-label">
+                        <input type="checkbox" id="chk_warp" onchange="toggleInput('warpCount', 'chk_warp')">
+                        超AW
+                    </label>
+                    <input type="number" id="warpCount" placeholder="ワープ数を入力" oninput="calculate()" disabled>
+                </div>
+
+                <div class="grid-item">
+                    <label class="check-label">
+                        <input type="checkbox" id="chk_ms" onchange="toggleInput('msSelect', 'chk_ms')">
+                        マインスイーパー
+                    </label>
+                    <select id="msSelect" onchange="calculate()" disabled>
+                        <option value="1.5" selected>無印 (x1.5)</option>
+                        <option value="2.0" >M (x2.0)</option>
+                        <option value="2.5">L (x2.5)</option>
+                        <option value="3.0">EL (x3.0)</option>
+                    </select>
+                </div>
+
+                <div class="grid-item">
+                    <label class="check-label">
+                        <input type="checkbox" id="chk_soko" onchange="toggleInput('sokoSelect', 'chk_soko')">
+                        底力
+                    </label>
+                    <select id="sokoSelect" onchange="calculate()" disabled>
+                        <option value="1.5" selected>無印 (x1.5)</option>
+                        <option value="2.0">M (x2.0)</option>
+                        <option value="2.5">L (x2.5)</option>
+                        <option value="3.0">EL (x3.0)</option>
+                    </select>
+                </div>
+
+                <div class="grid-item">
+                    <label class="check-label">
+                        <input type="checkbox" id="chk_aura" onchange="toggleInput('auraSelect', 'chk_aura')">
+                        パワーオーラ
+                    </label>
+                    <select id="auraSelect" onchange="calculate()" disabled>
+                        <option value="1.5" selected>無印 (x1.5)</option>
+                        <option value="2.0">M (x2.0)</option>
+                    </select>
+                </div>
+
+                <div class="grid-item">
+                    <label class="check-label">
+                        <input type="checkbox" id="chk_wboost" onchange="togglewboostInputs()">
+                        ウォールブースト
+                    </label>
+                    <div class="bottom-stack">
+                        <select id="wboostGrade" onchange="calculate()" disabled>
+                            <option value="1.5" selected>無印 (×1.5)</option>
+                            <option value="2.0">M (×2.0)</option>
+                            <option value="2.5">L (×2.5)</option>
+                        </select>
+                        
+                        <select id="wboostVal" onchange="calculate()" disabled>
+                            <option value="1" selected>1壁</option>
+                            <option value="2">2壁</option>
+                            <option value="3">3壁</option>
+                            <option value="4">4壁</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="grid-item">
+                    <label class="check-label">
+                        <input type="checkbox" id="chk_mboost" onchange="toggleInput('mboostSelect', 'chk_mboost')">
+                        魔法陣ブースト
+                    </label>
+                    <select id="mboostSelect" onchange="calculate()" disabled>
+                        <option value="1.5" selected>無印 (x1.5)</option>
+                        <option value="2.0">M (x2.0)</option>
+                        <option value="2.5">L (x2.5)</option>
+                    </select>
+                </div>
+
+                <div class="grid-item">
+                    <label class="check-label">
+                        <input type="checkbox" id="chk_ab2" onchange="calculate()">
+                        渾身 (x3.0)
+                    </label>
+                </div>
+
+                <div class="grid-item">
+                    <label class="check-label">
+                        <input type="checkbox" id="chk_ab3" onchange="calculate()">
+                        クリティカル (x7.5)
+                    </label>
+                </div>
+
+                <div class="grid-item">
+                    <label class="check-label">
+                        <input type="checkbox" id="chk_ab4" onchange="calculate()">
+                        超パワー型（初撃×1.2）
+                    </label>
+                </div>
+
+                <div class="grid-item">
+                    <label class="check-label">
+                        <input type="checkbox" id="chk_killer" onchange="toggleInput('killerRate', 'chk_killer')">
+                        キラー倍率
+                    </label>
+                    <input type="number" id="killerRate" step="0.01" oninput="calculate()" disabled>
+                </div>
+
+                <div class="grid-item">
+                    <label class="check-label">
+                        <input type="checkbox" id="chk_buff" onchange="toggleInput('buffRate', 'chk_buff')">
+                        バフ倍率
+                    </label>
+                    <input type="number" id="buffRate" step="0.01" oninput="calculate()" disabled>
+                </div>
+
+                <div class="grid-item">
+                    <label class="check-label">
+                        <input type="checkbox" id="chk_guardian" onchange="toggleInput('guardianRate', 'chk_guardian')">
+                        守護獣倍率
+                    </label>
+                    <input type="number" id="guardianRate" step="0.01" oninput="calculate()" disabled>
+                </div>
+
+                <div class="grid-item">
+                    <label class="check-label">
+                        <input type="checkbox" id="chk_SS" onchange="toggleInput('SSRate', 'chk_SS')">
+                        SS倍率
+                    </label>
+                    <input type="number" id="SSRate" step="0.01" oninput="calculate()" disabled>
+                </div>
+
+                <div class="grid-item">
+                    <label class="check-label">
+                        <input type="checkbox" id="chk_other" onchange="toggleInput('otherRate', 'chk_other')">
+                        その他倍率
+                    </label>
+                    <input type="number" id="otherRate" step="0.01" oninput="calculate()" disabled>
+                </div>
+
             </div>
+        </div>
+
+        <div class="category-section">
+            <h3 class="category-title">紋章</h3>
             
+            <div class="grid-4-col">
+                <div class="grid-item">
+                    <label class="check-label">
+                        <input type="checkbox" id="chk_emb1" onchange="calculate()">
+                        対属性 (x1.25)
+                    </label>
+                </div>
+                <div class="grid-item">
+                    <label class="check-label">
+                        <input type="checkbox" id="chk_emb2" onchange="calculate()">
+                        対弱 (x1.10)
+                    </label>
+                </div>
+                <div class="grid-item">
+                    <label class="check-label">
+                        <input type="checkbox" id="chk_emb3" onchange="calculate()">
+                        対将/対兵 (x1.10)
+                    </label>
+                </div>
+                <div class="grid-item">
+                    <label class="check-label">
+                        <input type="checkbox" id="chk_emb4" onchange="calculate()">
+                        守護獣加勢 (x1.08)
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="category-section">
+            <h3 class="category-title">敵倍率</h3>
+            
+            <div class="grid-4-col">
+
+                <div class="grid-item">
+                    <label class="check-label">
+                        <input type="checkbox" id="chk_weak" onchange="toggleInput('weakRate', 'chk_weak')">
+                        弱点倍率
+                    </label>
+                    <input type="number" id="weakRate" value="3" step="0.01" oninput="calculate()" disabled>
+                </div>
+
+                <div class="grid-item">
+                    <label class="check-label">
+                        <input type="checkbox" id="chk_naguri" onchange="toggleInput('naguriRate', 'chk_naguri')">
+                        直殴り倍率
+                    </label>
+                    <input type="number" id="naguriRate" step="0.01" oninput="calculate()" disabled>
+                </div>
+
+                <div class="grid-item">
+                    <label class="check-label">
+                        <input type="checkbox" id="chk_hontai" onchange="toggleInput('hontaiRate', 'chk_hontai')">
+                        本体倍率
+                    </label>
+                    <input type="number" id="hontaiRate" step="0.01" oninput="calculate()" disabled>
+                </div>
+
+                <div class="grid-item">
+                    <label class="check-label">
+                        <input type="checkbox" id="chk_def" onchange="toggleInput('defRate', 'chk_def')">
+                        防御ダウン倍率
+                    </label>
+                    <input type="number" id="defRate" step="0.01" oninput="calculate()" disabled>
+                </div>
+
+                <div class="grid-item">
+                    <label class="check-label">
+                        <input type="checkbox" id="chk_angry" onchange="toggleInput('angrySelect', 'chk_angry')">
+                        怒り倍率
+                    </label>
+                    <select id="angrySelect" onchange="calculate()" disabled>
+                        <option value="1.05" selected>小 (x1.05)</option>
+                        <option value="1.10">中 (x1.10)</option>
+                        <option value="1.15">大 (x1.15)</option>
+                    </select>
+                </div>
+
+                <div class="grid-item">
+                    <label class="check-label">
+                        <input type="checkbox" id="chk_mine" onchange="toggleInput('mineRate', 'chk_mine')">
+                        地雷倍率
+                    </label>
+                    <input type="number" id="mineRate" step="0.01" oninput="calculate()" disabled>
+                </div>
+
+                <div class="grid-item">
+                    <label class="check-label">
+                        <input type="checkbox" id="chk_special" onchange="toggleInput('specialRate', 'chk_special')">
+                        特殊倍率
+                    </label>
+                    <input type="number" id="specialRate" step="0.01" oninput="calculate()" disabled>
+                </div>
+            </div>
+        </div>
+
+        <div class="category-section">
+            <h3 class="category-title">ステージ倍率</h3>
+            
+            <div class="grid-4-col">
+                
+                <div class="grid-item">
+                    <label for="stageEffectSelect">有利属性倍率</label>
+                    <select id="stageEffectSelect" onchange="calculate()">
+                        <option value="1.0" selected>なし (x1.0)</option>
+                        <option value="1.33">通常(x1.33)</option>
+                        <option value="1.5016">属性効果UP (x1.5016)</option>
+                        <option value="1.99">属性効果超UP (x1.99)</option>
+                        <option value="2.9998">属性効果超絶UP (x2.9998)</option>
+                    </select>
+
+                    <div style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed #ccc;">
+                        <label class="check-label">
+                            <input type="checkbox" id="chk_stageSpecial" onchange="calculate()">
+                            超バランス型
+                        </label>
+                        <div style="font-size: 0.85rem; color: #555; margin-top: 5px;">
+                            倍率: x<span id="stageRealRate">1.00</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="grid-item">
+                    <label class="check-label">
+                        <input type="checkbox" id="chk_gimmick" onchange="toggleInput('gimmickRate', 'chk_gimmick')">
+                        ギミック倍率
+                    </label>
+                    <input type="number" id="gimmickRate" step="0.01" oninput="calculate()" disabled>
+                </div>
+                
+            </div>
+        </div>
+        
+        <div class="result-box">
+            <span class="result-label">最終ダメージ</span>
+            <span id="result" class="result-value">0</span>
+        </div>
+    </div> <div id="view-verify" style="display: none;">
+        <div class="category-section">
+            <h3 class="category-title">敵ステータス入力</h3>
+            
+            <div style="text-align: center; margin-bottom: 20px;">
+                <p style="font-weight:bold; color:#555;">現在の計算ダメージ</p>
+                <div style="font-size: 24px; font-weight: bold;">
+                    <span id="verifyDamageDisplay">0</span>
+                </div>
+            </div>
+
+            <div class="main-input" style="text-align: center;">
+                <label for="enemyHp">敵のHP</label>
+                <input type="number" id="enemyHp" placeholder="敵のHPを入力" oninput="checkOneshot()" style="font-size: 18px; padding: 10px; width: 80%; max-width: 300px;">
+            </div>
+
+            <div id="verify-result-box" class="result-box" style="margin-top: 20px; background-color: #fafafa; border-color: #ccc;">
+                <span id="judge-text" class="result-value" style="font-size: 24px;">HPを入力してください</span>
+            </div>
         </div>
     </div>
-    
 
-    <div class="result-box">
-        <span class="result-label">最終ダメージ</span>
-        <span id="result" class="result-value">0</span>
-    </div>
 </div>
 
 <script src="script.js"></script>
