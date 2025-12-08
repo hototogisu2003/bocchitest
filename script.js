@@ -345,7 +345,7 @@ function calculate() {
 }
 
 /* -------------------------------------------------------
-   ワンパン判定ロジック（チェック有効化・横並び対応版）
+   ワンパン判定ロジック（修正版）
 ------------------------------------------------------- */
 function checkOneshot() {
     const hpInput = document.getElementById('enemyHp');
@@ -353,6 +353,7 @@ function checkOneshot() {
     const resultBox = document.getElementById('verify-result-box');
     const realHpElem = document.getElementById('displayRealHp');
 
+    // 必要な要素が揃っていなければ終了
     if (!hpInput || !judgeText) return;
 
     const maxHp = parseFloat(hpInput.value);
@@ -368,17 +369,17 @@ function checkOneshot() {
     // --- HP削り計算 ---
     let reduceRate = 0;
     
-    // 1. アイテムA/B の処理
-    // 「有効化チェックボックス」と「セレクトボックス」を取得
+    // ▼▼▼ ここが修正ポイント ▼▼▼
+    // 1. 将命/兵命 の処理
     const enableAB = document.getElementById('chk_enableAB');
     const selAB = document.getElementById('sel_reduceAB');
 
-    // チェックが入っている場合のみ、セレクトボックスの値(0.16 or 0.17)を加算
+    // 「チェックボックスが存在し」かつ「チェックが入っている」場合のみ計算する
     if (enableAB && enableAB.checked && selAB) {
         reduceRate += parseFloat(selAB.value) || 0;
     }
 
-    // 2. アイテムC の処理
+    // 2. 10%削り の処理
     if (document.getElementById('chk_reduceC').checked) {
         reduceRate += 0.10;
     }
@@ -392,17 +393,17 @@ function checkOneshot() {
     }
 
     // --- 判定 ---
+    // グローバル変数 currentFinalDamage と比較
     if (currentFinalDamage >= currentEnemyHp) {
         // ワンパン可能
-        judgeText.innerHTML = `ワンパンできます！`;
+        judgeText.innerHTML = `ワンパンできます`;
         resultBox.className = "result-box judge-success";
     } else {
         // ワンパン不可
-        judgeText.innerHTML = `ワンパンできません…`;
+        judgeText.innerHTML = `ワンパンできません`;
         resultBox.className = "result-box judge-fail";
     }
 }
-
 
 /* -------------------------------------------------------
    デバッグ用：最終更新日時を表示
