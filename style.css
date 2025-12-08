@@ -1,0 +1,308 @@
+:root {
+    /* カラーパレット定義 */
+    --primary-color: #8bc34a; /* メインカラー: 黄緑 */
+    --primary-dark: #689f38;  /* 濃い緑（アクセント用） */
+    --bg-color: #f4f7f6;      /* ページ背景: 明るいグレー */
+    --container-bg: #ffffff;  /* コンテナ背景: 白 */
+    --text-color: #333333;    /* 文字色: 濃いグレー */
+    --border-color: #ddd;     /* 枠線 */
+    --item-bg: #fafafa;       /* 各項目の背景 */
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Noto Sans JP', sans-serif;
+    margin: 0;
+    padding: 20px;
+}
+
+/* メインコンテナ */
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: var(--container-bg);
+    padding: 20px 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1); /* 軽い影 */
+}
+
+h1 {
+    text-align: center;
+    color: var(--text-color);
+    margin-bottom: 30px;
+    font-size: 24px;
+}
+
+/* --- カテゴリ見出し (黄緑色) --- */
+.category-title {
+    background-color: var(--primary-color);
+    color: #ffffff;
+    padding: 8px 15px;
+    border-radius: 5px;
+    font-size: 18px;
+    margin-top: 30px;
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+/* --- グリッドレイアウト --- */
+.grid-4-col {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+/* 各項目のボックス */
+.grid-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* 上寄せ配置 */
+    gap: 8px;
+    padding: 10px;
+    border: 1px solid #eee;
+    border-radius: 6px;
+    background-color: var(--item-bg);
+    height: 100%; /* 高さを揃えるための設定 */
+    box-sizing: border-box;
+}
+
+/* --- 入力エリア --- */
+.main-input {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #fff;
+    border: 2px solid var(--primary-color); /* メイン枠線を緑に */
+    border-radius: 8px;
+}
+
+.main-input label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.input-with-checkbox {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+/* テキストボックス・セレクトボックス共通 */
+input[type="number"], select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background-color: #fff;
+    color: var(--text-color);
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+/* フォーカス時の色 */
+input[type="number"]:focus, select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(139, 195, 74, 0.2);
+}
+
+/* 無効化時のスタイル */
+input:disabled, select:disabled {
+    background-color: #eee;
+    color: #999;
+    cursor: not-allowed;
+    border-color: #ddd;
+}
+
+/* --- チェックボックス --- */
+.check-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    margin: 0;
+    color: var(--text-color);
+    line-height: 1.4;
+}
+
+input[type="checkbox"] {
+    transform: scale(1.2); /* 少し大きく */
+    accent-color: var(--primary-color); /* チェック色を黄緑に */
+    cursor: pointer;
+    margin: 0;
+}
+
+/* --- レイアウト調整用クラス --- */
+/* 入力欄などを下側に揃えるためのラッパー */
+.bottom-stack {
+    margin-top: auto; /* これにより親要素内で下に押し下げられる */
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+/* --- 結果表示ボックス --- */
+.result-box {
+    margin-top: 40px;
+    padding: 20px;
+    background-color: #fff;
+    border: 3px solid var(--primary-color);
+    border-radius: 10px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.result-label {
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--text-color);
+}
+
+.result-value {
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--text-color);
+}
+
+/* --- 1. 全体の基本文字サイズを小さく設定 --- */
+body {
+    font-size: 13px; /* 16px(標準) → 13px に縮小 */
+}
+
+/* 入力欄やボタンの中の文字も連動して小さくする */
+input, select, button {
+    font-size: 13px;
+}
+
+/* --- 2. スマホ（画面幅768px以下）向けの特別設定 --- */
+@media (max-width: 768px) {
+    
+    /* 画面を有効に使うため、外枠の余白を減らす */
+    .container {
+        padding: 15px 10px;
+    }
+
+    /* ★ここが重要：強制的に2列（2段組）にする設定 */
+    .grid-4-col {
+        display: grid;
+        /* repeat(2, 1fr) で均等に2分割 */
+        grid-template-columns: repeat(2, 1fr) !important; 
+        gap: 6px; /* 列と列の隙間を狭くする */
+    }
+
+    /* 各ボックス内の余白を少し詰める */
+    .grid-item {
+        padding: 8px 5px;
+    }
+
+    /* チェックボックスのラベル文字をさらに小さく（改行防止） */
+    .check-label {
+        font-size: 11px; 
+        letter-spacing: -0.5px; /* 文字間隔を少し詰める */
+    }
+
+    /* 入力欄をスマホ用にスリムにする */
+    input[type="number"], select {
+        padding: 4px;     /* 内側の余白を減らす */
+        height: 30px;     /* 高さを少し低く */
+        font-size: 12px;  /* 入力文字サイズも微調整 */
+    }
+
+.result-box {
+    margin-top: 40px;
+    padding: 20px;
+    background-color: #fff;
+    border: 3px solid var(--primary-color);
+    border-radius: 10px;
+    text-align: center;
+    
+    display: flex;
+    flex-direction: column; /* ★変更：要素を縦に積む指定 */
+    justify-content: center;
+    align-items: center;
+    gap: 5px; /* ラベルと数値の間隔 */
+}
+
+.result-label {
+    font-size: 16px; /* ラベルは少し控えめなサイズに */
+    font-weight: bold;
+    color: var(--text-color);
+}
+
+.result-value {
+    font-size: 24px; /* 数値は大きく */
+    font-weight: bold;
+    color: var(--text-color);
+    
+    /* ★追加：桁数が画面幅を超えた場合に自動で折り返す設定 */
+    word-break: break-all; 
+    line-height: 1.2;
+}
+}
+
+#debug-timestamp {
+    position: absolute;       /* 固定 */
+    top: 5px;              /* 上から5px */
+    right: 5px;            /* 右から5px */
+    background-color: rgba(0, 0, 0, 0.7); /* 背景を半透明の黒に */
+    color: #fff;           /* 文字色を白に */
+    padding: 4px 8px;      /* 内側の余白 */
+    font-size: 11px;       /* 文字を小さく */
+    border-radius: 4px;    /* 角を丸く */
+    z-index: 9999;         /* 他の要素より手前に表示 */
+    pointer-events: none;  /* クリックを透過させる（邪魔にならないように） */
+    font-family: monospace; /* 等幅フォントで見やすく */
+}
+
+/* --- タブ切り替えボタン --- */
+.tab-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.tab-button {
+    padding: 10px 20px;
+    border: none;
+    background-color: #e0e0e0;
+    color: #555;
+    font-weight: bold;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 14px;
+}
+
+.tab-button:hover {
+    background-color: #d5d5d5;
+}
+
+/* 選択中のタブのデザイン */
+.tab-button.active {
+    background-color: var(--primary-color);
+    color: #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* --- 判定結果のスタイル --- */
+/* ワンパン成功時 */
+.judge-success {
+    color: #d32f2f !important; /* 赤色 */
+    background-color: #ffebee !important;
+    border-color: #d32f2f !important;
+}
+
+/* ワンパン失敗時 */
+.judge-fail {
+    color: #1976d2 !important; /* 青色 */
+    background-color: #e3f2fd !important;
+    border-color: #1976d2 !important;
+}
