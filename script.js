@@ -340,12 +340,13 @@ function calculate() {
 
 
 /* -------------------------------------------------------
-   ワンパン判定ロジック（表示シンプル化・HP削り対応）
+   ワンパン判定ロジック（実質HP表示位置変更版）
 ------------------------------------------------------- */
 function checkOneshot() {
     const hpInput = document.getElementById('enemyHp');
     const judgeText = document.getElementById('judge-text');
     const resultBox = document.getElementById('verify-result-box');
+    const realHpElem = document.getElementById('displayRealHp'); // ★新規取得
 
     if (!hpInput || !judgeText) return;
 
@@ -355,6 +356,9 @@ function checkOneshot() {
     if (isNaN(maxHp) || maxHp <= 0) {
         judgeText.innerText = "HPを入力してください";
         resultBox.className = "result-box"; 
+        
+        // 実質HP表示もリセット
+        if (realHpElem) realHpElem.innerText = "-";
         return;
     }
 
@@ -371,26 +375,19 @@ function checkOneshot() {
     // 削り後の実質HPを計算
     const currentEnemyHp = Math.floor(maxHp * (1 - reduceRate));
 
+    // ★実質HPを表示エリアに反映
+    if (realHpElem) {
+        realHpElem.innerText = currentEnemyHp.toLocaleString();
+    }
+
     // --- 判定 ---
-    // 超過・不足ダメージは表示しない（シンプル版）
     if (currentFinalDamage >= currentEnemyHp) {
         // ワンパン可能
-        judgeText.innerHTML = `ワンパンできます！`;
-        
-        // 削りがある場合のみ確認用に実質HPを表示
-        if (reduceRate > 0) {
-            judgeText.innerHTML += `<br><span style="font-size:0.6em; color:#555;">(実質HP: ${currentEnemyHp.toLocaleString()})</span>`;
-        }
-        
+        judgeText.innerHTML = `ワンパンできます`;
         resultBox.className = "result-box judge-success";
     } else {
         // ワンパン不可
-        judgeText.innerHTML = `ワンパンできません…`;
-        
-        if (reduceRate > 0) {
-            judgeText.innerHTML += `<br><span style="font-size:0.6em; color:#555;">(実質HP: ${currentEnemyHp.toLocaleString()})</span>`;
-        }
-        
+        judgeText.innerHTML = `ワンパンできません`;
         resultBox.className = "result-box judge-fail";
     }
 }
