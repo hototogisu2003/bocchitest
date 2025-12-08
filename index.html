@@ -1,276 +1,350 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ひとりの冒険 絵柄揃えツール</title>
-  <style>
-    body {
-      text-align: center;
-      font-family: sans-serif;
-      margin: 0;
-      padding: 0;
-    }
-    h2 {
-      margin-top: 10px;
-      font-size: 1.2em;
-    }
-    #description {
-      margin-top: 5px;
-      font-size: 0.9em;
-      padding: 0 1em;
-    }
-    #circle-container {
-      position: relative;
-      width: 90vmin;
-      height: 90vmin;
-      max-width: 400px;
-      max-height: 400px;
-      margin: 5px auto;
-    }
-    .circle {
-      width: 14vmin;
-      height: 14vmin;
-      max-width: 60px;
-      max-height: 60px;
-      border-radius: 50%;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      cursor: pointer;
-      border: 2px solid #444;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-weight: bold;
-      color: white;
-      font-size: 1em;
-      transition: background-color 0.3s;
-      user-select: none;
-    }
-    .red    { background-color: red; }
-    .blue   { background-color: blue; }
-    .yellow { background-color: gold; }
-    button {
-      margin-top: 5px;
-      padding: 10px 20px;
-      font-size: 1em;
-    }
-    #output {
-      margin-top: 10px;
-      white-space: pre-wrap;
-      font-size: 1em;
-      padding: 0 1em;
-    }
-    #credit {
-      position: fixed;
-      right: 10px;
-      bottom: 10px;
-      font-size: 0.85em;
-      color: #666;
-      background-color: rgba(255, 255, 255, 0.8);
-      padding: 4px 8px;
-      border-radius: 6px;
-      box-shadow: 0 0 4px rgba(0,0,0,0.2);
-      z-index: 1000;
-    }
-    #credit a {
-      color: #1da1f2;
-      text-decoration: none;
-    }
-    #credit a:hover {
-      text-decoration: underline;
-    }
-    .controls {
-      margin-top: 10px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>モンストダメ計ツール</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<h2>ひとりの冒険 絵柄揃えツール</h2>
-<div id="description">
-  円をタップすると赤(喜多)→青(リョウ)→黄(虹夏)→赤…の順に色が遷移します。<br>色を設定し、どちらを揃えるかを選んで実行ボタンを押してください。
+<div id="debug-timestamp"></div>
+
+<div class="container">
+    <h1>モンストダメ計ツール</h1>
+
+<div class="main-input">
+        <div style="display: flex; flex-direction: column; gap: 5px;">
+            <label>攻撃ステータス</label>
+            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                <div style="display: flex; flex-direction: column;">
+                    <span style="font-size: 0.8rem;">攻撃力</span>
+                    <input type="number" id="attack"oninput="calculate()" style="width: 120px;">
+                </div>
+
+                <span style="font-weight: bold; padding-top: 15px;">+</span>
+
+                <div style="display: flex; flex-direction: column;">
+                    <span style="font-size: 0.8rem;">加撃量</span>
+                    <input type="number" id="attackBonus" oninput="calculate()" style="width: 120px;">
+                </div>
+
+                <span style="font-weight: bold; padding-top: 15px;">=</span>
+
+                <div style="padding-top: 15px; font-weight: bold;">
+                    <span id="totalAttackDisplay">0</span>
+                </div>
+            </div>
+
+            <div class="input-with-checkbox" style="margin-top: 10px;">
+                <label class="check-label" style="margin-bottom: 0; white-space: nowrap;">
+                    <input type="checkbox" id="chk_gauge" onchange="calculate()">
+                    ゲージ成功 (x1.2)
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <div class="category-section">
+        <h3 class="category-title">キャラクター倍率</h3>
+        
+        <div class="grid-4-col">
+            
+            <div class="grid-item">
+                <label class="check-label">
+                    <input type="checkbox" id="chk_ab1" onchange="calculate()">
+                    超ADW (x1.3)
+                </label>
+            </div>
+            
+            <div class="grid-item">
+                <label class="check-label">
+                    <input type="checkbox" id="chk_warp" onchange="toggleInput('warpCount', 'chk_warp')">
+                    超AW
+                </label>
+                <input type="number" id="warpCount" placeholder="ワープ数を入力" oninput="calculate()" disabled>
+            </div>
+
+            <div class="grid-item">
+                <label class="check-label">
+                    <input type="checkbox" id="chk_ms" onchange="toggleInput('msSelect', 'chk_ms')">
+                    マインスイーパー
+                </label>
+                <select id="msSelect" onchange="calculate()" disabled>
+                    <option value="1.5" selected>無印 (x1.5)</option>
+                    <option value="2.0" >M (x2.0)</option>
+                    <option value="2.5">L (x2.5)</option>
+                    <option value="3.0">EL (x3.0)</option>
+                </select>
+            </div>
+
+            <div class="grid-item">
+                <label class="check-label">
+                    <input type="checkbox" id="chk_soko" onchange="toggleInput('sokoSelect', 'chk_soko')">
+                    底力
+                </label>
+                <select id="sokoSelect" onchange="calculate()" disabled>
+                    <option value="1.5" selected>無印 (x1.5)</option>
+                    <option value="2.0">M (x2.0)</option>
+                    <option value="2.5">L (x2.5)</option>
+                    <option value="3.0">EL (x3.0)</option>
+                </select>
+            </div>
+
+            <div class="grid-item">
+                <label class="check-label">
+                    <input type="checkbox" id="chk_aura" onchange="toggleInput('auraSelect', 'chk_aura')">
+                    パワーオーラ
+                </label>
+                <select id="auraSelect" onchange="calculate()" disabled>
+                    <option value="1.5" selected>無印 (x1.5)</option>
+                    <option value="2.0">M (x2.0)</option>
+                </select>
+            </div>
+
+            <div class="grid-item">
+                <label class="check-label">
+                    <input type="checkbox" id="chk_wboost" onchange="togglewboostInputs()">
+                    ウォールブースト
+                </label>
+                <div class="bottom-stack">
+                    <select id="wboostGrade" onchange="calculate()" disabled>
+                        <option value="1.5" selected>無印 (×1.5)</option>
+                        <option value="2.0">M (×2.0)</option>
+                        <option value="2.5">L (×2.5)</option>
+                    </select>
+                    
+                    <select id="wboostVal" onchange="calculate()" disabled>
+                        <option value="1" selected>1壁</option>
+                        <option value="2">2壁</option>
+                        <option value="3">3壁</option>
+                        <option value="4">4壁</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="grid-item">
+                <label class="check-label">
+                    <input type="checkbox" id="chk_mboost" onchange="toggleInput('mboostSelect', 'chk_mboost')">
+                    魔法陣ブースト
+                </label>
+                <select id="mboostSelect" onchange="calculate()" disabled>
+                    <option value="1.5" selected>無印 (x1.5)</option>
+                    <option value="2.0">M (x2.0)</option>
+                    <option value="2.5">L (x2.5)</option>
+                </select>
+            </div>
+
+            <div class="grid-item">
+                <label class="check-label">
+                    <input type="checkbox" id="chk_ab2" onchange="calculate()">
+                    渾身 (x3.0)
+                </label>
+            </div>
+
+            <div class="grid-item">
+                <label class="check-label">
+                    <input type="checkbox" id="chk_ab3" onchange="calculate()">
+                    クリティカル (x7.5)
+                </label>
+            </div>
+
+            <div class="grid-item">
+                <label class="check-label">
+                    <input type="checkbox" id="chk_ab4" onchange="calculate()">
+                    超パワー型（初撃×1.2）
+                </label>
+            </div>
+
+            <div class="grid-item">
+                <label class="check-label">
+                    <input type="checkbox" id="chk_killer" onchange="toggleInput('killerRate', 'chk_killer')">
+                    キラー倍率
+                </label>
+                <input type="number" id="killerRate" step="0.01" oninput="calculate()" disabled>
+            </div>
+
+            <div class="grid-item">
+                <label class="check-label">
+                    <input type="checkbox" id="chk_buff" onchange="toggleInput('buffRate', 'chk_buff')">
+                    バフ倍率
+                </label>
+                <input type="number" id="buffRate" step="0.01" oninput="calculate()" disabled>
+            </div>
+
+            <div class="grid-item">
+                <label class="check-label">
+                    <input type="checkbox" id="chk_guardian" onchange="toggleInput('guardianRate', 'chk_guardian')">
+                    守護獣倍率
+                </label>
+                <input type="number" id="guardianRate" step="0.01" oninput="calculate()" disabled>
+            </div>
+
+            <div class="grid-item">
+                <label class="check-label">
+                    <input type="checkbox" id="chk_SS" onchange="toggleInput('SSRate', 'chk_SS')">
+                    SS倍率
+                </label>
+                <input type="number" id="SSRate" step="0.01" oninput="calculate()" disabled>
+            </div>
+
+            <div class="grid-item">
+                <label class="check-label">
+                    <input type="checkbox" id="chk_other" onchange="toggleInput('otherRate', 'chk_other')">
+                    その他倍率
+                </label>
+                <input type="number" id="otherRate" step="0.01" oninput="calculate()" disabled>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="category-section">
+        <h3 class="category-title">紋章</h3>
+        
+        <div class="grid-4-col">
+            <div class="grid-item">
+                <label class="check-label">
+                    <input type="checkbox" id="chk_emb1" onchange="calculate()">
+                    対属性 (x1.25)
+                </label>
+            </div>
+            <div class="grid-item">
+                <label class="check-label">
+                    <input type="checkbox" id="chk_emb2" onchange="calculate()">
+                    対弱 (x1.10)
+                </label>
+            </div>
+            <div class="grid-item">
+                <label class="check-label">
+                    <input type="checkbox" id="chk_emb3" onchange="calculate()">
+                    対将/対兵 (x1.10)
+                </label>
+            </div>
+            <div class="grid-item">
+                <label class="check-label">
+                    <input type="checkbox" id="chk_emb4" onchange="calculate()">
+                    守護獣加勢 (x1.08)
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <div class="category-section">
+        <h3 class="category-title">敵倍率</h3>
+        
+        <div class="grid-4-col">
+
+            <div class="grid-item">
+                <label class="check-label">
+                    <input type="checkbox" id="chk_weak" onchange="toggleInput('weakRate', 'chk_weak')">
+                    弱点倍率
+                </label>
+                <input type="number" id="weakRate" value="3" step="0.01" oninput="calculate()" disabled>
+            </div>
+
+            <div class="grid-item">
+                <label class="check-label">
+                    <input type="checkbox" id="chk_naguri" onchange="toggleInput('naguriRate', 'chk_naguri')">
+                    直殴り倍率
+                </label>
+                <input type="number" id="naguriRate" step="0.01" oninput="calculate()" disabled>
+            </div>
+
+            <div class="grid-item">
+                <label class="check-label">
+                    <input type="checkbox" id="chk_hontai" onchange="toggleInput('hontaiRate', 'chk_hontai')">
+                    本体倍率
+                </label>
+                <input type="number" id="hontaiRate" step="0.01" oninput="calculate()" disabled>
+            </div>
+
+            <div class="grid-item">
+                <label class="check-label">
+                    <input type="checkbox" id="chk_def" onchange="toggleInput('defRate', 'chk_def')">
+                    防御ダウン倍率
+                </label>
+                <input type="number" id="defRate" step="0.01" oninput="calculate()" disabled>
+            </div>
+
+            <div class="grid-item">
+                <label class="check-label">
+                    <input type="checkbox" id="chk_angry" onchange="toggleInput('angrySelect', 'chk_angry')">
+                    怒り倍率
+                </label>
+                <select id="angrySelect" onchange="calculate()" disabled>
+                    <option value="1.05" selected>小 (x1.05)</option>
+                    <option value="1.10">中 (x1.10)</option>
+                    <option value="1.15">大 (x1.15)</option>
+                </select>
+            </div>
+
+            <div class="grid-item">
+                <label class="check-label">
+                    <input type="checkbox" id="chk_mine" onchange="toggleInput('mineRate', 'chk_mine')">
+                    地雷倍率
+                </label>
+                <input type="number" id="mineRate" step="0.01" oninput="calculate()" disabled>
+            </div>
+
+            <div class="grid-item">
+                <label class="check-label">
+                    <input type="checkbox" id="chk_special" onchange="toggleInput('specialRate', 'chk_special')">
+                    特殊倍率
+                </label>
+                <input type="number" id="specialRate" step="0.01" oninput="calculate()" disabled>
+            </div>
+        </div>
+    </div>
+
+<div class="category-section">
+        <h3 class="category-title">ステージ倍率</h3>
+        
+        <div class="grid-4-col">
+            
+            <div class="grid-item">
+                <label for="stageEffectSelect">有利属性倍率</label>
+                <select id="stageEffectSelect" onchange="calculate()">
+                    <option value="1.0" selected>なし (x1.0)</option>
+                    <option value="1.33">通常(x1.33)</option>
+                    <option value="1.5016">属性効果UP (x1.5016)</option>
+                    <option value="1.99">属性効果超UP (x1.99)</option>
+                    <option value="2.9998">属性効果超絶UP (x2.9998)</option>
+                </select>
+
+                <div style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed #ccc;">
+                    <label class="check-label">
+                        <input type="checkbox" id="chk_stageSpecial" onchange="calculate()">
+                        超バランス型
+                    </label>
+                    <div style="font-size: 0.85rem; color: #555; margin-top: 5px;">
+                        倍率: x<span id="stageRealRate">1.00</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="grid-item">
+                <label class="check-label">
+                    <input type="checkbox" id="chk_gimmick" onchange="toggleInput('gimmickRate', 'chk_gimmick')">
+                    ギミック倍率
+                </label>
+                <input type="number" id="gimmickRate" step="0.01" oninput="calculate()" disabled>
+            </div>
+            
+        </div>
+    </div>
+    
+
+    <div class="result-box">
+        <span class="result-label">最終ダメージ</span>
+        <span id="result" class="result-value">0</span>
+    </div>
 </div>
 
-<div id="circle-container"></div>
-
-<div class="controls">
-  <label><input type="radio" name="mode" value="5"> 5つ揃える</label>
-  <label><input type="radio" name="mode" value="6" checked> 6つ揃える</label>
-  <select id="targetColor">
-    <option value="-1" selected>自動（最小手）</option>
-    <option value="0">赤 (喜多)</option>
-    <option value="1">青 (リョウ)</option>
-    <option value="2">黄 (虹夏)</option>
-  </select>
-</div>
-
-<button onclick="runSolver()">実行</button>
-<div id="output"></div>
-
-<div id="credit">
-  作成者：ほととぎす（<a href="https://twitter.com/hototogisu2003" target="_blank">@hototogisu2003</a>）
-</div>
-
-<script>
-const colors = ['red', 'blue', 'yellow'];
-const colorNames = ['赤', '青', '黄'];
-const circleStates = [0, 0, 0, 0, 0, 0];
-const container = document.getElementById('circle-container');
-
-function placeCircles() {
-  const rect = container.getBoundingClientRect();
-  const radius = rect.width / 2.3;
-  const compression = 0.70;
-  container.innerHTML = '';
-  for (let i = 0; i < 6; i++) {
-    const angle = (i / 6) * 2 * Math.PI - Math.PI / 3;
-    const x = 50 + (radius * Math.cos(angle) / rect.width) * 100;
-    const y = 50 + (radius * Math.sin(angle) * compression / rect.height) * 100;
-    const c = document.createElement('div');
-    c.className = 'circle ' + colors[circleStates[i]];
-    c.style.left = `${x}%`;
-    c.style.top = `${y}%`;
-    c.textContent = i + 1;
-    c.onclick = () => {
-      circleStates[i] = (circleStates[i] + 1) % 3;
-      c.className = 'circle ' + colors[circleStates[i]];
-    };
-    container.appendChild(c);
-  }
-}
-
-function mod3(n) {
-  return ((n % 3) + 3) % 3;
-}
-
-function product(arr, r = [], res = []) {
-  if (r.length === arr.length) return res.push([...r]);
-  for (let i = 0; i < 3; i++) {
-    r.push(i);
-    product(arr, r, res);
-    r.pop();
-  }
-  return res;
-}
-
-function solveSix(colors, target) {
-  const arrangements = product(new Array(6));
-  for (const presses of arrangements) {
-    let newColors = [...colors];
-    for (let i = 0; i < 6; i++) {
-      const t = presses[i];
-      if (t) {
-        newColors[(i + 5) % 6] = mod3(newColors[(i + 5) % 6] + t);
-        newColors[(i + 1) % 6] = mod3(newColors[(i + 1) % 6] + t);
-      }
-    }
-    if (!newColors.every(v => v === target)) continue;
-    const seq = arrangeNonRepeating(presses);
-    if (!seq) continue;
-    return { presses, seq };
-  }
-  return null;
-}
-
-function solveFive(colors) {
-  const count = [0, 0, 0];
-  for (let c of colors) count[c]++;
-  if (count.includes(5)) return "already-solved";
-  const arrangements = product(new Array(6));
-  let best = null, bestTotal = Infinity;
-  for (const presses of arrangements) {
-    let newColors = [...colors];
-    for (let i = 0; i < 6; i++) {
-      const t = presses[i];
-      if (t) {
-        newColors[(i + 5) % 6] = mod3(newColors[(i + 5) % 6] + t);
-        newColors[(i + 1) % 6] = mod3(newColors[(i + 1) % 6] + t);
-      }
-    }
-    const count = [0, 0, 0];
-    for (let c of newColors) count[c]++;
-    if (!count.includes(5)) continue;
-    const seq = arrangeNonRepeating(presses);
-    if (!seq) continue;
-    const total = presses.reduce((a, b) => a + b, 0);
-    if (total < bestTotal) {
-      best = { presses, seq };
-      bestTotal = total;
-    }
-  }
-  return best;
-}
-
-function arrangeNonRepeating(presses) {
-  const counts = [];
-  for (let i = 0; i < presses.length; i++) {
-    if (presses[i] > 0) counts.push([presses[i], i]);
-  }
-  const result = [];
-  let prev = -1;
-  while (counts.length) {
-    counts.sort((a, b) => b[0] - a[0]);
-    let pickIdx = counts.findIndex(pair => pair[1] !== prev);
-    if (pickIdx === -1) return null;
-    const [remain, idx] = counts[pickIdx];
-    result.push(idx);
-    if (remain - 1 > 0) {
-      counts[pickIdx][0] = remain - 1;
-    } else {
-      counts.splice(pickIdx, 1);
-    }
-    prev = idx;
-  }
-  return result;
-}
-
-function runSolver() {
-  const output = document.getElementById('output');
-  const mode = document.querySelector('input[name="mode"]:checked').value;
-  const selVal = parseInt(document.getElementById('targetColor').value);
-
-  if (mode === "5") {
-    const result = solveFive(circleStates);
-    if (result === "already-solved") {
-      output.textContent = "すでに5つ同じ色が揃っています！";
-    } else if (!result) {
-      output.textContent = "有効な押し順が見つかりませんでした。";
-    } else {
-      output.textContent = "--- 押す順番 ---\n" + result.seq.map(i => `円${i + 1}`).join(" → ");
-    }
-  } else {
-    // 6つ同色か事前チェック
-    if (circleStates.every(x => x === circleStates[0])) {
-      output.textContent = "すでに6つ同じ色が揃っています！";
-      return;
-    }
-
-    const candidates = selVal === -1 ? [0, 1, 2] : [selVal];
-    let best = null;
-    let bestColor = null;
-    for (const c of candidates) {
-      const res = solveSix(circleStates, c);
-      if (!res) continue;
-      if (!best || res.seq.length < best.seq.length) {
-        best = res;
-        bestColor = c;
-      }
-    }
-
-    if (!best) {
-      output.textContent = "3色いずれでも 6 つ揃えることはできません。";
-    } else {
-      output.textContent = `--- 押す順番 ---\n` + best.seq.map(i => `円${i + 1}`).join(" → ");
-    }
-  }
-}
-
-window.addEventListener('resize', placeCircles);
-window.addEventListener('load', placeCircles);
-</script>
+<script src="script.js"></script>
 
 </body>
 </html>
