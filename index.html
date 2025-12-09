@@ -21,6 +21,10 @@
 <div id="history-log" style="display: none;">
     <div class="history-title">更新履歴</div>
     <ul class="history-list">
+         <li>
+            <span class="date">2025/12/09</span>
+            <span class="content">SS倍率の枠を増やしました。自強化+弱点特攻のような2種の乗算が発生するSSに対して効果的です。</span>
+        </li>
         <li>
             <span class="date">2025/12/09</span>
             <span class="content">直殴り/友情コンボの切り替え機能を実装しました。</span>
@@ -146,10 +150,37 @@
                     </select>
                 </div>
 
+                 <div class="grid-item" data-mode="friend">
+                    <label class="check-label">
+                        <input type="checkbox" id="chk_friend_boost" onchange="toggleInput('friendBoostSelect', 'chk_friend_boost')">
+                        友情ブースト
+                    </label>
+                    <select id="friendBoostSelect" onchange="calculate()" disabled>
+                        <option value="1.5">無印 (x1.5)</option>
+                        <option value="2.0">M (x2.0)</option>
+                        <option value="2.5">L (x2.5)</option>
+                        <option value="3.0">EL (x3.0)</option>
+                    </select>
+                </div>
+
+
                 <div class="grid-item" data-mode="direct">
                     <label class="check-label">
                         <input type="checkbox" id="chk_soko" onchange="toggleInput('sokoSelect', 'chk_soko')">
                         底力
+                    </label>
+                    <select id="sokoSelect" onchange="calculate()" disabled>
+                        <option value="1.5" selected>無印 (x1.5)</option>
+                        <option value="2.0">M (x2.0)</option>
+                        <option value="2.5">L (x2.5)</option>
+                        <option value="3.0">EL (x3.0)</option>
+                    </select>
+                </div>
+
+                    <div class="grid-item" data-mode="friend">
+                        <label class="check-label">
+                        <input type="checkbox" id="chk_friendsoko" onchange="toggleInput('friendsokoSelect', 'chk_friendsoko')">
+                        友情底力
                     </label>
                     <select id="sokoSelect" onchange="calculate()" disabled>
                         <option value="1.5" selected>無印 (x1.5)</option>
@@ -190,7 +221,7 @@
                     </div>
                 </div>
                 
-                <div class="grid-item" data-mode="direct">
+                <div class="grid-item">
                     <label class="check-label">
                         <input type="checkbox" id="chk_mboost" onchange="toggleInput('mboostSelect', 'chk_mboost')">
                         魔法陣ブースト
@@ -219,7 +250,7 @@
                 <div class="grid-item" data-mode="direct">
                     <label class="check-label">
                         <input type="checkbox" id="chk_ab4" onchange="calculate()">
-                        超パワー型（初撃×1.2）
+                        超パワー型（初撃x1.2）
                     </label>
                 </div>
 
@@ -231,19 +262,6 @@
                     <select id="pfieldSelect" onchange="calculate()" disabled>
                         <option value="1.5" selected>主友情 (x1.5)</option>
                         <option value="1.1">副友情[神化] (x1.1)</option>
-                    </select>
-                </div>
-
-                <div class="grid-item" data-mode="friend">
-                    <label class="check-label">
-                        <input type="checkbox" id="chk_friend_boost" onchange="toggleInput('friendBoostSelect', 'chk_friend_boost')">
-                        友情ブースト
-                    </label>
-                    <select id="friendBoostSelect" onchange="calculate()" disabled>
-                        <option value="1.5">無印 (x1.5)</option>
-                        <option value="2.0">M (x2.0)</option>
-                        <option value="2.5">L (x2.5)</option>
-                        <option value="3.0">EL (x3.0)</option>
                     </select>
                 </div>
 
@@ -289,9 +307,17 @@
                 <div class="grid-item" data-mode="direct">
                     <label class="check-label">
                         <input type="checkbox" id="chk_SS" onchange="toggleInput('SSRate', 'chk_SS')">
-                        SS倍率
+                        SS倍率1
                     </label>
                     <input type="number" id="SSRate" step="0.01" oninput="calculate()" disabled>
+                </div>
+
+                <div class="grid-item" data-mode="direct">
+                    <label class="check-label">
+                        <input type="checkbox" id="chk_SS2" onchange="toggleInput('SS2Rate', 'chk_SS2')">
+                        SS倍率2
+                    </label>
+                    <input type="number" id="SS2Rate" step="0.01" oninput="calculate()" disabled>
                 </div>
 
                 <div class="grid-item">
