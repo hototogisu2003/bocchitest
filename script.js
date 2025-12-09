@@ -224,6 +224,11 @@ function calculate() {
         if (document.getElementById('chk_yujo').checked) {
             totalMultiplier *= (parseFloat(document.getElementById('yujoRate').value) || 1.0);
         }
+
+        // 友情バフ
+        if (document.getElementById('chk_friendbuff').checked) {
+            totalMultiplier *= (parseFloat(document.getElementById('friendbuffRate').value) || 1.0);
+    }
     }
 
     // ==========================================
