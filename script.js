@@ -144,7 +144,7 @@ function calculate() {
     } else {
         // 友情: ベース × 友撃 (四捨五入)
         const yuugekiVal = parseFloat(document.getElementById('friendYuugekiSelect').value) || 1.0;
-        actualAttack = Math.round(baseAttack * yuugekiVal);
+        actualAttack = Math.floor(baseAttack * yuugekiVal);
     }
 
     // 表示更新
