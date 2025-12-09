@@ -263,6 +263,14 @@
                     <input type="number" id="buffRate" step="0.01" oninput="calculate()" disabled>
                 </div>
 
+                <div class="grid-item" data-mode="friend">
+                    <label class="check-label">
+                        <input type="checkbox" id="chk_friendbuff" onchange="toggleInput('friendbuffRate', 'chk_friendbuff')">
+                        友情バフ倍率
+                    </label>
+                    <input type="number" id="friendbuffRate" step="0.01" oninput="calculate()" disabled>
+                </div>
+                
                 <div class="grid-item">
                     <label class="check-label">
                         <input type="checkbox" id="chk_guardian" onchange="toggleInput('guardianRate', 'chk_guardian')">
