@@ -126,7 +126,30 @@ function togglewboostInputs() {
 }
 
 /* -------------------------------------------------------
-   ★新規追加：フッター詳細の開閉
+   等級名の取得
+   セレクトボックスのテキストから "M" "L" 等を抽出する
+------------------------------------------------------- */
+function getGradeSuffix(selectId) {
+    const el = document.getElementById(selectId);
+    if (!el) return "";
+    
+    // 現在選択されているオプションのテキストを取得 (例: "M (x2.0)")
+    const text = el.options[el.selectedIndex].text;
+    
+    // スペースで区切って最初の部分を取得 ("M", "L", "無印" など)
+    const grade = text.split(' ')[0];
+    
+    // "無印", "なし", "主友情" の場合は何も返さない
+    if (grade.includes("無印") || grade.includes("なし") || grade.includes("主友情")) {
+        return "";
+    }
+    
+    // それ以外ならスペース＋等級名を返す (例: " M")
+    return " " + grade;
+}
+
+/* -------------------------------------------------------
+   フッター詳細の開閉
 ------------------------------------------------------- */
 function toggleResultDetails() {
     const details = document.getElementById('result-details');
@@ -148,7 +171,6 @@ function toggleResultDetails() {
    計算メイン処理 (詳細ログ作成機能付きに書き換え)
 ------------------------------------------------------- */
 function calculate() {
-    // ★内訳記録用配列
     let breakdown = [];
 
     // --- 攻撃力(威力)取得 ---
@@ -160,13 +182,14 @@ function calculate() {
         const bonusElem = document.getElementById('attackBonus');
         const bonusAttack = parseFloat(bonusElem.value) || 0;
         actualAttack = baseAttack + bonusAttack;
-        // ログ記録
         breakdown.push({ name: "ベース攻撃力 (素+加)", val: actualAttack.toLocaleString() });
     } else {
         const yuugekiVal = parseFloat(document.getElementById('friendYuugekiSelect').value) || 1.0;
         actualAttack = Math.floor(baseAttack * yuugekiVal);
-        // ログ記録
-        breakdown.push({ name: "ベース威力 (×友撃)", val: actualAttack.toLocaleString() });
+        
+        // 友撃の等級を取得して表示名に追加
+        const yuugekiSuffix = getGradeSuffix('friendYuugekiSelect');
+        breakdown.push({ name: `ベース威力 (×友撃${yuugekiSuffix})`, val: actualAttack.toLocaleString() });
     }
 
     const totalDisplay = document.getElementById('totalAttackDisplay');
@@ -174,11 +197,10 @@ function calculate() {
 
     let totalMultiplier = 1.0;
 
-    // ★ヘルパー関数: 倍率適用とログ記録を同時に行う
+    // ヘルパー関数: 倍率適用とログ記録
     const apply = (name, rate) => {
         if (rate !== 1.0 && rate !== 0) {
             totalMultiplier *= rate;
-            // 小数点以下が見やすいように整形 (例: 1.5 -> x1.5)
             breakdown.push({ name: name, val: "x" + Math.round(rate * 10000) / 10000 });
         }
     };
@@ -196,23 +218,26 @@ function calculate() {
         }
 
         if (document.getElementById('chk_ms').checked) {
-            apply("マインスイーパー", parseFloat(document.getElementById('msSelect').value) || 1.0);
+            apply("マインスイーパー" + getGradeSuffix('msSelect'), parseFloat(document.getElementById('msSelect').value) || 1.0);
         }
 
         if (document.getElementById('chk_soko').checked) {
-            apply("底力", parseFloat(document.getElementById('sokoSelect').value) || 1.0);
+            apply("底力" + getGradeSuffix('sokoSelect'), parseFloat(document.getElementById('sokoSelect').value) || 1.0);
         }
 
         if (document.getElementById('chk_wboost').checked) {
             const gradeKey = document.getElementById('wboostGrade').value;
             const valKey = document.getElementById('wboostVal').value;
+            // 等級名を取得
+            const gradeSuffix = getGradeSuffix('wboostGrade');
+            
             if (WALL_BOOST_DATA[gradeKey] && WALL_BOOST_DATA[gradeKey][valKey]) {
-                apply(`ウォールブースト(${valKey}壁)`, WALL_BOOST_DATA[gradeKey][valKey]);
+                apply(`ウォールブースト${gradeSuffix}(${valKey}壁)`, WALL_BOOST_DATA[gradeKey][valKey]);
             }
         }
 
         if (document.getElementById('chk_mboost').checked) {
-            apply("魔法陣ブースト", parseFloat(document.getElementById('mboostSelect').value) || 1.0);
+            apply("魔法陣ブースト" + getGradeSuffix('mboostSelect'), parseFloat(document.getElementById('mboostSelect').value) || 1.0);
         }
 
         if (document.getElementById('chk_ab2').checked) apply("渾身", 3.0);
@@ -220,7 +245,7 @@ function calculate() {
         if (document.getElementById('chk_ab4').checked) apply("超パワー型(初撃)", 1.2);
 
         if (document.getElementById('chk_pfield') && document.getElementById('chk_pfield').checked) {
-            apply("パワーフィールド", parseFloat(document.getElementById('pfieldSelect').value) || 1.0);
+            apply("パワーフィールド" + getGradeSuffix('pfieldSelect'), parseFloat(document.getElementById('pfieldSelect').value) || 1.0);
         }
 
         if (document.getElementById('chk_SS').checked) {
@@ -238,18 +263,17 @@ function calculate() {
     // === 友情モード ===
     if (currentAttackMode === 'friend') {
         if (document.getElementById('chk_friend_boost').checked) {
-            apply("友情ブースト", parseFloat(document.getElementById('friendBoostSelect').value) || 1.0);
+            apply("友情ブースト" + getGradeSuffix('friendBoostSelect'), parseFloat(document.getElementById('friendBoostSelect').value) || 1.0);
         }
         
-        // 誘発
         if (document.getElementById('chk_friendhalf') && document.getElementById('chk_friendhalf').checked) {
             apply("誘発", 0.5);
         }
 
-        // 友情底力
         if (document.getElementById('chk_friendsoko') && document.getElementById('chk_friendsoko').checked) {
              const sokoVal = document.getElementById('sokoSelect') ? document.getElementById('sokoSelect').value : 1.0;
-             apply("友情底力", parseFloat(sokoVal) || 1.0);
+             // 底力のIDと共用しているので、sokoSelectから等級名を取得
+             apply("友情底力" + getGradeSuffix('sokoSelect'), parseFloat(sokoVal) || 1.0);
         }
 
         if (document.getElementById('chk_ffield') && document.getElementById('chk_ffield').checked) {
@@ -267,7 +291,7 @@ function calculate() {
 
     // === 共通 ===
     if (document.getElementById('chk_aura').checked) {
-        apply("パワーオーラ", parseFloat(document.getElementById('auraSelect').value) || 1.0);
+        apply("パワーオーラ" + getGradeSuffix('auraSelect'), parseFloat(document.getElementById('auraSelect').value) || 1.0);
     }
     if (document.getElementById('chk_killer').checked) {
         apply("キラー", parseFloat(document.getElementById('killerRate').value) || 1.0);
@@ -296,9 +320,12 @@ function calculate() {
     if (document.getElementById('chk_def').checked) {
         apply("防御ダウン倍率", parseFloat(document.getElementById('defRate').value) || 1.0);
     }
+    
+    // 怒り倍率にも適用 (小、中、大)
     if (document.getElementById('chk_angry').checked) {
-        apply("怒り倍率", parseFloat(document.getElementById('angrySelect').value) || 1.0);
+        apply("怒り倍率" + getGradeSuffix('angrySelect'), parseFloat(document.getElementById('angrySelect').value) || 1.0);
     }
+    
     if (document.getElementById('chk_mine').checked) {
         apply("地雷倍率", parseFloat(document.getElementById('mineRate').value) || 1.0);
     }
@@ -312,18 +339,26 @@ function calculate() {
     if (stageSelect) {
         let stageBase = 1.0;
         let rateName = "属性倍率";
+        
+        // セレクトボックスのテキストを取得して名前に反映（例: 属性効果超絶UP）
         if (stageSelect.value === 'custom') {
             stageBase = parseFloat(customInput.value) || 1.0;
             rateName = "属性倍率(手動)";
         } else {
             stageBase = parseFloat(stageSelect.value) || 1.0;
+            // 選択中のテキストを取得 (例: "通常 (x1.33)" -> "通常")
+            const text = stageSelect.options[stageSelect.selectedIndex].text;
+            const label = text.split(' ')[0];
+            if (label !== "なし") {
+                rateName = "属性倍率(" + label + ")";
+            }
         }
 
         let stageMultiplier = stageBase;
         if (document.getElementById('chk_stageSpecial').checked && stageBase !== 1.0) {
             let temp = ((stageBase - 1) / 0.33) * 0.596 + 1;
             stageMultiplier = Math.round(temp * 100000) / 100000;
-            rateName = "超バランス型";
+            rateName = "超バランス型(" + rateName.replace("属性倍率", "").replace(/[()]/g, "") + ")";
         }
         
         apply(rateName, stageMultiplier);
@@ -336,7 +371,7 @@ function calculate() {
         apply("ギミック倍率", parseFloat(document.getElementById('gimmickRate').value) || 1.0);
     }
 
-    // --- 最終計算 ---
+    // --- 最終計算 (微小値加算方式) ---
     const finalDamage = Math.floor((actualAttack * totalMultiplier) + 0.00001);
     
     currentFinalDamage = finalDamage;
@@ -347,10 +382,10 @@ function calculate() {
     const verifyDisplay = document.getElementById('verifyDamageDisplay');
     if (verifyDisplay) verifyDisplay.innerText = currentFinalDamage.toLocaleString();
 
-    // ★リスト表示更新
+    // 内訳リスト表示
     const listElem = document.getElementById('detail-list');
     if (listElem) {
-        listElem.innerHTML = ""; // クリア
+        listElem.innerHTML = "";
         breakdown.forEach(item => {
             const li = document.createElement('li');
             li.className = 'detail-item';
@@ -358,7 +393,6 @@ function calculate() {
             listElem.appendChild(li);
         });
         
-        // 最後に合計倍率も表示
         if (breakdown.length > 1) { 
              const li = document.createElement('li');
              li.className = 'detail-item';
