@@ -9,7 +9,10 @@
     --item-bg: #fafafa;       /* 各項目の背景 */
 }
 
-/* --- 基本設定 --- */
+/* ==============================================
+   1. 基本・共通設定 (PC/スマホ共通)
+   ============================================== */
+
 body {
     background-color: var(--bg-color);
     color: var(--text-color);
@@ -26,12 +29,11 @@ h1 {
     font-size: 24px;
 }
 
-/* --- 入力要素の共通設定 --- */
+/* --- 入力要素 --- */
 input, select, button {
-    font-size: 13px; /* bodyに合わせて縮小 */
+    font-size: 13px;
 }
 
-/* テキストボックス・セレクトボックス */
 input[type="number"], select {
     width: 100%;
     padding: 8px;
@@ -42,14 +44,12 @@ input[type="number"], select {
     box-sizing: border-box;
 }
 
-/* フォーカス時の色 */
 input[type="number"]:focus, select:focus {
     outline: none;
     border-color: var(--primary-color);
     box-shadow: 0 0 0 2px rgba(139, 195, 74, 0.2);
 }
 
-/* 無効化時のスタイル */
 input:disabled, select:disabled {
     background-color: #eee;
     color: #999;
@@ -57,15 +57,14 @@ input:disabled, select:disabled {
     border-color: #ddd;
 }
 
-/* チェックボックス */
 input[type="checkbox"] {
-    transform: scale(1.2); /* 少し大きく */
-    accent-color: var(--primary-color); /* チェック色を黄緑に */
+    transform: scale(1.2);
+    accent-color: var(--primary-color);
     cursor: pointer;
     margin: 0;
 }
 
-/* --- レイアウト・コンテナ --- */
+/* --- レイアウト --- */
 .container {
     max-width: 800px;
     margin: 0 auto;
@@ -75,7 +74,6 @@ input[type="checkbox"] {
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
-/* カテゴリ見出し */
 .category-title {
     background-color: var(--primary-color);
     color: #ffffff;
@@ -87,7 +85,7 @@ input[type="checkbox"] {
     font-weight: bold;
 }
 
-/* グリッドレイアウト */
+/* グリッド (基本は自動調整の4列) */
 .grid-4-col {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -95,7 +93,6 @@ input[type="checkbox"] {
     margin-bottom: 20px;
 }
 
-/* 各項目のボックス */
 .grid-item {
     display: flex;
     flex-direction: column;
@@ -109,7 +106,6 @@ input[type="checkbox"] {
     box-sizing: border-box;
 }
 
-/* 入力エリア */
 .main-input {
     margin-bottom: 20px;
     padding: 15px;
@@ -149,7 +145,7 @@ input[type="checkbox"] {
     gap: 5px;
 }
 
-/* --- 結果表示ボックス (PC/スマホ共通で縦並び) --- */
+/* --- 結果表示ボックス (縦並び統一) --- */
 .result-box {
     margin-top: 40px;
     padding: 20px;
@@ -157,9 +153,8 @@ input[type="checkbox"] {
     border: 3px solid var(--primary-color);
     border-radius: 10px;
     text-align: center;
-    
     display: flex;
-    flex-direction: column; /* 常に縦並び（桁数対策） */
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     gap: 5px;
@@ -175,11 +170,11 @@ input[type="checkbox"] {
     font-size: 24px;
     font-weight: bold;
     color: var(--text-color);
-    word-break: break-all; /* 長い数字の折り返し */
+    word-break: break-all;
     line-height: 1.2;
 }
 
-/* --- タブ切り替えボタン --- */
+/* --- タブボタン --- */
 .tab-container {
     display: flex;
     justify-content: center;
@@ -209,49 +204,65 @@ input[type="checkbox"] {
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
-/* --- 判定結果のスタイル --- */
+/* --- 判定結果の色 --- */
 .judge-success {
-    color: #d32f2f !important; /* 赤色 */
+    color: #d32f2f !important;
     background-color: #ffebee !important;
     border-color: #d32f2f !important;
 }
 
 .judge-fail {
-    color: #1976d2 !important; /* 青色 */
+    color: #1976d2 !important;
     background-color: #e3f2fd !important;
     border-color: #1976d2 !important;
 }
 
+/* --- リセットボタン --- */
+.reset-button {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background-color 0.3s;
+    font-family: 'Noto Sans JP', sans-serif;
+}
+
+.reset-button:hover {
+    background-color: #d32f2f;
+}
+
 /* --- 更新履歴（ベルマーク） --- */
 #bell-icon {
-    position: fixed;       /* 画面右上に固定 */
+    position: fixed;
     top: 15px;
     right: 15px;
     width: 40px;
     height: 40px;
-    background-color: var(--primary-color); /* メインカラーを使用 */
-    border-radius: 50%;    /* 丸くする */
+    background-color: var(--primary-color);
+    border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
     box-shadow: 0 2px 5px rgba(0,0,0,0.3);
     cursor: pointer;
-    z-index: 10000;        /* 最前面に */
+    z-index: 10000;
     transition: transform 0.2s;
 }
 
 #bell-icon:hover {
-    transform: scale(1.1); /* ホバー時に少し拡大 */
+    transform: scale(1.1);
     background-color: var(--primary-dark);
 }
 
-/* --- 履歴ログウィンドウ --- */
 #history-log {
     position: fixed;
-    top: 65px;             /* ベルの下あたりに表示 */
+    top: 65px;
     right: 15px;
     width: 300px;
-    max-height: 400px;     /* 長すぎたらスクロール */
+    max-height: 400px;
     overflow-y: auto;
     background-color: #fff;
     border: 2px solid var(--primary-color);
@@ -290,33 +301,8 @@ input[type="checkbox"] {
     font-size: 11px;
 }
 
-/* スマホでの調整 */
-@media (max-width: 768px) {
-    #history-log {
-        width: 85%; /* 画面幅いっぱいになりすぎないように */
-        right: 5%;  /* 中央寄せ気味に */
-    }
-}
-
-/* --- リセットボタン --- */
-.reset-button {
-    background-color: #f44336; /* 赤色で注意を引く */
-    color: white;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 12px;
-    transition: background-color 0.3s;
-    font-family: 'Noto Sans JP', sans-serif;
-}
-
-.reset-button:hover {
-    background-color: #d32f2f;
-}
-
 /* ==============================================
-   スマホ（画面幅768px以下）向けの特別設定
+   2. スマホ専用設定 (画面幅768px以下で上書き)
    ============================================== */
 @media (max-width: 768px) {
     
@@ -324,7 +310,7 @@ input[type="checkbox"] {
         padding: 15px 10px;
     }
 
-    /* 強制的に2列（2段組）にする設定 */
+    /* 強制的に2列（2段組）にする */
     .grid-4-col {
         display: grid;
         grid-template-columns: repeat(2, 1fr) !important; 
@@ -335,16 +321,22 @@ input[type="checkbox"] {
         padding: 8px 5px;
     }
 
-    /* チェックボックスのラベル文字を縮小 */
+    /* 文字サイズ調整 */
     .check-label {
         font-size: 11px; 
         letter-spacing: -0.5px;
     }
 
-    /* 入力欄をスリムに */
+    /* 入力欄スリム化 */
     input[type="number"], select {
         padding: 4px;
         height: 30px;
         font-size: 12px;
+    }
+
+    /* 履歴ログの幅調整 */
+    #history-log {
+        width: 85%;
+        right: 5%;
     }
 }
