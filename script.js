@@ -403,22 +403,29 @@ function checkOneshot() {
     }
 }
 
-
 /* -------------------------------------------------------
-   デバッグ用：最終更新日時を表示
+   更新履歴の表示切り替え
 ------------------------------------------------------- */
-const debugElem = document.getElementById('debug-timestamp');
-if (debugElem) {
-    const d = new Date(document.lastModified);
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    const hours = String(d.getHours()).padStart(2, '0');
-    const min = String(d.getMinutes()).padStart(2, '0');
-
-    // 秒を省いて表示
-    debugElem.innerText = `Update: ${year}-${month}-${day} ${hours}:${min}`;
+function toggleHistory() {
+    const log = document.getElementById('history-log');
+    if (log) {
+        if (log.style.display === 'none') {
+            log.style.display = 'block';
+        } else {
+            log.style.display = 'none';
+        }
+    }
 }
 
-// 初期化実行
-calculate();
+// 画面のどこかをクリックした時、ベルと履歴以外なら閉じる処理（UX向上）
+document.addEventListener('click', function(event) {
+    const log = document.getElementById('history-log');
+    const bell = document.getElementById('bell-icon');
+    
+    if (log && bell && log.style.display === 'block') {
+        // クリックされた場所が「ログの中」でも「ベル」でもなければ閉じる
+        if (!log.contains(event.target) && !bell.contains(event.target)) {
+            log.style.display = 'none';
+        }
+    }
+});
