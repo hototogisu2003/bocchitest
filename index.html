@@ -466,10 +466,21 @@
             </div>
         </div>
         
-        <div class="result-box">
-            <span class="result-label">最終ダメージ</span>
+    <div class="result-box" id="footer-result" onclick="toggleResultDetails()">
+        <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+            <div style="display: flex; align-items: center; gap: 5px;">
+                <span class="result-label">最終ダメージ</span>
+                <span id="detail-toggle-icon" style="font-size: 12px; color: #666;">(▲ 詳細)</span>
+            </div>
             <span id="result" class="result-value">0</span>
         </div>
+
+        <div id="result-details" style="display: none;">
+            <div class="detail-header">倍率内訳</div>
+            <ul id="detail-list">
+                </ul>
+        </div>
+    </div>
     </div> <div id="view-verify" style="display: none;">
         <div class="category-section">
             <h3 class="category-title">敵ステータス入力</h3>
