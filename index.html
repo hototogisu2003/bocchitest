@@ -36,7 +36,7 @@
 </div>
 
 <div class="container">
-    <h1>モンストダメ計デバッグ用</h1>
+    <h1>モンストダメ計ツール</h1>
 
     <div style="text-align: left; margin-bottom: 10px;">
         <button class="reset-button" onclick="resetAll()">
@@ -64,7 +64,7 @@
 
         <div class="main-input">
             <div style="display: flex; flex-direction: column; gap: 5px;">
-                <label id="label-base-power">攻撃ステータス</label>
+                <label id="label-base-power"></label>
                 <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
                     <div style="display: flex; flex-direction: column;">
                         <span style="font-size: 0.8rem;" id="label-atk-val">攻撃力</span>
@@ -152,19 +152,6 @@
                         底力
                     </label>
                     <select id="sokoSelect" onchange="calculate()" disabled>
-                        <option value="1.5" selected>無印 (x1.5)</option>
-                        <option value="2.0">M (x2.0)</option>
-                        <option value="2.5">L (x2.5)</option>
-                        <option value="3.0">EL (x3.0)</option>
-                    </select>
-                </div>
-
-                <div class="grid-item" data-mode="friend">
-                    <label class="check-label">
-                        <input type="checkbox" id="chk_friendsoko" onchange="toggleInput('friendsokoSelect', 'chk_friendsoko')">
-                        友情底力
-                    </label>
-                    <select id="friendsokoSelect" onchange="calculate()" disabled>
                         <option value="1.5" selected>無印 (x1.5)</option>
                         <option value="2.0">M (x2.0)</option>
                         <option value="2.5">L (x2.5)</option>
@@ -396,7 +383,7 @@
                         <option value="1.15">大 (x1.15)</option>
                     </select>
                 </div>
-                <div class="grid-item">
+                <div class="grid-item" data-mode="direct">
                     <label class="check-label">
                         <input type="checkbox" id="chk_mine" onchange="toggleInput('mineRate', 'chk_mine')">
                         地雷倍率
