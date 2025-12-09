@@ -219,6 +219,7 @@ function calculate() {
         }
 
         if (document.getElementById('chk_ffield').checked) totalMultiplier *= 1.5; // 友情フィールド
+        if (document.getElementById('chk_friendhalf').checked) totalMultiplier *= 0.5; // 友情フィールド
 
         // 友情倍率
         if (document.getElementById('chk_yujo').checked) {
@@ -228,7 +229,9 @@ function calculate() {
         // 友情バフ
         if (document.getElementById('chk_friendbuff').checked) {
             totalMultiplier *= (parseFloat(document.getElementById('friendbuffRate').value) || 1.0);
-    }
+        }
+
+
     }
 
     // ==========================================
