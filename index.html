@@ -110,6 +110,13 @@
             <h3 class="category-title">キャラクター倍率</h3>
             
             <div class="grid-4-col">
+
+                <div class="grid-item" data-mode="friend">
+                    <label class="check-label">
+                        <input type="checkbox" id="chk_friendhalf" onchange="calculate()">
+                        誘発 (x0.5)
+                    </label>
+                </div>
                 
                 <div class="grid-item" data-mode="direct">
                     <label class="check-label">
@@ -244,13 +251,6 @@
                     <label class="check-label">
                         <input type="checkbox" id="chk_ffield" onchange="calculate()">
                         友情フィールド (x1.5)
-                    </label>
-                </div>
-
-                    <div class="grid-item" data-mode="friend">
-                    <label class="check-label">
-                        <input type="checkbox" id="chk_friendhalf" onchange="calculate()">
-                        誘発 (x0.5)
                     </label>
                 </div>
 
