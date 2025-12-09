@@ -111,13 +111,21 @@ function calculate() {
     // 超パワー型
     const ab4Elem = document.getElementById('chk_ab4');
     let ab4Multiplier = (ab4Elem && ab4Elem.checked) ? 1.2 : 1.0;
-
+    
     // パワーオーラ
     let auraMultiplier = 1.0;
     const auraCheck = document.getElementById('chk_aura');
     const auraSelect = document.getElementById('auraSelect');
     if (auraCheck && auraCheck.checked && auraSelect) {
         auraMultiplier = parseFloat(auraSelect.value) || 1.0;
+    }
+
+    // パワーフィールド
+    let fieldMultiplier = 1.0;
+    const fieldCheck = document.getElementById('chk_field');
+    const fieldSelect = document.getElementById('fieldSelect');
+    if (fieldCheck && fieldCheck.checked && fieldSelect) {
+        fieldMultiplier = parseFloat(fieldSelect.value) || 1.0;
     }
 
     // マインスイーパー
@@ -304,6 +312,7 @@ function calculate() {
         * ab3Multiplier
         * ab4Multiplier
         * auraMultiplier
+        * fieldMultiplier
         * msMultiplier
         * warpMultiplier
         * sokoMultiplier
