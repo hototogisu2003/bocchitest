@@ -298,6 +298,23 @@ input[type="checkbox"] {
     }
 }
 
+/* --- リセットボタン --- */
+.reset-button {
+    background-color: #f44336; /* 赤色で注意を引く */
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background-color 0.3s;
+    font-family: 'Noto Sans JP', sans-serif;
+}
+
+.reset-button:hover {
+    background-color: #d32f2f;
+}
+
 /* ==============================================
    スマホ（画面幅768px以下）向けの特別設定
    ============================================== */
