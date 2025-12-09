@@ -10,7 +10,7 @@
 }
 
 /* ==============================================
-   1. 基本・共通設定 (PC/スマホ共通)
+   1. 基本設定 (すべての画面共通)
    ============================================== */
 
 body {
@@ -19,7 +19,7 @@ body {
     font-family: 'Noto Sans JP', sans-serif;
     margin: 0;
     padding: 20px;
-    font-size: 13px; /* 基本文字サイズ */
+    font-size: 13px;
 }
 
 h1 {
@@ -27,6 +27,15 @@ h1 {
     color: var(--text-color);
     margin-bottom: 30px;
     font-size: 24px;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: var(--container-bg);
+    padding: 20px 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
 /* --- 入力要素 --- */
@@ -64,31 +73,11 @@ input[type="checkbox"] {
     margin: 0;
 }
 
-/* --- レイアウト --- */
-.container {
-    max-width: 800px;
-    margin: 0 auto;
-    background-color: var(--container-bg);
-    padding: 20px 30px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-}
-
-.category-title {
-    background-color: var(--primary-color);
-    color: #ffffff;
-    padding: 8px 15px;
-    border-radius: 5px;
-    font-size: 18px;
-    margin-top: 30px;
-    margin-bottom: 15px;
-    font-weight: bold;
-}
-
-/* グリッド (基本は自動調整の4列) */
+/* --- グリッドレイアウト (標準：4列) --- */
 .grid-4-col {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    /* repeat(4, 1fr) で強制的に4列にします */
+    grid-template-columns: repeat(4, 1fr); 
     gap: 15px;
     margin-bottom: 20px;
 }
@@ -104,6 +93,17 @@ input[type="checkbox"] {
     background-color: var(--item-bg);
     height: 100%;
     box-sizing: border-box;
+}
+
+.category-title {
+    background-color: var(--primary-color);
+    color: #ffffff;
+    padding: 8px 15px;
+    border-radius: 5px;
+    font-size: 18px;
+    margin-top: 30px;
+    margin-bottom: 15px;
+    font-weight: bold;
 }
 
 .main-input {
@@ -145,7 +145,7 @@ input[type="checkbox"] {
     gap: 5px;
 }
 
-/* --- 結果表示ボックス (縦並び統一) --- */
+/* --- 結果表示ボックス --- */
 .result-box {
     margin-top: 40px;
     padding: 20px;
@@ -172,6 +172,22 @@ input[type="checkbox"] {
     color: var(--text-color);
     word-break: break-all;
     line-height: 1.2;
+}
+
+/* --- リセットボタン --- */
+.reset-button {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background-color 0.3s;
+    font-family: 'Noto Sans JP', sans-serif;
+}
+.reset-button:hover {
+    background-color: #d32f2f;
 }
 
 /* --- タブボタン --- */
@@ -204,37 +220,19 @@ input[type="checkbox"] {
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
-/* --- 判定結果の色 --- */
+/* --- 判定結果 --- */
 .judge-success {
     color: #d32f2f !important;
     background-color: #ffebee !important;
     border-color: #d32f2f !important;
 }
-
 .judge-fail {
     color: #1976d2 !important;
     background-color: #e3f2fd !important;
     border-color: #1976d2 !important;
 }
 
-/* --- リセットボタン --- */
-.reset-button {
-    background-color: #f44336;
-    color: white;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 12px;
-    transition: background-color 0.3s;
-    font-family: 'Noto Sans JP', sans-serif;
-}
-
-.reset-button:hover {
-    background-color: #d32f2f;
-}
-
-/* --- 更新履歴（ベルマーク） --- */
+/* --- ベルマーク・更新履歴 --- */
 #bell-icon {
     position: fixed;
     top: 15px;
@@ -251,7 +249,6 @@ input[type="checkbox"] {
     z-index: 10000;
     transition: transform 0.2s;
 }
-
 #bell-icon:hover {
     transform: scale(1.1);
     background-color: var(--primary-dark);
@@ -272,7 +269,6 @@ input[type="checkbox"] {
     z-index: 9999;
     font-size: 13px;
 }
-
 .history-title {
     font-weight: bold;
     border-bottom: 1px solid #ddd;
@@ -280,20 +276,17 @@ input[type="checkbox"] {
     margin-bottom: 10px;
     color: var(--primary-dark);
 }
-
 .history-list {
     list-style: none;
     padding: 0;
     margin: 0;
 }
-
 .history-list li {
     margin-bottom: 8px;
     border-bottom: 1px dashed #eee;
     padding-bottom: 8px;
     line-height: 1.4;
 }
-
 .history-list .date {
     display: block;
     font-weight: bold;
@@ -302,18 +295,16 @@ input[type="checkbox"] {
 }
 
 /* ==============================================
-   2. スマホ専用設定 (画面幅768px以下で上書き)
+   2. スマホ専用設定 (画面幅768px以下の場合)
    ============================================== */
 @media (max-width: 768px) {
-    
     .container {
         padding: 15px 10px;
     }
 
-    /* 強制的に2列（2段組）にする */
+    /* スマホは2列 */
     .grid-4-col {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr) !important; 
+        grid-template-columns: repeat(2, 1fr) !important;
         gap: 6px;
     }
 
@@ -321,22 +312,29 @@ input[type="checkbox"] {
         padding: 8px 5px;
     }
 
-    /* 文字サイズ調整 */
     .check-label {
-        font-size: 11px; 
+        font-size: 11px;
         letter-spacing: -0.5px;
     }
 
-    /* 入力欄スリム化 */
     input[type="number"], select {
         padding: 4px;
         height: 30px;
         font-size: 12px;
     }
 
-    /* 履歴ログの幅調整 */
     #history-log {
         width: 85%;
         right: 5%;
+    }
+}
+
+/* ==============================================
+   3. PC専用・強制補正 (画面幅769px以上の場合)
+   ============================================== */
+@media (min-width: 769px) {
+    /* PCでは絶対に4列にする強制ルール */
+    .grid-4-col {
+        grid-template-columns: repeat(4, 1fr) !important;
     }
 }
