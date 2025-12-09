@@ -6,7 +6,7 @@ const WALL_BOOST_DATA = {
     "2.5": { 1: 1.37, 2: 1.75, 3: 2.12, 4: 2.5 }, // L
 };
 
-// 計算された最終ダメージを保持する変数
+// 計算された最終ダメージを保持する変数（判定画面で使用）
 let currentFinalDamage = 0;
 
 
@@ -313,6 +313,7 @@ function calculate() {
         // 超バランス型計算 (丸め処理込み)
         if (isStageSpecial && stageBase !== 1.0) {
             let temp = ((stageBase - 1) / 0.33) * 0.596 + 1;
+            // 第6位を四捨五入
             stageMultiplier = Math.round(temp * 100000) / 100000;
         }
 
@@ -380,6 +381,7 @@ function checkOneshot() {
     const resultBox = document.getElementById('verify-result-box');
     const realHpElem = document.getElementById('displayRealHp');
 
+    // 必要な要素が揃っていなければ終了
     if (!hpInput || !judgeText) return;
 
     const maxHp = parseFloat(hpInput.value);
@@ -418,9 +420,11 @@ function checkOneshot() {
 
     // --- 判定 ---
     if (currentFinalDamage >= currentEnemyHp) {
+        // ワンパン可能
         judgeText.innerHTML = `ワンパンできます`;
         resultBox.className = "result-box judge-success";
     } else {
+        // ワンパン不可
         judgeText.innerHTML = `ワンパンできません`;
         resultBox.className = "result-box judge-fail";
     }
