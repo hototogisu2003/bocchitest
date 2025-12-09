@@ -333,7 +333,7 @@ function calculate() {
     }
 
     // --- 最終計算 ---
-    const finalDamage = Math.floor(actualAttack * totalMultiplier);
+    const finalDamage = Math.floor((actualAttack * totalMultiplier) + 0.00001);
     
     currentFinalDamage = finalDamage;
 
