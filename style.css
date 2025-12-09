@@ -19,6 +19,10 @@ body {
     font-family: 'Noto Sans JP', sans-serif;
     margin: 0;
     padding: 20px;
+    
+    /* ★追加：下に固定バーが出る分だけ余白を確保 */
+    padding-bottom: 140px; 
+    
     font-size: 13px;
 }
 
@@ -145,19 +149,30 @@ input[type="checkbox"] {
     gap: 5px;
 }
 
-/* --- 結果表示ボックス --- */
+/* --- 結果表示ボックス (画面下固定) --- */
 .result-box {
-    margin-top: 40px;
-    padding: 20px;
-    background-color: #fff;
-    border: 3px solid var(--primary-color);
-    border-radius: 10px;
-    text-align: center;
+    position: fixed;        /* 画面に固定 */
+    bottom: 0;              /* 一番下 */
+    left: 0;                /* 左端から */
+    width: 100%;            /* 横幅いっぱい */
+    z-index: 1000;          /* 最前面に表示 */
+    
+    background-color: #fff; /* 背景色 */
+    padding: 10px 0;        /* 内側の余白 */
+    margin: 0;              /* 外側の余白は削除 */
+    
+    /* デザイン調整 */
+    border: none;
+    border-top: 4px solid var(--primary-color); /* 上にだけ緑の線 */
+    border-radius: 16px 16px 0 0; /* 上の角だけ丸くする */
+    box-shadow: 0 -4px 10px rgba(0,0,0,0.15); /* 上向きの影 */
+    
+    /* 中身の配置 */
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 5px;
+    gap: 0px;
 }
 
 .result-label {
@@ -363,6 +378,15 @@ input[type="checkbox"] {
     #history-log {
         width: 85%;
         right: 5%;
+    }
+
+    .result-box {
+        padding: 8px 0;
+        border-radius: 12px 12px 0 0;
+    }
+    
+    .result-value {
+        font-size: 22px; /* スマホでは少し文字を小さくして見切れ防止 */
     }
 }
 
