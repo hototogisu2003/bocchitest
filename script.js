@@ -175,7 +175,7 @@ function calculate() {
             totalMultiplier *= (parseFloat(document.getElementById('msSelect').value) || 1.0);
         }
 
-        // 底力
+        // 友情底力
         if (document.getElementById('chk_soko').checked) {
             totalMultiplier *= (parseFloat(document.getElementById('sokoSelect').value) || 1.0);
         }
