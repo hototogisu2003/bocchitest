@@ -1,12 +1,12 @@
 // --- ウォールブースト倍率定義 ---
 // 1壁, 2壁, 3壁, 4壁 の順で倍率を定義
 const WALL_BOOST_DATA = {
-    "1.5": { 1: 1.125, 2: 1.25, 3: 1.375, 4: 1.5 }, // 無印
+    "1.5": { 1: 1.12, 2: 1.25, 3: 1.37, 4: 1.5 }, // 無印
     "2.0": { 1: 1.25,  2: 1.5,  3: 1.75,  4: 2.0 }, // M
-    "2.5": { 1: 1.375, 2: 1.75, 3: 2.125, 4: 2.5 }, // L
+    "2.5": { 1: 1.37, 2: 1.75, 3: 2.12, 4: 2.5 }, // L
 };
 
-// 計算された最終ダメージを保持する変数（判定画面で使用）
+// 計算された最終ダメージを保持する変数
 let currentFinalDamage = 0;
 
 
@@ -52,6 +52,24 @@ function toggleInput(inputId, checkboxId) {
         if (typeof checkOneshot === 'function') {
             checkOneshot();
         }
+    }
+}
+
+/* -------------------------------------------------------
+   ★新規追加：属性倍率の手入力欄切り替え
+------------------------------------------------------- */
+function toggleStageInput() {
+    const select = document.getElementById('stageEffectSelect');
+    const input = document.getElementById('customStageRate');
+    
+    if (select && input) {
+        if (select.value === 'custom') {
+            input.style.display = 'block';
+            input.focus();
+        } else {
+            input.style.display = 'none';
+        }
+        calculate();
     }
 }
 
@@ -111,21 +129,13 @@ function calculate() {
     // 超パワー型
     const ab4Elem = document.getElementById('chk_ab4');
     let ab4Multiplier = (ab4Elem && ab4Elem.checked) ? 1.2 : 1.0;
-    
+
     // パワーオーラ
     let auraMultiplier = 1.0;
     const auraCheck = document.getElementById('chk_aura');
     const auraSelect = document.getElementById('auraSelect');
     if (auraCheck && auraCheck.checked && auraSelect) {
         auraMultiplier = parseFloat(auraSelect.value) || 1.0;
-    }
-
-    // パワーフィールド
-    let fieldMultiplier = 1.0;
-    const fieldCheck = document.getElementById('chk_field');
-    const fieldSelect = document.getElementById('fieldSelect');
-    if (fieldCheck && fieldCheck.checked && fieldSelect) {
-        fieldMultiplier = parseFloat(fieldSelect.value) || 1.0;
     }
 
     // マインスイーパー
@@ -281,20 +291,28 @@ function calculate() {
         mineMultiplier = parseFloat(mineInput.value) || 1.0;
     }
 
-    // --- ステージ倍率 ---
+    // --- ステージ倍率 (手入力対応) ---
     const stageSelect = document.getElementById('stageEffectSelect');
+    const customInput = document.getElementById('customStageRate');
     const stageCheck = document.getElementById('chk_stageSpecial');
     let stageMultiplier = 1.0;
     
     if (stageSelect && stageCheck) {
-        const stageBase = parseFloat(stageSelect.value) || 1.0;
+        let stageBase = 1.0;
+        
+        // ★ customなら手入力欄、それ以外ならセレクトボックスの値を使う
+        if (stageSelect.value === 'custom') {
+            stageBase = parseFloat(customInput.value) || 1.0;
+        } else {
+            stageBase = parseFloat(stageSelect.value) || 1.0;
+        }
+
         const isStageSpecial = stageCheck.checked;
         stageMultiplier = stageBase;
 
         // 超バランス型計算 (丸め処理込み)
         if (isStageSpecial && stageBase !== 1.0) {
             let temp = ((stageBase - 1) / 0.33) * 0.596 + 1;
-            // 第6位を四捨五入
             stageMultiplier = Math.round(temp * 100000) / 100000;
         }
 
@@ -312,7 +330,6 @@ function calculate() {
         * ab3Multiplier
         * ab4Multiplier
         * auraMultiplier
-        * fieldMultiplier
         * msMultiplier
         * warpMultiplier
         * sokoMultiplier
@@ -363,7 +380,6 @@ function checkOneshot() {
     const resultBox = document.getElementById('verify-result-box');
     const realHpElem = document.getElementById('displayRealHp');
 
-    // 必要な要素が揃っていなければ終了
     if (!hpInput || !judgeText) return;
 
     const maxHp = parseFloat(hpInput.value);
@@ -402,11 +418,9 @@ function checkOneshot() {
 
     // --- 判定 ---
     if (currentFinalDamage >= currentEnemyHp) {
-        // ワンパン可能
         judgeText.innerHTML = `ワンパンできます`;
         resultBox.className = "result-box judge-success";
     } else {
-        // ワンパン不可
         judgeText.innerHTML = `ワンパンできません`;
         resultBox.className = "result-box judge-fail";
     }
@@ -426,13 +440,11 @@ function toggleHistory() {
     }
 }
 
-// 画面のどこかをクリックした時、ベルと履歴以外なら閉じる処理（UX向上）
 document.addEventListener('click', function(event) {
     const log = document.getElementById('history-log');
     const bell = document.getElementById('bell-icon');
     
     if (log && bell && log.style.display === 'block') {
-        // クリックされた場所が「ログの中」でも「ベル」でもなければ閉じる
         if (!log.contains(event.target) && !bell.contains(event.target)) {
             log.style.display = 'none';
         }
@@ -443,48 +455,41 @@ document.addEventListener('click', function(event) {
    全入力リセット処理
 ------------------------------------------------------- */
 function resetAll() {
-    // 誤操作防止の確認アラート
     if (!confirm("入力内容をすべてリセットしますか？")) {
         return;
     }
 
-    // 1. テキストボックス・数値入力のクリア
     const inputs = document.querySelectorAll('input[type="number"]');
     inputs.forEach(input => {
         input.value = "";
     });
 
-    // 2. チェックボックスをすべて外す
     const checkboxes = document.querySelectorAll('input[type="checkbox"]');
     checkboxes.forEach(chk => {
         chk.checked = false;
     });
 
-    // 3. セレクトボックスを初期値(一番上の選択肢)に戻す
     const selects = document.querySelectorAll('select');
     selects.forEach(sel => {
         sel.selectedIndex = 0;
     });
 
-    // 4. 入力欄の無効化 (disabled) 状態を復元する
-    // main-input(攻撃力欄)以外の、category-section内の入力欄を基本的に無効化します
     const dependentInputs = document.querySelectorAll('.category-section input[type="number"], .category-section select');
     dependentInputs.forEach(el => {
-        // "stageEffectSelect" (有利属性) だけは最初から有効なので除外
         if (el.id !== 'stageEffectSelect') {
             el.disabled = true;
         }
     });
 
-    // 5. 特殊な表示項目のリセット
-    // 手入力欄を隠す
+    // 特殊な表示項目のリセット
     const customStageInput = document.getElementById('customStageRate');
     if (customStageInput) customStageInput.style.display = 'none';
     
-    // 実質HP表示のリセット
     const realHpElem = document.getElementById('displayRealHp');
     if (realHpElem) realHpElem.innerText = "-";
 
-    // 6. 再計算して結果を0に戻す
     calculate();
 }
+
+// 初期化実行
+calculate();
