@@ -43,13 +43,11 @@ function switchAttackMode() {
     const groupGauge = document.getElementById('group-gauge');
 
     if (currentAttackMode === 'friend') {
-        labelBase.innerText = "友情コンボステータス";
         labelAtk.innerText = "友情威力";
         groupBonus.style.display = 'none';   // 加撃を隠す
         groupYuugeki.style.display = 'flex'; // 友撃を表示
         groupGauge.style.display = 'none';   // ゲージを隠す
     } else {
-        labelBase.innerText = "攻撃ステータス";
         labelAtk.innerText = "攻撃力";
         groupBonus.style.display = 'flex';   // 加撃を表示
         groupYuugeki.style.display = 'none'; // 友撃を隠す
