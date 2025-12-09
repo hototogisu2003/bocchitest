@@ -429,3 +429,53 @@ document.addEventListener('click', function(event) {
         }
     }
 });
+
+/* -------------------------------------------------------
+   全入力リセット処理
+------------------------------------------------------- */
+function resetAll() {
+    // 誤操作防止の確認アラート
+    if (!confirm("入力内容をすべてリセットしますか？")) {
+        return;
+    }
+
+    // 1. テキストボックス・数値入力のクリア
+    const inputs = document.querySelectorAll('input[type="number"]');
+    inputs.forEach(input => {
+        input.value = "";
+    });
+
+    // 2. チェックボックスをすべて外す
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach(chk => {
+        chk.checked = false;
+    });
+
+    // 3. セレクトボックスを初期値(一番上の選択肢)に戻す
+    const selects = document.querySelectorAll('select');
+    selects.forEach(sel => {
+        sel.selectedIndex = 0;
+    });
+
+    // 4. 入力欄の無効化 (disabled) 状態を復元する
+    // main-input(攻撃力欄)以外の、category-section内の入力欄を基本的に無効化します
+    const dependentInputs = document.querySelectorAll('.category-section input[type="number"], .category-section select');
+    dependentInputs.forEach(el => {
+        // "stageEffectSelect" (有利属性) だけは最初から有効なので除外
+        if (el.id !== 'stageEffectSelect') {
+            el.disabled = true;
+        }
+    });
+
+    // 5. 特殊な表示項目のリセット
+    // 手入力欄を隠す
+    const customStageInput = document.getElementById('customStageRate');
+    if (customStageInput) customStageInput.style.display = 'none';
+    
+    // 実質HP表示のリセット
+    const realHpElem = document.getElementById('displayRealHp');
+    if (realHpElem) realHpElem.innerText = "-";
+
+    // 6. 再計算して結果を0に戻す
+    calculate();
+}
