@@ -126,210 +126,214 @@ function togglewboostInputs() {
 }
 
 /* -------------------------------------------------------
-   計算メイン処理 (モード分岐対応)
+   ★新規追加：フッター詳細の開閉
+------------------------------------------------------- */
+function toggleResultDetails() {
+    const details = document.getElementById('result-details');
+    const icon = document.getElementById('detail-toggle-icon');
+    const box = document.getElementById('footer-result');
+
+    if (details.style.display === 'none') {
+        details.style.display = 'block';
+        icon.innerText = '(▼ 閉じる)';
+        box.classList.add('open');
+    } else {
+        details.style.display = 'none';
+        icon.innerText = '(▲ 詳細)';
+        box.classList.remove('open');
+    }
+}
+
+/* -------------------------------------------------------
+   計算メイン処理 (詳細ログ作成機能付きに書き換え)
 ------------------------------------------------------- */
 function calculate() {
+    // ★内訳記録用配列
+    let breakdown = [];
+
     // --- 攻撃力(威力)取得 ---
     const attackElem = document.getElementById('attack');
     let baseAttack = parseFloat(attackElem.value) || 0;
     let actualAttack = 0;
 
     if (currentAttackMode === 'direct') {
-        // 直殴り: ベース + 加撃
         const bonusElem = document.getElementById('attackBonus');
         const bonusAttack = parseFloat(bonusElem.value) || 0;
         actualAttack = baseAttack + bonusAttack;
+        // ログ記録
+        breakdown.push({ name: "ベース攻撃力 (素+加)", val: actualAttack.toLocaleString() });
     } else {
-        // 友情: ベース × 友撃 (四捨五入)
         const yuugekiVal = parseFloat(document.getElementById('friendYuugekiSelect').value) || 1.0;
         actualAttack = Math.floor(baseAttack * yuugekiVal);
+        // ログ記録
+        breakdown.push({ name: "ベース威力 (×友撃)", val: actualAttack.toLocaleString() });
     }
 
-    // 表示更新
     const totalDisplay = document.getElementById('totalAttackDisplay');
     if (totalDisplay) totalDisplay.innerText = actualAttack.toLocaleString();
 
     let totalMultiplier = 1.0;
 
-    // ==========================================
-    // 1. 直殴りモード専用倍率
-    // ==========================================
-    if (currentAttackMode === 'direct') {
-        // ゲージ
-        const gaugeElem = document.getElementById('chk_gauge');
-        if (gaugeElem && gaugeElem.checked) totalMultiplier *= 1.2;
+    // ★ヘルパー関数: 倍率適用とログ記録を同時に行う
+    const apply = (name, rate) => {
+        if (rate !== 1.0 && rate !== 0) {
+            totalMultiplier *= rate;
+            // 小数点以下が見やすいように整形 (例: 1.5 -> x1.5)
+            breakdown.push({ name: name, val: "x" + Math.round(rate * 10000) / 10000 });
+        }
+    };
 
-        // キャラクター倍率
-        if (document.getElementById('chk_ab1').checked) totalMultiplier *= 1.3; // 超ADW
+    // === 直殴りモード ===
+    if (currentAttackMode === 'direct') {
+        const gaugeElem = document.getElementById('chk_gauge');
+        if (gaugeElem && gaugeElem.checked) apply("ゲージ", 1.2);
+
+        if (document.getElementById('chk_ab1').checked) apply("超ADW", 1.3);
         
-        // 超AW
         if (document.getElementById('chk_warp').checked) {
             const count = parseFloat(document.getElementById('warpCount').value) || 0;
-            totalMultiplier *= (1 + (count * 0.05));
+            apply(`超AW (${count}個)`, 1 + (count * 0.05));
         }
 
-        // MS
         if (document.getElementById('chk_ms').checked) {
-            totalMultiplier *= (parseFloat(document.getElementById('msSelect').value) || 1.0);
+            apply("マインスイーパー", parseFloat(document.getElementById('msSelect').value) || 1.0);
         }
 
-        // 底力
         if (document.getElementById('chk_soko').checked) {
-            totalMultiplier *= (parseFloat(document.getElementById('sokoSelect').value) || 1.0);
+            apply("底力", parseFloat(document.getElementById('sokoSelect').value) || 1.0);
         }
 
-        // ウォールブースト
         if (document.getElementById('chk_wboost').checked) {
             const gradeKey = document.getElementById('wboostGrade').value;
             const valKey = document.getElementById('wboostVal').value;
             if (WALL_BOOST_DATA[gradeKey] && WALL_BOOST_DATA[gradeKey][valKey]) {
-                totalMultiplier *= WALL_BOOST_DATA[gradeKey][valKey];
+                apply(`ウォールブースト(${valKey}壁)`, WALL_BOOST_DATA[gradeKey][valKey]);
             }
         }
 
-        // パワーフィールド
-        if (document.getElementById('chk_pfield').checked) {
-        totalMultiplier *= (parseFloat(document.getElementById('pfieldSelect').value) || 1.0);
-    }
+        if (document.getElementById('chk_mboost').checked) {
+            apply("魔法陣ブースト", parseFloat(document.getElementById('mboostSelect').value) || 1.0);
+        }
 
-        if (document.getElementById('chk_ab2').checked) totalMultiplier *= 3.0; // 渾身
-        if (document.getElementById('chk_ab3').checked) totalMultiplier *= 7.5; // クリティカル
-        if (document.getElementById('chk_ab4').checked) totalMultiplier *= 1.2; // 超パワー型
+        if (document.getElementById('chk_ab2').checked) apply("渾身", 3.0);
+        if (document.getElementById('chk_ab3').checked) apply("クリティカル", 7.5);
+        if (document.getElementById('chk_ab4').checked) apply("超パワー型(初撃)", 1.2);
 
-        // SS倍率1
+        if (document.getElementById('chk_pfield') && document.getElementById('chk_pfield').checked) {
+            apply("パワーフィールド", parseFloat(document.getElementById('pfieldSelect').value) || 1.0);
+        }
+
         if (document.getElementById('chk_SS').checked) {
-            totalMultiplier *= (parseFloat(document.getElementById('SSRate').value) || 1.0);
+            apply("SS倍率1", parseFloat(document.getElementById('SSRate').value) || 1.0);
         }
-
-         // SS倍率1
         if (document.getElementById('chk_SS2').checked) {
-            totalMultiplier *= (parseFloat(document.getElementById('SS2Rate').value) || 1.0);
+            apply("SS倍率2", parseFloat(document.getElementById('SS2Rate').value) || 1.0);
         }
 
-        // 直殴り倍率(敵)
         if (document.getElementById('chk_naguri').checked) {
-            totalMultiplier *= (parseFloat(document.getElementById('naguriRate').value) || 1.0);
+            apply("直殴り倍率", parseFloat(document.getElementById('naguriRate').value) || 1.0);
         }
     }
 
-    // ==========================================
-    // 2. 友情コンボモード専用倍率
-    // ==========================================
+    // === 友情モード ===
     if (currentAttackMode === 'friend') {
-        // 友情ブースト
         if (document.getElementById('chk_friend_boost').checked) {
-            totalMultiplier *= (parseFloat(document.getElementById('friendBoostSelect').value) || 1.0);
+            apply("友情ブースト", parseFloat(document.getElementById('friendBoostSelect').value) || 1.0);
         }
-
-        if (document.getElementById('chk_ffield').checked) totalMultiplier *= 1.5; // 友情フィールド
-        if (document.getElementById('chk_friendhalf').checked) totalMultiplier *= 0.5; // 誘発
+        
+        // 誘発
+        if (document.getElementById('chk_friendhalf') && document.getElementById('chk_friendhalf').checked) {
+            apply("誘発", 0.5);
+        }
 
         // 友情底力
-        if (document.getElementById('chk_friendsoko').checked) {
-            totalMultiplier *= (parseFloat(document.getElementById('friendsokoSelect').value) || 1.0);
+        if (document.getElementById('chk_friendsoko') && document.getElementById('chk_friendsoko').checked) {
+             const sokoVal = document.getElementById('sokoSelect') ? document.getElementById('sokoSelect').value : 1.0;
+             apply("友情底力", parseFloat(sokoVal) || 1.0);
         }
 
-        // 友情倍率
-        if (document.getElementById('chk_yujo').checked) {
-            totalMultiplier *= (parseFloat(document.getElementById('yujoRate').value) || 1.0);
+        if (document.getElementById('chk_ffield') && document.getElementById('chk_ffield').checked) {
+            apply("友情フィールド", 1.5);
         }
 
-        // 友情バフ
-        if (document.getElementById('chk_friendbuff').checked) {
-            totalMultiplier *= (parseFloat(document.getElementById('friendbuffRate').value) || 1.0);
+        if (document.getElementById('chk_friendbuff') && document.getElementById('chk_friendbuff').checked) {
+            apply("友情バフ", parseFloat(document.getElementById('friendbuffRate').value) || 1.0);
         }
 
-
+        if (document.getElementById('chk_yujo') && document.getElementById('chk_yujo').checked) {
+            apply("友情倍率", parseFloat(document.getElementById('yujoRate').value) || 1.0);
+        }
     }
 
-    // ==========================================
-    // 3. 共通倍率
-    // ==========================================
-    
-    // パワーオーラ
+    // === 共通 ===
     if (document.getElementById('chk_aura').checked) {
-        totalMultiplier *= (parseFloat(document.getElementById('auraSelect').value) || 1.0);
+        apply("パワーオーラ", parseFloat(document.getElementById('auraSelect').value) || 1.0);
     }
-
-    // 魔法陣ブースト
-    if (document.getElementById('chk_mboost').checked) {
-        totalMultiplier *= (parseFloat(document.getElementById('mboostSelect').value) || 1.0);
-    }
-
-    // キラー
     if (document.getElementById('chk_killer').checked) {
-        totalMultiplier *= (parseFloat(document.getElementById('killerRate').value) || 1.0);
+        apply("キラー", parseFloat(document.getElementById('killerRate').value) || 1.0);
     }
-
-    // バフ
     if (document.getElementById('chk_buff').checked) {
-        totalMultiplier *= (parseFloat(document.getElementById('buffRate').value) || 1.0);
+        apply("バフ", parseFloat(document.getElementById('buffRate').value) || 1.0);
     }
-
-    // 守護獣
     if (document.getElementById('chk_guardian').checked) {
-        totalMultiplier *= (parseFloat(document.getElementById('guardianRate').value) || 1.0);
+        apply("守護獣", parseFloat(document.getElementById('guardianRate').value) || 1.0);
     }
-
-    // その他
     if (document.getElementById('chk_other').checked) {
-        totalMultiplier *= (parseFloat(document.getElementById('otherRate').value) || 1.0);
+        apply("その他", parseFloat(document.getElementById('otherRate').value) || 1.0);
     }
 
-    // 紋章
-    if (document.getElementById('chk_emb1').checked) totalMultiplier *= 1.25;
-    if (document.getElementById('chk_emb2').checked) totalMultiplier *= 1.10;
-    if (document.getElementById('chk_emb3').checked) totalMultiplier *= 1.10;
-    if (document.getElementById('chk_emb4').checked) totalMultiplier *= 1.08;
+    if (document.getElementById('chk_emb1').checked) apply("紋章(対属性)", 1.25);
+    if (document.getElementById('chk_emb2').checked) apply("紋章(対弱)", 1.10);
+    if (document.getElementById('chk_emb3').checked) apply("紋章(対将/兵)", 1.10);
+    if (document.getElementById('chk_emb4').checked) apply("紋章(守護獣)", 1.08);
 
-    // 敵倍率(共通)
     if (document.getElementById('chk_weak').checked) {
-        totalMultiplier *= (parseFloat(document.getElementById('weakRate').value) || 1.0);
+        apply("弱点倍率", parseFloat(document.getElementById('weakRate').value) || 1.0);
     }
     if (document.getElementById('chk_hontai').checked) {
-        totalMultiplier *= (parseFloat(document.getElementById('hontaiRate').value) || 1.0);
+        apply("本体倍率", parseFloat(document.getElementById('hontaiRate').value) || 1.0);
     }
     if (document.getElementById('chk_def').checked) {
-        totalMultiplier *= (parseFloat(document.getElementById('defRate').value) || 1.0);
+        apply("防御ダウン倍率", parseFloat(document.getElementById('defRate').value) || 1.0);
     }
     if (document.getElementById('chk_angry').checked) {
-        totalMultiplier *= (parseFloat(document.getElementById('angrySelect').value) || 1.0);
+        apply("怒り倍率", parseFloat(document.getElementById('angrySelect').value) || 1.0);
     }
     if (document.getElementById('chk_mine').checked) {
-        totalMultiplier *= (parseFloat(document.getElementById('mineRate').value) || 1.0);
+        apply("地雷倍率", parseFloat(document.getElementById('mineRate').value) || 1.0);
     }
     if (document.getElementById('chk_special').checked) {
-        totalMultiplier *= (parseFloat(document.getElementById('specialRate').value) || 1.0);
+        apply("特殊倍率", parseFloat(document.getElementById('specialRate').value) || 1.0);
     }
 
     // ステージ倍率
-    let stageMultiplier = 1.0;
     const stageSelect = document.getElementById('stageEffectSelect');
     const customInput = document.getElementById('customStageRate');
-    
     if (stageSelect) {
         let stageBase = 1.0;
+        let rateName = "属性倍率";
         if (stageSelect.value === 'custom') {
             stageBase = parseFloat(customInput.value) || 1.0;
+            rateName = "属性倍率(手動)";
         } else {
             stageBase = parseFloat(stageSelect.value) || 1.0;
         }
 
+        let stageMultiplier = stageBase;
         if (document.getElementById('chk_stageSpecial').checked && stageBase !== 1.0) {
             let temp = ((stageBase - 1) / 0.33) * 0.596 + 1;
             stageMultiplier = Math.round(temp * 100000) / 100000;
-        } else {
-            stageMultiplier = stageBase;
+            rateName = "超バランス型";
         }
+        
+        apply(rateName, stageMultiplier);
 
         const displayElem = document.getElementById('stageRealRate');
         if (displayElem) displayElem.innerText = Math.floor(stageMultiplier * 100000) / 100000;
     }
-    totalMultiplier *= stageMultiplier;
 
-    // ギミック倍率
     if (document.getElementById('chk_gimmick').checked) {
-        totalMultiplier *= (parseFloat(document.getElementById('gimmickRate').value) || 1.0);
+        apply("ギミック倍率", parseFloat(document.getElementById('gimmickRate').value) || 1.0);
     }
 
     // --- 最終計算 ---
@@ -337,12 +341,33 @@ function calculate() {
     
     currentFinalDamage = finalDamage;
 
-    // 表示更新
     const resultElem = document.getElementById('result');
     if (resultElem) resultElem.innerText = currentFinalDamage.toLocaleString();
 
     const verifyDisplay = document.getElementById('verifyDamageDisplay');
     if (verifyDisplay) verifyDisplay.innerText = currentFinalDamage.toLocaleString();
+
+    // ★リスト表示更新
+    const listElem = document.getElementById('detail-list');
+    if (listElem) {
+        listElem.innerHTML = ""; // クリア
+        breakdown.forEach(item => {
+            const li = document.createElement('li');
+            li.className = 'detail-item';
+            li.innerHTML = `<span class="detail-name">${item.name}</span><span class="detail-val">${item.val}</span>`;
+            listElem.appendChild(li);
+        });
+        
+        // 最後に合計倍率も表示
+        if (breakdown.length > 1) { 
+             const li = document.createElement('li');
+             li.className = 'detail-item';
+             li.style.borderTop = "2px solid #ddd";
+             li.style.marginTop = "5px";
+             li.innerHTML = `<span class="detail-name" style="color:#000;">合計倍率(概算)</span><span class="detail-val">x${Math.round(totalMultiplier * 100) / 100}</span>`;
+             listElem.appendChild(li);
+        }
+    }
 
     checkOneshot();
 }
