@@ -219,7 +219,12 @@ function calculate() {
         }
 
         if (document.getElementById('chk_ffield').checked) totalMultiplier *= 1.5; // 友情フィールド
-        if (document.getElementById('chk_friendhalf').checked) totalMultiplier *= 0.5; // 友情フィールド
+        if (document.getElementById('chk_friendhalf').checked) totalMultiplier *= 0.5; // 誘発
+
+        // 底力
+        if (document.getElementById('chk_friendsoko').checked) {
+            totalMultiplier *= (parseFloat(document.getElementById('friendsokoSelect').value) || 1.0);
+        }
 
         // 友情倍率
         if (document.getElementById('chk_yujo').checked) {
