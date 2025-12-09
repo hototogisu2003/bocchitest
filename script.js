@@ -1,8 +1,9 @@
 // --- ウォールブースト倍率定義 ---
 const WALL_BOOST_DATA = {
-    "1.5": { 1: 1.12, 2: 1.25, 3: 1.37, 4: 1.5 },
+    "1.5": { 1: 1.125, 2: 1.25, 3: 1.375, 4: 1.5 },
     "2.0": { 1: 1.25,  2: 1.5,  3: 1.75,  4: 2.0 },
-    "2.5": { 1: 1.37, 2: 1.75, 3: 2.12, 4: 2.5 },
+    "2.5": { 1: 1.375, 2: 1.75, 3: 2.125, 4: 2.5 },
+    "3.0": { 1: 1.5,   2: 2.0,  3: 2.5,   4: 3.0 }
 };
 
 // 現在の攻撃モード ('direct' or 'friend')
@@ -27,30 +28,33 @@ function switchAttackMode() {
     items.forEach(item => {
         const mode = item.getAttribute('data-mode');
         if (!mode) {
-            item.style.display = 'flex'; // 共通項目
+            item.style.display = 'flex'; // 共通
         } else if (mode === currentAttackMode) {
-            item.style.display = 'flex'; // 現在のモード用
+            item.style.display = 'flex'; // 専用
         } else {
-            item.style.display = 'none'; // 違うモード用
+            item.style.display = 'none'; // 非表示
         }
     });
 
     // ラベル等の書き換え
     const labelBase = document.getElementById('label-base-power');
     const labelAtk = document.getElementById('label-atk-val');
-    const groupBonus = document.getElementById('group-bonus-atk');
+    const groupBonus = document.getElementById('group-bonus-atk'); // 加撃グループ
+    const groupYuugeki = document.getElementById('group-yuugeki'); // 友撃グループ
     const groupGauge = document.getElementById('group-gauge');
 
     if (currentAttackMode === 'friend') {
         labelBase.innerText = "友情コンボステータス";
         labelAtk.innerText = "友情威力";
-        groupBonus.style.display = 'none'; // 友情は加撃入力欄を隠す（直接威力入力想定）
-        groupGauge.style.display = 'none'; // 友情にゲージはない
+        groupBonus.style.display = 'none';   // 加撃を隠す
+        groupYuugeki.style.display = 'flex'; // 友撃を表示
+        groupGauge.style.display = 'none';   // ゲージを隠す
     } else {
         labelBase.innerText = "攻撃ステータス";
         labelAtk.innerText = "攻撃力";
-        groupBonus.style.display = 'flex';
-        groupGauge.style.display = 'flex';
+        groupBonus.style.display = 'flex';   // 加撃を表示
+        groupYuugeki.style.display = 'none'; // 友撃を隠す
+        groupGauge.style.display = 'flex';   // ゲージを表示
     }
 
     calculate();
@@ -131,14 +135,18 @@ function calculate() {
     // --- 攻撃力(威力)取得 ---
     const attackElem = document.getElementById('attack');
     let baseAttack = parseFloat(attackElem.value) || 0;
-    
-    // 直殴りモードの場合のみ加撃を加算
+    let actualAttack = 0;
+
     if (currentAttackMode === 'direct') {
+        // 直殴り: ベース + 加撃
         const bonusElem = document.getElementById('attackBonus');
         const bonusAttack = parseFloat(bonusElem.value) || 0;
-        baseAttack += bonusAttack;
+        actualAttack = baseAttack + bonusAttack;
+    } else {
+        // 友情: ベース × 友撃 (四捨五入)
+        const yuugekiVal = parseFloat(document.getElementById('friendYuugekiSelect').value) || 1.0;
+        actualAttack = Math.round(baseAttack * yuugekiVal);
     }
-    const actualAttack = baseAttack;
 
     // 表示更新
     const totalDisplay = document.getElementById('totalAttackDisplay');
@@ -209,11 +217,6 @@ function calculate() {
         // 友情ブースト
         if (document.getElementById('chk_friend_boost').checked) {
             totalMultiplier *= (parseFloat(document.getElementById('friendBoostSelect').value) || 1.0);
-        }
-        
-        // 熱き友撃 (倍率として乗算)
-        if (document.getElementById('chk_friend_yuugeki').checked) {
-            totalMultiplier *= (parseFloat(document.getElementById('friendYuugekiSelect').value) || 1.0);
         }
     }
 
@@ -408,15 +411,8 @@ function resetAll() {
     const realHpElem = document.getElementById('displayRealHp');
     if (realHpElem) realHpElem.innerText = "-";
 
-    // モードも直殴りに戻す？ (お好みで)
-    const radioDirect = document.querySelector('input[name="attackMode"][value="direct"]');
-    if (radioDirect) {
-        radioDirect.checked = true;
-        switchAttackMode(); // モード表示リセット
-    }
-
     calculate();
 }
 
 // 初期化実行
-switchAttackMode(); // モードに応じた表示初期化
+switchAttackMode();
