@@ -182,14 +182,14 @@ function calculate() {
         const bonusElem = document.getElementById('attackBonus');
         const bonusAttack = parseFloat(bonusElem.value) || 0;
         actualAttack = baseAttack + bonusAttack;
-        breakdown.push({ name: "ベース攻撃力 (素+加)", val: actualAttack.toLocaleString() });
+        breakdown.push({ name: "攻撃力", val: actualAttack.toLocaleString() });
     } else {
         const yuugekiVal = parseFloat(document.getElementById('friendYuugekiSelect').value) || 1.0;
         actualAttack = Math.floor(baseAttack * yuugekiVal);
         
         // 友撃の等級を取得して表示名に追加
         const yuugekiSuffix = getGradeSuffix('friendYuugekiSelect');
-        breakdown.push({ name: `ベース威力 (×友撃${yuugekiSuffix})`, val: actualAttack.toLocaleString() });
+        breakdown.push({ name: `友情コンボ威力 (×友撃${yuugekiSuffix})`, val: actualAttack.toLocaleString() });
     }
 
     const totalDisplay = document.getElementById('totalAttackDisplay');
