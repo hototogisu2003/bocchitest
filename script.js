@@ -218,7 +218,12 @@ function calculate() {
             totalMultiplier *= (parseFloat(document.getElementById('friendBoostSelect').value) || 1.0);
         }
 
-        if (document.getElementById('chk_ffield').checked) totalMultiplier *= 1.5; // 友情フィールド     
+        if (document.getElementById('chk_ffield').checked) totalMultiplier *= 1.5; // 友情フィールド
+
+        // 友情倍率
+        if (document.getElementById('chk_yujo').checked) {
+            totalMultiplier *= (parseFloat(document.getElementById('yujoRate').value) || 1.0);
+        }
     }
 
     // ==========================================
