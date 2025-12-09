@@ -49,7 +49,7 @@
         <button id="btn-tab-verify" class="tab-button" onclick="switchTab('verify')">ワンパン判定</button>
     </div>
 
-    <div id="view-calc">
+<div id="view-calc">
         
         <div class="mode-switch-container">
             <label class="mode-switch-label">
@@ -77,10 +77,25 @@
                             <span style="font-size: 0.8rem;">加撃量</span>
                             <input type="number" id="attackBonus" oninput="calculate()" style="width: 120px;">
                         </div>
-                        <span style="font-weight: bold; padding-top: 15px;">=</span>
-                        <div style="padding-top: 15px; font-weight: bold;">
-                            <span id="totalAttackDisplay">0</span>
+                    </div>
+
+                    <div id="group-yuugeki" style="display: none; align-items: center; gap: 10px;">
+                        <span style="font-weight: bold; padding-top: 15px;">×</span>
+                        <div style="display: flex; flex-direction: column;">
+                            <span style="font-size: 0.8rem;">熱き友撃</span>
+                            <select id="friendYuugekiSelect" onchange="calculate()" style="width: 120px; padding: 8px;">
+                                <option value="1.0" selected>なし</option>
+                                <option value="1.2">特級 (x1.2)</option>
+                                <option value="1.225">特級M (x1.225)</option>
+                                <option value="1.25">特級L (x1.25)</option>
+                                <option value="1.3">EL (x1.3)</option>
+                            </select>
                         </div>
+                    </div>
+
+                    <span style="font-weight: bold; padding-top: 15px;">=</span>
+                    <div style="padding-top: 15px; font-weight: bold;">
+                        <span id="totalAttackDisplay">0</span>
                     </div>
                 </div>
 
@@ -110,7 +125,7 @@
                         <input type="checkbox" id="chk_warp" onchange="toggleInput('warpCount', 'chk_warp')">
                         超AW
                     </label>
-                    <input type="number" id="warpCount" placeholder="ワープ数" oninput="calculate()" disabled>
+                    <input type="number" id="warpCount" placeholder="ワープ数を入力" oninput="calculate()" disabled>
                 </div>
 
                 <div class="grid-item" data-mode="direct">
@@ -213,18 +228,6 @@
                         <option value="2.0">M (x2.0)</option>
                         <option value="2.5">L (x2.5)</option>
                         <option value="3.0">EL (x3.0)</option>
-                    </select>
-                </div>
-
-                <div class="grid-item" data-mode="friend" style="display:none; background-color:#fffde7;">
-                    <label class="check-label">
-                        <input type="checkbox" id="chk_friend_yuugeki" onchange="toggleInput('friendYuugekiSelect', 'chk_friend_yuugeki')">
-                        熱き友撃
-                    </label>
-                    <select id="friendYuugekiSelect" onchange="calculate()" disabled>
-                        <option value="1.2">特級 (x1.2)</option>
-                        <option value="1.225">特級M (x1.225)</option>
-                        <option value="1.25">特級L (x1.25)</option>
                     </select>
                 </div>
 
