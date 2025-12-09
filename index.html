@@ -23,7 +23,15 @@
     <ul class="history-list">
         <li>
             <span class="date">2025/12/09</span>
-            <span class="content">入力リセットボタンを追加しました。</span>
+            <span class="content">有利属性倍率の手入力機能を追加しました。</span>
+        </li>
+        <li>
+            <span class="date">2025/12/09</span>
+            <span class="content">レイアウトとバグを修正しました。</span>
+        </li>
+        <li>
+            <span class="date">2025/12/09</span>
+            <span class="content">入力リセット機能を追加しました。</span>
         </li>
     </ul>
     <div style="text-align: center; margin-top: 10px;">
@@ -144,6 +152,7 @@
                             <option value="1.5" selected>無印 (×1.5)</option>
                             <option value="2.0">M (×2.0)</option>
                             <option value="2.5">L (×2.5)</option>
+                            <option value="3.0">EL (×3.0)</option>
                         </select>
                         <select id="wboostVal" onchange="calculate()" disabled>
                             <option value="1" selected>1壁</option>
@@ -330,7 +339,7 @@
                         <option value="1.5016">属性効果UP (x1.5016)</option>
                         <option value="1.99">属性効果超UP (x1.99)</option>
                         <option value="2.9998">属性効果超絶UP (x2.9998)</option>
-                        <option value="custom">エレメント系</option> 
+                        <option value="custom">手入力...</option> 
                     </select>
 
                     <input type="number" id="customStageRate" placeholder="倍率を入力 (例: 5.0)" step="0.0001" oninput="calculate()" style="display: none; margin-top: 5px; border: 2px solid #8bc34a;">
@@ -380,7 +389,7 @@
                     <div style="display: flex; align-items: center; gap: 5px; background: #f9f9f9; padding: 6px 12px; border: 1px solid #ddd; border-radius: 4px;">
                         <label class="check-label" style="margin: 0; white-space: nowrap;">
                             <input type="checkbox" id="chk_enableAB" onchange="toggleInput('sel_reduceAB', 'chk_enableAB')">
-                            将命・兵命削り
+                            将命/兵命削り
                         </label>
                         <select id="sel_reduceAB" onchange="checkOneshot()" disabled style="margin-left: 5px; padding: 4px; border-radius: 4px; border: 1px solid #ccc;">
                             <option value="0.16">L (-16%)</option>
