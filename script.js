@@ -1,14 +1,60 @@
 // --- ウォールブースト倍率定義 ---
-// 1壁, 2壁, 3壁, 4壁 の順で倍率を定義
 const WALL_BOOST_DATA = {
-    "1.5": { 1: 1.12, 2: 1.25, 3: 1.37, 4: 1.5 }, // 無印
-    "2.0": { 1: 1.25,  2: 1.5,  3: 1.75,  4: 2.0 }, // M
-    "2.5": { 1: 1.37, 2: 1.75, 3: 2.12, 4: 2.5 }, // L
+    "1.5": { 1: 1.125, 2: 1.25, 3: 1.375, 4: 1.5 },
+    "2.0": { 1: 1.25,  2: 1.5,  3: 1.75,  4: 2.0 },
+    "2.5": { 1: 1.375, 2: 1.75, 3: 2.125, 4: 2.5 },
 };
 
-// 計算された最終ダメージを保持する変数（判定画面で使用）
+// 現在の攻撃モード ('direct' or 'friend')
+let currentAttackMode = 'direct';
+// 最終ダメージ
 let currentFinalDamage = 0;
 
+/* -------------------------------------------------------
+   攻撃モード切り替え (直殴り <-> 友情)
+------------------------------------------------------- */
+function switchAttackMode() {
+    const radios = document.getElementsByName('attackMode');
+    for (const radio of radios) {
+        if (radio.checked) {
+            currentAttackMode = radio.value;
+            break;
+        }
+    }
+
+    // 表示切り替え
+    const items = document.querySelectorAll('.grid-item');
+    items.forEach(item => {
+        const mode = item.getAttribute('data-mode');
+        if (!mode) {
+            item.style.display = 'flex'; // 共通項目
+        } else if (mode === currentAttackMode) {
+            item.style.display = 'flex'; // 現在のモード用
+        } else {
+            item.style.display = 'none'; // 違うモード用
+        }
+    });
+
+    // ラベル等の書き換え
+    const labelBase = document.getElementById('label-base-power');
+    const labelAtk = document.getElementById('label-atk-val');
+    const groupBonus = document.getElementById('group-bonus-atk');
+    const groupGauge = document.getElementById('group-gauge');
+
+    if (currentAttackMode === 'friend') {
+        labelBase.innerText = "友情コンボステータス";
+        labelAtk.innerText = "友情威力";
+        groupBonus.style.display = 'none'; // 友情は加撃入力欄を隠す（直接威力入力想定）
+        groupGauge.style.display = 'none'; // 友情にゲージはない
+    } else {
+        labelBase.innerText = "攻撃ステータス";
+        labelAtk.innerText = "攻撃力";
+        groupBonus.style.display = 'flex';
+        groupGauge.style.display = 'flex';
+    }
+
+    calculate();
+}
 
 /* -------------------------------------------------------
    タブ切り替え処理
@@ -29,11 +75,9 @@ function switchTab(mode) {
         viewVerify.style.display = 'block';
         btnCalc.classList.remove('active');
         btnVerify.classList.add('active');
-        // タブを開いたときにも判定を実行
         checkOneshot();
     }
 }
-
 
 /* -------------------------------------------------------
    入力欄の有効/無効を切り替える関数
@@ -41,27 +85,19 @@ function switchTab(mode) {
 function toggleInput(inputId, checkboxId) {
     const input = document.getElementById(inputId);
     const checkbox = document.getElementById(checkboxId);
-    
     if (input && checkbox) {
         input.disabled = !checkbox.checked;
-        
-        // ★重要: 切り替え時に必ず再計算を実行する
         calculate(); 
-        
-        // 判定画面用の更新も兼ねて checkOneshot も念のため呼ぶ
-        if (typeof checkOneshot === 'function') {
-            checkOneshot();
-        }
+        if (typeof checkOneshot === 'function') checkOneshot();
     }
 }
 
 /* -------------------------------------------------------
-   ★新規追加：属性倍率の手入力欄切り替え
+   有利属性倍率の手入力欄切り替え
 ------------------------------------------------------- */
 function toggleStageInput() {
     const select = document.getElementById('stageEffectSelect');
     const input = document.getElementById('customStageRate');
-    
     if (select && input) {
         if (select.value === 'custom') {
             input.style.display = 'block';
@@ -80,7 +116,6 @@ function togglewboostInputs() {
     const checkbox = document.getElementById('chk_wboost');
     const grade = document.getElementById('wboostGrade');
     const val = document.getElementById('wboostVal');
-
     if (checkbox && grade && val) {
         const isDisabled = !checkbox.checked;
         grade.disabled = isDisabled;
@@ -89,288 +124,198 @@ function togglewboostInputs() {
     }
 }
 
-
 /* -------------------------------------------------------
-   計算メイン処理
+   計算メイン処理 (モード分岐対応)
 ------------------------------------------------------- */
 function calculate() {
-    // --- 1. 攻撃力の計算 ---
+    // --- 攻撃力(威力)取得 ---
     const attackElem = document.getElementById('attack');
-    const bonusElem = document.getElementById('attackBonus');
-
-    const baseAttack = attackElem ? (parseFloat(attackElem.value) || 0) : 0;
-    const bonusAttack = bonusElem ? (parseFloat(bonusElem.value) || 0) : 0;
+    let baseAttack = parseFloat(attackElem.value) || 0;
     
-    const actualAttack = baseAttack + bonusAttack;
+    // 直殴りモードの場合のみ加撃を加算
+    if (currentAttackMode === 'direct') {
+        const bonusElem = document.getElementById('attackBonus');
+        const bonusAttack = parseFloat(bonusElem.value) || 0;
+        baseAttack += bonusAttack;
+    }
+    const actualAttack = baseAttack;
 
+    // 表示更新
     const totalDisplay = document.getElementById('totalAttackDisplay');
-    if (totalDisplay) {
-        totalDisplay.innerText = actualAttack.toLocaleString();
-    }
+    if (totalDisplay) totalDisplay.innerText = actualAttack.toLocaleString();
 
-    // --- 2. ゲージ ---
-    const gaugeElem = document.getElementById('chk_gauge');
-    const gaugeMultiplier = (gaugeElem && gaugeElem.checked) ? 1.2 : 1.0;
+    let totalMultiplier = 1.0;
 
-    // --- 3. キャラクター倍率 ---
-    
-    // 超ADW
-    const ab1Elem = document.getElementById('chk_ab1');
-    let ab1Multiplier = (ab1Elem && ab1Elem.checked) ? 1.3 : 1.0;
-    
-    // 渾身
-    const ab2Elem = document.getElementById('chk_ab2');
-    let ab2Multiplier = (ab2Elem && ab2Elem.checked) ? 3.0 : 1.0;
+    // ==========================================
+    // 1. 直殴りモード専用倍率
+    // ==========================================
+    if (currentAttackMode === 'direct') {
+        // ゲージ
+        const gaugeElem = document.getElementById('chk_gauge');
+        if (gaugeElem && gaugeElem.checked) totalMultiplier *= 1.2;
 
-    // クリティカル
-    const ab3Elem = document.getElementById('chk_ab3');
-    let ab3Multiplier = (ab3Elem && ab3Elem.checked) ? 7.5 : 1.0;
+        // キャラクター倍率
+        if (document.getElementById('chk_ab1').checked) totalMultiplier *= 1.3; // 超ADW
+        
+        // 超AW
+        if (document.getElementById('chk_warp').checked) {
+            const count = parseFloat(document.getElementById('warpCount').value) || 0;
+            totalMultiplier *= (1 + (count * 0.05));
+        }
 
-    // 超パワー型
-    const ab4Elem = document.getElementById('chk_ab4');
-    let ab4Multiplier = (ab4Elem && ab4Elem.checked) ? 1.2 : 1.0;
+        // MS
+        if (document.getElementById('chk_ms').checked) {
+            totalMultiplier *= (parseFloat(document.getElementById('msSelect').value) || 1.0);
+        }
 
-    // パワーオーラ
-    let auraMultiplier = 1.0;
-    const auraCheck = document.getElementById('chk_aura');
-    const auraSelect = document.getElementById('auraSelect');
-    if (auraCheck && auraCheck.checked && auraSelect) {
-        auraMultiplier = parseFloat(auraSelect.value) || 1.0;
-    }
+        // 底力
+        if (document.getElementById('chk_soko').checked) {
+            totalMultiplier *= (parseFloat(document.getElementById('sokoSelect').value) || 1.0);
+        }
 
-    // マインスイーパー
-    let msMultiplier = 1.0;
-    const msCheck = document.getElementById('chk_ms');
-    const msSelect = document.getElementById('msSelect');
-    if (msCheck && msCheck.checked && msSelect) {
-        msMultiplier = parseFloat(msSelect.value) || 1.0;
-    }
+        // ウォールブースト
+        if (document.getElementById('chk_wboost').checked) {
+            const gradeKey = document.getElementById('wboostGrade').value;
+            const valKey = document.getElementById('wboostVal').value;
+            if (WALL_BOOST_DATA[gradeKey] && WALL_BOOST_DATA[gradeKey][valKey]) {
+                totalMultiplier *= WALL_BOOST_DATA[gradeKey][valKey];
+            }
+        }
 
-    // 超アンチワープ
-    let warpMultiplier = 1.0;
-    const warpCheck = document.getElementById('chk_warp');
-    const warpInput = document.getElementById('warpCount');
-    if (warpCheck && warpCheck.checked && warpInput) {
-        const count = parseFloat(warpInput.value) || 0;
-        warpMultiplier = 1 + (count * 0.05);
-    }
-    
-    // 底力
-    let sokoMultiplier = 1.0;
-    const sokoCheck = document.getElementById('chk_soko');
-    const sokoSelect = document.getElementById('sokoSelect');
-    if (sokoCheck && sokoCheck.checked && sokoSelect) {
-        sokoMultiplier = parseFloat(sokoSelect.value) || 1.0;
-    }
+        // 魔法陣ブースト
+        if (document.getElementById('chk_mboost').checked) {
+            totalMultiplier *= (parseFloat(document.getElementById('mboostSelect').value) || 1.0);
+        }
 
-    // ウォールブースト
-    let wboostMultiplier = 1.0;
-    const wbCheck = document.getElementById('chk_wboost');
-    const wbGrade = document.getElementById('wboostGrade');
-    const wbVal = document.getElementById('wboostVal');
-    if (wbCheck && wbCheck.checked && wbGrade && wbVal) {
-        const gradeKey = wbGrade.value;
-        const valKey = wbVal.value;
-        if (WALL_BOOST_DATA[gradeKey] && WALL_BOOST_DATA[gradeKey][valKey]) {
-            wboostMultiplier = WALL_BOOST_DATA[gradeKey][valKey];
+        if (document.getElementById('chk_ab2').checked) totalMultiplier *= 3.0; // 渾身
+        if (document.getElementById('chk_ab3').checked) totalMultiplier *= 7.5; // クリティカル
+        if (document.getElementById('chk_ab4').checked) totalMultiplier *= 1.2; // 超パワー型
+
+        // SS倍率
+        if (document.getElementById('chk_SS').checked) {
+            totalMultiplier *= (parseFloat(document.getElementById('SSRate').value) || 1.0);
+        }
+
+        // 直殴り倍率(敵)
+        if (document.getElementById('chk_naguri').checked) {
+            totalMultiplier *= (parseFloat(document.getElementById('naguriRate').value) || 1.0);
         }
     }
 
-    // 魔法陣ブースト
-    let mboostMultiplier = 1.0;
-    const mbCheck = document.getElementById('chk_mboost');
-    const mbSelect = document.getElementById('mboostSelect');
-    if (mbCheck && mbCheck.checked && mbSelect) {
-        mboostMultiplier = parseFloat(mbSelect.value) || 1.0;
+    // ==========================================
+    // 2. 友情コンボモード専用倍率
+    // ==========================================
+    if (currentAttackMode === 'friend') {
+        // 友情ブースト
+        if (document.getElementById('chk_friend_boost').checked) {
+            totalMultiplier *= (parseFloat(document.getElementById('friendBoostSelect').value) || 1.0);
+        }
+        
+        // 熱き友撃 (倍率として乗算)
+        if (document.getElementById('chk_friend_yuugeki').checked) {
+            totalMultiplier *= (parseFloat(document.getElementById('friendYuugekiSelect').value) || 1.0);
+        }
+    }
+
+    // ==========================================
+    // 3. 共通倍率
+    // ==========================================
+    
+    // パワーオーラ
+    if (document.getElementById('chk_aura').checked) {
+        totalMultiplier *= (parseFloat(document.getElementById('auraSelect').value) || 1.0);
     }
 
     // キラー
-    let killerMultiplier = 1.0;
-    const killerCheck = document.getElementById('chk_killer');
-    const killerInput = document.getElementById('killerRate');
-    if (killerCheck && killerCheck.checked && killerInput) {
-        killerMultiplier = parseFloat(killerInput.value) || 1.0;
+    if (document.getElementById('chk_killer').checked) {
+        totalMultiplier *= (parseFloat(document.getElementById('killerRate').value) || 1.0);
     }
 
     // バフ
-    let buffMultiplier = 1.0;
-    const buffCheck = document.getElementById('chk_buff');
-    const buffInput = document.getElementById('buffRate');
-    if (buffCheck && buffCheck.checked && buffInput) {
-        buffMultiplier = parseFloat(buffInput.value) || 1.0;
+    if (document.getElementById('chk_buff').checked) {
+        totalMultiplier *= (parseFloat(document.getElementById('buffRate').value) || 1.0);
     }
 
     // 守護獣
-    let guardianMultiplier = 1.0;
-    const guardCheck = document.getElementById('chk_guardian');
-    const guardInput = document.getElementById('guardianRate');
-    if (guardCheck && guardCheck.checked && guardInput) {
-        guardianMultiplier = parseFloat(guardInput.value) || 1.0;
-    }
-
-    // SS倍率
-    let SSMultiplier = 1.0;
-    const ssCheck = document.getElementById('chk_SS');
-    const ssInput = document.getElementById('SSRate');
-    if (ssCheck && ssCheck.checked && ssInput) {
-        SSMultiplier = parseFloat(ssInput.value) || 1.0;
+    if (document.getElementById('chk_guardian').checked) {
+        totalMultiplier *= (parseFloat(document.getElementById('guardianRate').value) || 1.0);
     }
 
     // その他
-    let otherMultiplier = 1.0;
-    const otherCheck = document.getElementById('chk_other');
-    const otherInput = document.getElementById('otherRate');
-    if (otherCheck && otherCheck.checked && otherInput) {
-        otherMultiplier = parseFloat(otherInput.value) || 1.0;
+    if (document.getElementById('chk_other').checked) {
+        totalMultiplier *= (parseFloat(document.getElementById('otherRate').value) || 1.0);
     }
 
-    // --- 4. 紋章 ---
-    const e1 = document.getElementById('chk_emb1');
-    const e2 = document.getElementById('chk_emb2');
-    const e3 = document.getElementById('chk_emb3');
-    const e4 = document.getElementById('chk_emb4');
-    let emb1 = (e1 && e1.checked) ? 1.25 : 1.0;
-    let emb2 = (e2 && e2.checked) ? 1.10 : 1.0;
-    let emb3 = (e3 && e3.checked) ? 1.10 : 1.0;
-    let emb4 = (e4 && e4.checked) ? 1.08 : 1.0;
+    // 紋章
+    if (document.getElementById('chk_emb1').checked) totalMultiplier *= 1.25;
+    if (document.getElementById('chk_emb2').checked) totalMultiplier *= 1.10;
+    if (document.getElementById('chk_emb3').checked) totalMultiplier *= 1.10;
+    if (document.getElementById('chk_emb4').checked) totalMultiplier *= 1.08;
 
-    // --- 5. 敵倍率 ---
-    let weakMultiplier = 1.0;
-    const weakCheck = document.getElementById('chk_weak');
-    const weakInput = document.getElementById('weakRate');
-    if (weakCheck && weakCheck.checked && weakInput) {
-        weakMultiplier = parseFloat(weakInput.value) || 1.0;
+    // 敵倍率(共通)
+    if (document.getElementById('chk_weak').checked) {
+        totalMultiplier *= (parseFloat(document.getElementById('weakRate').value) || 1.0);
+    }
+    if (document.getElementById('chk_hontai').checked) {
+        totalMultiplier *= (parseFloat(document.getElementById('hontaiRate').value) || 1.0);
+    }
+    if (document.getElementById('chk_def').checked) {
+        totalMultiplier *= (parseFloat(document.getElementById('defRate').value) || 1.0);
+    }
+    if (document.getElementById('chk_angry').checked) {
+        totalMultiplier *= (parseFloat(document.getElementById('angrySelect').value) || 1.0);
+    }
+    if (document.getElementById('chk_mine').checked) {
+        totalMultiplier *= (parseFloat(document.getElementById('mineRate').value) || 1.0);
+    }
+    if (document.getElementById('chk_special').checked) {
+        totalMultiplier *= (parseFloat(document.getElementById('specialRate').value) || 1.0);
     }
 
-    let naguriMultiplier = 1.0;
-    const naguriCheck = document.getElementById('chk_naguri');
-    const naguriInput = document.getElementById('naguriRate');
-    if (naguriCheck && naguriCheck.checked && naguriInput) {
-        naguriMultiplier = parseFloat(naguriInput.value) || 1.0;
-    }
-
-    let hontaiMultiplier = 1.0;
-    const hontaiCheck = document.getElementById('chk_hontai');
-    const hontaiInput = document.getElementById('hontaiRate');
-    if (hontaiCheck && hontaiCheck.checked && hontaiInput) {
-        hontaiMultiplier = parseFloat(hontaiInput.value) || 1.0;
-    }
-
-    let defMultiplier = 1.0;
-    const defCheck = document.getElementById('chk_def');
-    const defInput = document.getElementById('defRate');
-    if (defCheck && defCheck.checked && defInput) {
-        defMultiplier = parseFloat(defInput.value) || 1.0;
-    }
-
-    let angryMultiplier = 1.0;
-    const angryCheck = document.getElementById('chk_angry');
-    const angrySelect = document.getElementById('angrySelect');
-    if (angryCheck && angryCheck.checked && angrySelect) {
-        angryMultiplier = parseFloat(angrySelect.value) || 1.0;
-    }
-
-    let speMultiplier = 1.0;
-    const speCheck = document.getElementById('chk_special');
-    const speInput = document.getElementById('specialRate');
-    if (speCheck && speCheck.checked && speInput) {
-        speMultiplier = parseFloat(speInput.value) || 1.0;
-    }
-
-    let gimmickMultiplier = 1.0;
-    const gimCheck = document.getElementById('chk_gimmick');
-    const gimInput = document.getElementById('gimmickRate');
-    if (gimCheck && gimCheck.checked && gimInput) {
-        gimmickMultiplier = parseFloat(gimInput.value) || 1.0;
-    }
-
-    let mineMultiplier = 1.0;
-    const mineCheck = document.getElementById('chk_mine');
-    const mineInput = document.getElementById('mineRate');
-    if (mineCheck && mineCheck.checked && mineInput) {
-        mineMultiplier = parseFloat(mineInput.value) || 1.0;
-    }
-
-    // --- ステージ倍率 (手入力対応) ---
+    // ステージ倍率
+    let stageMultiplier = 1.0;
     const stageSelect = document.getElementById('stageEffectSelect');
     const customInput = document.getElementById('customStageRate');
-    const stageCheck = document.getElementById('chk_stageSpecial');
-    let stageMultiplier = 1.0;
     
-    if (stageSelect && stageCheck) {
+    if (stageSelect) {
         let stageBase = 1.0;
-        
-        // ★ customなら手入力欄、それ以外ならセレクトボックスの値を使う
         if (stageSelect.value === 'custom') {
             stageBase = parseFloat(customInput.value) || 1.0;
         } else {
             stageBase = parseFloat(stageSelect.value) || 1.0;
         }
 
-        const isStageSpecial = stageCheck.checked;
-        stageMultiplier = stageBase;
-
-        // 超バランス型計算 (丸め処理込み)
-        if (isStageSpecial && stageBase !== 1.0) {
+        if (document.getElementById('chk_stageSpecial').checked && stageBase !== 1.0) {
             let temp = ((stageBase - 1) / 0.33) * 0.596 + 1;
-            // 第6位を四捨五入
             stageMultiplier = Math.round(temp * 100000) / 100000;
+        } else {
+            stageMultiplier = stageBase;
         }
 
         const displayElem = document.getElementById('stageRealRate');
-        if (displayElem) {
-            displayElem.innerText = Math.floor(stageMultiplier * 100000) / 100000;
-        }
+        if (displayElem) displayElem.innerText = Math.floor(stageMultiplier * 100000) / 100000;
+    }
+    totalMultiplier *= stageMultiplier;
+
+    // ギミック倍率
+    if (document.getElementById('chk_gimmick').checked) {
+        totalMultiplier *= (parseFloat(document.getElementById('gimmickRate').value) || 1.0);
     }
 
     // --- 最終計算 ---
-    const finalDamage = actualAttack 
-        * gaugeMultiplier
-        * ab1Multiplier 
-        * ab2Multiplier
-        * ab3Multiplier
-        * ab4Multiplier
-        * auraMultiplier
-        * msMultiplier
-        * warpMultiplier
-        * sokoMultiplier
-        * wboostMultiplier
-        * mboostMultiplier
-        * killerMultiplier
-        * buffMultiplier      
-        * guardianMultiplier
-        * SSMultiplier
-        * otherMultiplier 
-        * emb1 * emb2 * emb3 * emb4 
-        * weakMultiplier
-        * naguriMultiplier
-        * hontaiMultiplier
-        * defMultiplier
-        * angryMultiplier
-        * speMultiplier
-        * gimmickMultiplier
-        * mineMultiplier
-        * stageMultiplier;
+    const finalDamage = Math.floor(actualAttack * totalMultiplier);
     
-    // グローバル変数に保存
-    currentFinalDamage = Math.floor(finalDamage);
+    currentFinalDamage = finalDamage;
 
-    // 1. 計算タブの結果表示を更新
+    // 表示更新
     const resultElem = document.getElementById('result');
-    if (resultElem) {
-        resultElem.innerText = currentFinalDamage.toLocaleString();
-    }
+    if (resultElem) resultElem.innerText = currentFinalDamage.toLocaleString();
 
-    // 2. 判定タブのダメージ表示も更新
     const verifyDisplay = document.getElementById('verifyDamageDisplay');
-    if (verifyDisplay) {
-        verifyDisplay.innerText = currentFinalDamage.toLocaleString();
-    }
+    if (verifyDisplay) verifyDisplay.innerText = currentFinalDamage.toLocaleString();
 
-    // 3. 判定ロジックを再実行
     checkOneshot();
 }
-
 
 /* -------------------------------------------------------
    ワンパン判定ロジック
@@ -381,12 +326,10 @@ function checkOneshot() {
     const resultBox = document.getElementById('verify-result-box');
     const realHpElem = document.getElementById('displayRealHp');
 
-    // 必要な要素が揃っていなければ終了
     if (!hpInput || !judgeText) return;
 
     const maxHp = parseFloat(hpInput.value);
 
-    // HPが未入力の場合
     if (isNaN(maxHp) || maxHp <= 0) {
         judgeText.innerText = "HPを入力してください";
         resultBox.className = "result-box"; 
@@ -394,10 +337,7 @@ function checkOneshot() {
         return;
     }
 
-    // --- HP削り計算 ---
     let reduceRate = 0;
-    
-    // 1. 将命/兵命 (チェック有効時のみセレクトボックス値を加算)
     const enableAB = document.getElementById('chk_enableAB');
     const selAB = document.getElementById('sel_reduceAB');
 
@@ -405,26 +345,18 @@ function checkOneshot() {
         reduceRate += parseFloat(selAB.value) || 0;
     }
 
-    // 2. 10%削り
     if (document.getElementById('chk_reduceC').checked) {
         reduceRate += 0.10;
     }
 
-    // 削り後の実質HPを計算
     const currentEnemyHp = Math.floor(maxHp * (1 - reduceRate));
 
-    // 実質HPを表示エリアに反映
-    if (realHpElem) {
-        realHpElem.innerText = currentEnemyHp.toLocaleString();
-    }
+    if (realHpElem) realHpElem.innerText = currentEnemyHp.toLocaleString();
 
-    // --- 判定 ---
     if (currentFinalDamage >= currentEnemyHp) {
-        // ワンパン可能
         judgeText.innerHTML = `ワンパンできます`;
         resultBox.className = "result-box judge-success";
     } else {
-        // ワンパン不可
         judgeText.innerHTML = `ワンパンできません`;
         resultBox.className = "result-box judge-fail";
     }
@@ -436,18 +368,13 @@ function checkOneshot() {
 function toggleHistory() {
     const log = document.getElementById('history-log');
     if (log) {
-        if (log.style.display === 'none') {
-            log.style.display = 'block';
-        } else {
-            log.style.display = 'none';
-        }
+        log.style.display = (log.style.display === 'none') ? 'block' : 'none';
     }
 }
 
 document.addEventListener('click', function(event) {
     const log = document.getElementById('history-log');
     const bell = document.getElementById('bell-icon');
-    
     if (log && bell && log.style.display === 'block') {
         if (!log.contains(event.target) && !bell.contains(event.target)) {
             log.style.display = 'none';
@@ -459,41 +386,37 @@ document.addEventListener('click', function(event) {
    全入力リセット処理
 ------------------------------------------------------- */
 function resetAll() {
-    if (!confirm("入力内容をすべてリセットしますか？")) {
-        return;
-    }
+    if (!confirm("入力内容をすべてリセットしますか？")) return;
 
     const inputs = document.querySelectorAll('input[type="number"]');
-    inputs.forEach(input => {
-        input.value = "";
-    });
+    inputs.forEach(input => input.value = "");
 
     const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-    checkboxes.forEach(chk => {
-        chk.checked = false;
-    });
+    checkboxes.forEach(chk => chk.checked = false);
 
     const selects = document.querySelectorAll('select');
-    selects.forEach(sel => {
-        sel.selectedIndex = 0;
-    });
+    selects.forEach(sel => sel.selectedIndex = 0);
 
     const dependentInputs = document.querySelectorAll('.category-section input[type="number"], .category-section select');
     dependentInputs.forEach(el => {
-        if (el.id !== 'stageEffectSelect') {
-            el.disabled = true;
-        }
+        if (el.id !== 'stageEffectSelect') el.disabled = true;
     });
 
-    // 特殊な表示項目のリセット
     const customStageInput = document.getElementById('customStageRate');
     if (customStageInput) customStageInput.style.display = 'none';
     
     const realHpElem = document.getElementById('displayRealHp');
     if (realHpElem) realHpElem.innerText = "-";
 
+    // モードも直殴りに戻す？ (お好みで)
+    const radioDirect = document.querySelector('input[name="attackMode"][value="direct"]');
+    if (radioDirect) {
+        radioDirect.checked = true;
+        switchAttackMode(); // モード表示リセット
+    }
+
     calculate();
 }
 
 // 初期化実行
-calculate();
+switchAttackMode(); // モードに応じた表示初期化
