@@ -159,6 +159,19 @@
                     </select>
                 </div>
 
+                <div class="grid-item" data-mode="friend">
+                    <label class="check-label">
+                        <input type="checkbox" id="chk_friendsoko" onchange="toggleInput('friendsokoSelect', 'chk_friendsoko')">
+                        友情底力
+                    </label>
+                    <select id="friendsokoSelect" onchange="calculate()" disabled>
+                        <option value="1.5" selected>無印 (x1.5)</option>
+                        <option value="2.0">M (x2.0)</option>
+                        <option value="2.5">L (x2.5)</option>
+                        <option value="3.0">EL (x3.0)</option>
+                    </select>
+                </div>
+
                 <div class="grid-item">
                     <label class="check-label">
                         <input type="checkbox" id="chk_aura" onchange="toggleInput('auraSelect', 'chk_aura')">
