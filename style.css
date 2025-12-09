@@ -390,6 +390,61 @@ input[type="checkbox"] {
     }
 }
 
+/* --- フッター詳細展開用 --- */
+.result-box {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    max-height: 80vh; /* 画面の8割以上は占有しない */
+    overflow-y: auto; /* 中身が多い場合はスクロール */
+}
+
+/* 詳細エリア */
+#result-details {
+    width: 90%;
+    margin-top: 15px;
+    border-top: 1px dashed #ccc;
+    padding-top: 10px;
+    text-align: left;
+    font-size: 13px;
+    padding-bottom: 20px; /* スクロールしやすくするための余白 */
+}
+
+.detail-header {
+    font-weight: bold;
+    color: var(--primary-dark);
+    margin-bottom: 5px;
+    text-align: center;
+}
+
+#detail-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* 内訳の各行 */
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.detail-name {
+    color: #555;
+}
+
+.detail-val {
+    font-weight: bold;
+    color: #333;
+}
+
+/* 詳細が開いている時のフッター背景色を少し変える */
+.result-box.open {
+    background-color: #f9fff9;
+    box-shadow: 0 -5px 15px rgba(0,0,0,0.2);
+}
+
 /* ==============================================
    3. PC専用・強制補正 (画面幅769px以上の場合)
    ============================================== */
