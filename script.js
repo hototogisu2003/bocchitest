@@ -182,7 +182,7 @@ function calculate() {
         const bonusElem = document.getElementById('attackBonus');
         const bonusAttack = parseFloat(bonusElem.value) || 0;
         actualAttack = baseAttack + bonusAttack;
-        breakdown.push({ name: "攻撃力", val: actualAttack.toLocaleString() });
+        breakdown.push({ name: "攻撃力（加撃込）", val: actualAttack.toLocaleString() });
     } else {
         const yuugekiVal = parseFloat(document.getElementById('friendYuugekiSelect').value) || 1.0;
         actualAttack = Math.floor(baseAttack * yuugekiVal);
