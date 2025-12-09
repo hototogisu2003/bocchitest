@@ -346,50 +346,6 @@ input[type="checkbox"] {
     font-size: 11px;
 }
 
-/* ==============================================
-   2. スマホ専用設定 (画面幅768px以下の場合)
-   ============================================== */
-@media (max-width: 768px) {
-    .container {
-        padding: 15px 10px;
-    }
-
-    /* スマホは2列 */
-    .grid-4-col {
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: 6px;
-    }
-
-    .grid-item {
-        padding: 8px 5px;
-    }
-
-    .check-label {
-        font-size: 11px;
-        letter-spacing: -0.5px;
-    }
-
-    input[type="number"], select {
-        padding: 4px;
-        height: 30px;
-        font-size: 12px;
-    }
-
-    #history-log {
-        width: 85%;
-        right: 5%;
-    }
-
-    .result-box {
-        padding: 8px 0;
-        border-radius: 12px 12px 0 0;
-    }
-    
-    .result-value {
-        font-size: 22px; /* スマホでは少し文字を小さくして見切れ防止 */
-    }
-}
-
 /* --- フッター詳細展開用 --- */
 .result-box {
     cursor: pointer;
@@ -443,6 +399,50 @@ input[type="checkbox"] {
 .result-box.open {
     background-color: #f9fff9;
     box-shadow: 0 -5px 15px rgba(0,0,0,0.2);
+}
+
+/* ==============================================
+   2. スマホ専用設定 (画面幅768px以下の場合)
+   ============================================== */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px 10px;
+    }
+
+    /* スマホは2列 */
+    .grid-4-col {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 6px;
+    }
+
+    .grid-item {
+        padding: 8px 5px;
+    }
+
+    .check-label {
+        font-size: 11px;
+        letter-spacing: -0.5px;
+    }
+
+    input[type="number"], select {
+        padding: 4px;
+        height: 30px;
+        font-size: 12px;
+    }
+
+    #history-log {
+        width: 85%;
+        right: 5%;
+    }
+
+    .result-box {
+        padding: 8px 0;
+        border-radius: 12px 12px 0 0;
+    }
+    
+    .result-value {
+        font-size: 22px; /* スマホでは少し文字を小さくして見切れ防止 */
+    }
 }
 
 /* ==============================================
