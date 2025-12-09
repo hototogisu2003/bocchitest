@@ -189,10 +189,10 @@ function calculate() {
             }
         }
 
-        // 魔法陣ブースト
-        if (document.getElementById('chk_mboost').checked) {
-            totalMultiplier *= (parseFloat(document.getElementById('mboostSelect').value) || 1.0);
-        }
+        // パワーフィールド
+        if (document.getElementById('chk_pfield').checked) {
+        totalMultiplier *= (parseFloat(document.getElementById('pfieldSelect').value) || 1.0);
+    }
 
         if (document.getElementById('chk_ab2').checked) totalMultiplier *= 3.0; // 渾身
         if (document.getElementById('chk_ab3').checked) totalMultiplier *= 7.5; // クリティカル
@@ -217,6 +217,8 @@ function calculate() {
         if (document.getElementById('chk_friend_boost').checked) {
             totalMultiplier *= (parseFloat(document.getElementById('friendBoostSelect').value) || 1.0);
         }
+
+        if (document.getElementById('chk_ffield').checked) totalMultiplier *= 1.5; // 友情フィールド     
     }
 
     // ==========================================
@@ -226,6 +228,11 @@ function calculate() {
     // パワーオーラ
     if (document.getElementById('chk_aura').checked) {
         totalMultiplier *= (parseFloat(document.getElementById('auraSelect').value) || 1.0);
+    }
+
+    // 魔法陣ブースト
+    if (document.getElementById('chk_mboost').checked) {
+        totalMultiplier *= (parseFloat(document.getElementById('mboostSelect').value) || 1.0);
     }
 
     // キラー
