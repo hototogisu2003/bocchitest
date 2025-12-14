@@ -10,27 +10,16 @@
 }
 
 /* ==============================================
-   1. 基本設定 (すべての画面共通)
+   1. 基本設定
    ============================================== */
-
 body {
     background-color: var(--bg-color);
     color: var(--text-color);
     font-family: 'Noto Sans JP', sans-serif;
     margin: 0;
     padding: 20px;
-    
-    /* ★追加：下に固定バーが出る分だけ余白を確保 */
-    padding-bottom: 140px; 
-    
+    padding-bottom: 140px; /* 固定フッター用の余白 */
     font-size: 13px;
-}
-
-h1 {
-    text-align: center;
-    color: var(--text-color);
-    margin-bottom: 30px;
-    font-size: 24px;
 }
 
 .container {
@@ -42,7 +31,110 @@ h1 {
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
-/* --- 入力要素 --- */
+/* ==============================================
+   2. ヘッダーレイアウト (タイトル・ボタン類)
+   ============================================== */
+.header-row {
+    display: flex;
+    justify-content: space-between; /* 両端揃え */
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #eee;
+}
+
+.header-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+h1 {
+    text-align: left;
+    color: var(--text-color);
+    margin: 0;
+    font-size: 20px;
+}
+
+/* --- リセットボタン & ベルマーク (共通アイコンスタイル) --- */
+.reset-button, #bell-icon {
+    position: static; /* 固定配置を解除 */
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    box-shadow: none;
+    border: none;
+}
+
+/* リセットボタン固有 */
+.reset-button {
+    background-color: #f44336;
+    color: white;
+    font-size: 20px;
+    padding: 0;
+    font-family: sans-serif;
+}
+.reset-button:hover {
+    background-color: #d32f2f;
+}
+
+/* ベルマーク固有 */
+#bell-icon {
+    background-color: var(--primary-color);
+}
+#bell-icon:hover {
+    background-color: var(--primary-dark);
+}
+
+/* --- 履歴ログ --- */
+#history-log {
+    position: fixed;
+    top: 65px;
+    right: 15px;
+    width: 300px;
+    max-height: 400px;
+    overflow-y: auto;
+    background-color: #fff;
+    border: 2px solid var(--primary-color);
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    z-index: 9999;
+    font-size: 13px;
+}
+.history-title {
+    font-weight: bold;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+    color: var(--primary-dark);
+}
+.history-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.history-list li {
+    margin-bottom: 8px;
+    border-bottom: 1px dashed #eee;
+    padding-bottom: 8px;
+    line-height: 1.4;
+}
+.history-list .date {
+    display: block;
+    font-weight: bold;
+    color: #666;
+    font-size: 11px;
+}
+
+/* ==============================================
+   3. 入力要素・グリッド
+   ============================================== */
 input, select, button {
     font-size: 13px;
 }
@@ -77,10 +169,9 @@ input[type="checkbox"] {
     margin: 0;
 }
 
-/* --- グリッドレイアウト (標準：4列) --- */
+/* グリッドレイアウト (PC: 4列) */
 .grid-4-col {
     display: grid;
-    /* repeat(4, 1fr) で強制的に4列にします */
     grid-template-columns: repeat(4, 1fr); 
     gap: 15px;
     margin-bottom: 20px;
@@ -149,69 +240,11 @@ input[type="checkbox"] {
     gap: 5px;
 }
 
-/* --- 結果表示ボックス (画面下固定) --- */
-.result-box {
-    position: fixed;        /* 画面に固定 */
-    bottom: 0;              /* 一番下 */
-    left: 0;                /* 左端から */
-    width: 100%;            /* 横幅いっぱい */
-    z-index: 1000;          /* 最前面に表示 */
-    
-    background-color: #fff; /* 背景色 */
-    padding: 10px 0;        /* 内側の余白 */
-    margin: 0;              /* 外側の余白は削除 */
-    
-    /* デザイン調整 */
-    border: none;
-    border-top: 4px solid var(--primary-color); /* 上にだけ緑の線 */
-    border-radius: 16px 16px 0 0; /* 上の角だけ丸くする */
-    box-shadow: 0 -4px 10px rgba(0,0,0,0.15); /* 上向きの影 */
-    
-    /* 中身の配置 */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 0px;
-}
+/* ==============================================
+   4. UIコンポーネント (タブ・スイッチ・結果表示)
+   ============================================== */
 
-.result-label {
-    font-size: 16px;
-    font-weight: bold;
-    color: var(--text-color);
-}
-
-.result-value {
-    font-size: 24px;
-    font-weight: bold;
-    color: var(--text-color);
-    word-break: break-all;
-    line-height: 1.2;
-}
-
-/* --- リセットボタン --- */
-.reset-button {
-    position: absolute;      
-    top: 15px;           
-    left: 15px;
-    z-index: 10000;        /* 最前面 */
-    
-    background-color: #f44336; 
-    color: white;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 12px;
-    transition: background-color 0.3s;
-    font-family: 'Noto Sans JP', sans-serif;
-}
-
-.reset-button:hover {
-    background-color: #d32f2f;
-}
-
-/* --- タブボタン --- */
+/* タブボタン */
 .tab-container {
     display: flex;
     justify-content: center;
@@ -241,11 +274,11 @@ input[type="checkbox"] {
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
-/* --- 攻撃モード切り替えスイッチ --- */
+/* 攻撃モード切り替えスイッチ */
 .mode-switch-container {
     display: flex;
     justify-content: center;
-    background-color: #ddd;
+    background-color: #eee;
     border-radius: 25px;
     padding: 4px;
     margin: 0 auto 20px auto;
@@ -259,7 +292,7 @@ input[type="checkbox"] {
 }
 
 .mode-switch-label input {
-    display: none; /* ラジオボタン自体は消す */
+    display: none;
 }
 
 .mode-switch-text {
@@ -271,14 +304,82 @@ input[type="checkbox"] {
     transition: all 0.3s;
 }
 
-/* 選択された方のスタイル */
 .mode-switch-label input:checked + .mode-switch-text {
     background-color: #fff;
     color: var(--primary-color);
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
-/* --- 判定結果 --- */
+/* 結果表示ボックス (フッター固定) */
+.result-box {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    background-color: #fff;
+    padding: 10px 0;
+    margin: 0;
+    border-top: 4px solid var(--primary-color);
+    border-radius: 16px 16px 0 0;
+    box-shadow: 0 -4px 10px rgba(0,0,0,0.15);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.result-box.open {
+    background-color: #f9fff9;
+    box-shadow: 0 -5px 15px rgba(0,0,0,0.2);
+}
+
+.result-label {
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--text-color);
+}
+
+.result-value {
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--text-color);
+    word-break: break-all;
+    line-height: 1.2;
+}
+
+/* 詳細エリア */
+#result-details {
+    width: 90%;
+    margin-top: 15px;
+    border-top: 1px dashed #ccc;
+    padding-top: 10px;
+    text-align: left;
+    font-size: 13px;
+    padding-bottom: 20px;
+}
+
+.detail-header {
+    font-weight: bold;
+    color: var(--primary-dark);
+    margin-bottom: 5px;
+    text-align: center;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.detail-name { color: #555; }
+.detail-val { font-weight: bold; color: #333; }
+
+/* 判定結果の色 */
 .judge-success {
     color: #d32f2f !important;
     background-color: #ffebee !important;
@@ -290,215 +391,28 @@ input[type="checkbox"] {
     border-color: #1976d2 !important;
 }
 
-/* --- ベルマーク・更新履歴 --- */
-#bell-icon {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    width: 40px;
-    height: 40px;
-    background-color: var(--primary-color);
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-    cursor: pointer;
-    z-index: 10000;
-    transition: transform 0.2s;
-}
-#bell-icon:hover {
-    transform: scale(1.1);
-    background-color: var(--primary-dark);
-}
-
-#history-log {
-    position: fixed;
-    top: 65px;
-    right: 15px;
-    width: 300px;
-    max-height: 400px;
-    overflow-y: auto;
-    background-color: #fff;
-    border: 2px solid var(--primary-color);
-    border-radius: 8px;
-    padding: 15px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    z-index: 9999;
-    font-size: 13px;
-}
-.history-title {
-    font-weight: bold;
-    border-bottom: 1px solid #ddd;
-    padding-bottom: 5px;
-    margin-bottom: 10px;
-    color: var(--primary-dark);
-}
-.history-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-.history-list li {
-    margin-bottom: 8px;
-    border-bottom: 1px dashed #eee;
-    padding-bottom: 8px;
-    line-height: 1.4;
-}
-.history-list .date {
-    display: block;
-    font-weight: bold;
-    color: #666;
-    font-size: 11px;
-}
-
-/* --- フッター詳細展開用 --- */
-.result-box {
-    cursor: pointer;
-    transition: all 0.3s ease;
-    max-height: 80vh; /* 画面の8割以上は占有しない */
-    overflow-y: auto; /* 中身が多い場合はスクロール */
-}
-
-/* 詳細エリア */
-#result-details {
-    width: 90%;
-    margin-top: 15px;
-    border-top: 1px dashed #ccc;
-    padding-top: 10px;
-    text-align: left;
-    font-size: 13px;
-    padding-bottom: 20px; /* スクロールしやすくするための余白 */
-}
-
-.detail-header {
-    font-weight: bold;
-    color: var(--primary-dark);
-    margin-bottom: 5px;
-    text-align: center;
-}
-
-#detail-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-/* 内訳の各行 */
-.detail-item {
-    display: flex;
-    justify-content: space-between;
-    padding: 4px 0;
-    border-bottom: 1px solid #eee;
-}
-
-.detail-name {
-    color: #555;
-}
-
-.detail-val {
-    font-weight: bold;
-    color: #333;
-}
-
-/* 詳細が開いている時のフッター背景色を少し変える */
-.result-box.open {
-    background-color: #f9fff9;
-    box-shadow: 0 -5px 15px rgba(0,0,0,0.2);
-}
-
 /* ==============================================
-   ヘッダーレイアウト変更用 (追記・上書き)
+   5. レスポンシブ設定 (スマホ・PC補正)
    ============================================== */
 
-/* タイトルとボタンを横並びにするコンテナ */
-.header-row {
-    display: flex;
-    justify-content: space-between; /* 両端揃え */
-    align-items: center;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #eee; /* 区切り線 */
-}
-
-.header-actions {
-    display: flex;
-    gap: 10px; /* ボタン同士の間隔 */
-    align-items: center;
-}
-
-/* タイトル (左寄せに変更) */
-h1 {
-    text-align: left;
-    margin: 0;         /* 余白削除 */
-    font-size: 20px;   /* 少し小さくして1行に収める */
-    color: var(--text-color);
-}
-
-/* ベルマーク (固定配置を解除して整形) */
-#bell-icon {
-    position: static;  /* 固定配置を解除 */
-    width: 36px;       /* 少し小さく */
-    height: 36px;
-    background-color: var(--primary-color);
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    box-shadow: none;  /* フラットに */
-    transition: background-color 0.3s;
-}
-
-#bell-icon:hover {
-    transform: none;
-    background-color: var(--primary-dark);
-}
-
-/* リセットボタン (丸型アイコン化) */
-.reset-button {
-    position: static;  /* 固定配置を解除 */
-    width: 36px;
-    height: 36px;
-    padding: 0;
-    border-radius: 50%; /* 丸くする */
-    background-color: #f44336;
-    color: white;
-    border: none;
-    cursor: pointer;
-    font-size: 20px;   /* 矢印を大きく */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: background-color 0.3s;
-    font-family: sans-serif; /* 記号のズレ防止 */
-}
-
-.reset-button:hover {
-    background-color: #d32f2f;
-}
-
-/* スマホでの調整 */
-@media (max-width: 768px) {
-    .header-row {
-        margin-bottom: 15px;
-    }
-    h1 {
-        font-size: 16px; /* スマホでは文字サイズをさらに小さく */
-    }
-    #bell-icon, .reset-button {
-        width: 32px;
-        height: 32px;
-        font-size: 18px;
-    }
-}
-
-/* ==============================================
-   2. スマホ専用設定 (画面幅768px以下の場合)
-   ============================================== */
+/* スマホ (画面幅768px以下) */
 @media (max-width: 768px) {
     .container {
         padding: 15px 10px;
+    }
+
+    .header-row {
+        margin-bottom: 15px;
+    }
+    
+    h1 {
+        font-size: 16px;
+    }
+    
+    .reset-button, #bell-icon {
+        width: 32px;
+        height: 32px;
+        font-size: 18px;
     }
 
     /* スマホは2列 */
@@ -533,15 +447,12 @@ h1 {
     }
     
     .result-value {
-        font-size: 22px; /* スマホでは少し文字を小さくして見切れ防止 */
+        font-size: 22px;
     }
 }
 
-/* ==============================================
-   3. PC専用・強制補正 (画面幅769px以上の場合)
-   ============================================== */
+/* PC (画面幅769px以上) - 強制4列 */
 @media (min-width: 769px) {
-    /* PCでは絶対に4列にする強制ルール */
     .grid-4-col {
         grid-template-columns: repeat(4, 1fr) !important;
     }
