@@ -179,10 +179,23 @@ function calculate() {
     let actualAttack = 0;
 
     if (currentAttackMode === 'direct') {
-        const bonusElem = document.getElementById('attackBonus');
-        const bonusAttack = parseFloat(bonusElem.value) || 0;
-        actualAttack = baseAttack + bonusAttack;
-        breakdown.push({ name: "攻撃力（加撃込）", val: actualAttack.toLocaleString() });
+    const bonusElem = document.getElementById('attackBonus');
+        const manualBonus = parseFloat(bonusElem.value) || 0;
+        
+        // ★プリセット加撃の計算
+        let presetBonus = 0;
+        if (document.getElementById('chk_spot').checked) presetBonus += 2000;
+        if (document.getElementById('chk_9L').checked) presetBonus += 14000;
+        if (document.getElementById('chk_9EL').checked) presetBonus += 15400;
+
+        // 合計を算出
+        actualAttack = baseAttack + manualBonus + presetBonus;
+        
+        // 内訳ログも見やすく変更
+        breakdown.push({ name: "攻撃力 (表示ステ)", val: baseAttack.toLocaleString() });
+        if (manualBonus > 0) breakdown.push({ name: "加撃 (手入力)", val: "+" + manualBonus.toLocaleString() });
+        if (presetBonus > 0) breakdown.push({ name: "加撃 (チェック)", val: "+" + presetBonus.toLocaleString() });
+        breakdown.push({ name: "基礎攻撃力(合計)", val: actualAttack.toLocaleString() });
     } else {
         const yuugekiVal = parseFloat(document.getElementById('friendYuugekiSelect').value) || 1.0;
         actualAttack = Math.floor(baseAttack * yuugekiVal);
@@ -191,9 +204,6 @@ function calculate() {
         const yuugekiSuffix = getGradeSuffix('friendYuugekiSelect');
         breakdown.push({ name: `友情コンボ威力 (×友撃${yuugekiSuffix})`, val: actualAttack.toLocaleString() });
     }
-
-    const totalDisplay = document.getElementById('totalAttackDisplay');
-    if (totalDisplay) totalDisplay.innerText = actualAttack.toLocaleString();
 
     let totalMultiplier = 1.0;
 
