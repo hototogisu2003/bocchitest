@@ -200,25 +200,30 @@ function calculate() {
     let baseAttack = parseFloat(attackElem.value) || 0;
     let actualAttack = 0;
 
+    // === 直殴りモード ===
     if (currentAttackMode === 'direct') {
-    const bonusElem = document.getElementById('attackBonus');
+        // 直殴り: ベース + 加撃 (入力欄の値をそのまま使う)
+        const bonusElem = document.getElementById('attackBonus');
         const manualBonus = parseFloat(bonusElem.value) || 0;
         
-        // ★プリセット加撃の計算
-        let presetBonus = 0;
-        if (document.getElementById('chk_spot').checked) presetBonus += 2000;
-        if (document.getElementById('chk_9L').checked) presetBonus += 14000;
-        if (document.getElementById('chk_9EL').checked) presetBonus += 15400;
+        /* ★削除・変更点：
+           以前ここにあった「presetBonus」の加算処理は削除しました。
+           チェックボックスの値は「manualBonus（入力欄）」に含まれるようになったためです。
+        */
 
         // 合計を算出
-        actualAttack = baseAttack + manualBonus + presetBonus;
+        actualAttack = baseAttack + manualBonus;
         
-        // 内訳ログも見やすく変更
+        // ログ記録
         breakdown.push({ name: "攻撃力 (表示ステ)", val: baseAttack.toLocaleString() });
-        if (manualBonus > 0) breakdown.push({ name: "加撃 (手入力)", val: "+" + manualBonus.toLocaleString() });
-        if (presetBonus > 0) breakdown.push({ name: "加撃 (チェック)", val: "+" + presetBonus.toLocaleString() });
+        // 内訳表示もシンプルに入力欄の値のみを表示
+        if (manualBonus > 0) breakdown.push({ name: "加撃 (合計)", val: "+" + manualBonus.toLocaleString() });
         breakdown.push({ name: "基礎攻撃力(合計)", val: actualAttack.toLocaleString() });
-    } else {
+    }
+
+
+    
+    else {
         const yuugekiVal = parseFloat(document.getElementById('friendYuugekiSelect').value) || 1.0;
         actualAttack = Math.floor(baseAttack * yuugekiVal);
         
