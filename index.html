@@ -76,20 +76,36 @@
             </label>
         </div>
 
-        <div class="main-input">
+<div class="main-input">
             <div style="display: flex; flex-direction: column; gap: 5px;">
                 <label id="label-base-power"></label>
-                <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                <div style="display: flex; align-items: flex-start; gap: 10px; flex-wrap: wrap;">
                     <div style="display: flex; flex-direction: column;">
                         <span style="font-size: 0.8rem;" id="label-atk-val">攻撃力</span>
                         <input type="number" id="attack" oninput="calculate()" style="width: 120px;">
                     </div>
 
-                    <div id="group-bonus-atk" style="display: flex; align-items: center; gap: 10px;">
-                        <span style="font-weight: bold; padding-top: 15px;">+</span>
+                    <div id="group-bonus-atk" style="display: flex; align-items: flex-start; gap: 10px;">
+                        <span style="font-weight: bold; padding-top: 25px;">+</span>
+                        
                         <div style="display: flex; flex-direction: column;">
                             <span style="font-size: 0.8rem;">加撃量</span>
                             <input type="number" id="attackBonus" oninput="calculate()" style="width: 120px;">
+                            
+                            <div style="margin-top: 8px; display: flex; flex-direction: column; gap: 4px; background-color: #f9f9f9; padding: 5px; border-radius: 4px; border: 1px solid #eee;">
+                                <label class="check-label" style="font-size: 11px; margin: 0;">
+                                    <input type="checkbox" id="chk_spot" onchange="calculate()">
+                                    スポット (+2,000)
+                                </label>
+                                <label class="check-label" style="font-size: 11px; margin: 0;">
+                                    <input type="checkbox" id="chk_9L" onchange="calculate()">
+                                    9加撃L (+14,000)
+                                </label>
+                                <label class="check-label" style="font-size: 11px; margin: 0;">
+                                    <input type="checkbox" id="chk_9EL" onchange="calculate()">
+                                    9加撃EL (+15,400)
+                                </label>
+                            </div>
                         </div>
                     </div>
 
@@ -98,18 +114,13 @@
                         <div style="display: flex; flex-direction: column;">
                             <span style="font-size: 0.8rem;">熱き友撃</span>
                             <select id="friendYuugekiSelect" onchange="calculate()" style="width: 120px; padding: 8px;">
-                                <option value="1.0" selected>なし</option>
                                 <option value="1.25">L (x1.25)</option>
                                 <option value="1.275">EL (x1.275)</option>
                             </select>
                         </div>
                     </div>
 
-                    <span style="font-weight: bold; padding-top: 15px;">=</span>
-                    <div style="padding-top: 15px; font-weight: bold;">
-                        <span id="totalAttackDisplay">0</span>
                     </div>
-                </div>
 
                 <div class="input-with-checkbox" id="group-gauge" style="margin-top: 10px;">
                     <label class="check-label" style="margin-bottom: 0; white-space: nowrap;">
@@ -118,7 +129,7 @@
                     </label>
                 </div>
             </div>
-        </div>
+</div>
 
         <div class="category-section">
             <h3 class="category-title">キャラクター倍率</h3>
