@@ -391,6 +391,28 @@ input[type="checkbox"] {
     border-color: #1976d2 !important;
 }
 
+.preset-group {
+    margin-top: 8px;
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* 1:1の2列にする */
+    gap: 8px 10px; /* 縦横の間隔 */
+    background-color: #f9f9f9;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #eee;
+}
+
+/* スマホ表示での微調整 */
+@media (max-width: 768px) {
+    .preset-group {
+        gap: 6px 4px;
+    }
+    .preset-group .check-label {
+        font-size: 10px; /* 少し文字を小さくして収まりよくする */
+        white-space: nowrap; /* 折り返し防止 */
+    }
+}
+
 /* ==============================================
    5. レスポンシブ設定 (スマホ・PC補正)
    ============================================== */
