@@ -168,6 +168,28 @@ function toggleResultDetails() {
 }
 
 /* -------------------------------------------------------
+   ★新規追加：加撃プリセットの反映
+   チェックボックスの状態に応じて入力欄の数値を増減させる
+------------------------------------------------------- */
+function updateBonus(amount, checkbox) {
+    const input = document.getElementById('attackBonus');
+    // 現在の入力値を取得（空なら0）
+    let currentVal = parseInt(input.value) || 0;
+
+    if (checkbox.checked) {
+        currentVal += amount; // チェックONなら加算
+    } else {
+        currentVal -= amount; // チェックOFFなら減算
+    }
+
+    // 計算結果を入力欄に反映
+    input.value = currentVal;
+    
+    // 全体の再計算を実行
+    calculate();
+}
+
+/* -------------------------------------------------------
    計算メイン処理 (詳細ログ作成機能付きに書き換え)
 ------------------------------------------------------- */
 function calculate() {
