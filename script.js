@@ -330,6 +330,9 @@ function calculate() {
     if (document.getElementById('chk_aura').checked) {
         apply("パワーオーラ" + getGradeSuffix('auraSelect'), parseFloat(document.getElementById('auraSelect').value) || 1.0);
     }
+    if (document.getElementById('chk_hiyoko') && document.getElementById('chk_hiyoko').checked) {
+        apply("ヒヨコ", 1/3);
+    }
     if (document.getElementById('chk_killer').checked) {
         apply("キラー", parseFloat(document.getElementById('killerRate').value) || 1.0);
     }
