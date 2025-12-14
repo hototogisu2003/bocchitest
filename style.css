@@ -408,6 +408,92 @@ input[type="checkbox"] {
 }
 
 /* ==============================================
+   ヘッダーレイアウト変更用 (追記・上書き)
+   ============================================== */
+
+/* タイトルとボタンを横並びにするコンテナ */
+.header-row {
+    display: flex;
+    justify-content: space-between; /* 両端揃え */
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #eee; /* 区切り線 */
+}
+
+.header-actions {
+    display: flex;
+    gap: 10px; /* ボタン同士の間隔 */
+    align-items: center;
+}
+
+/* タイトル (左寄せに変更) */
+h1 {
+    text-align: left;
+    margin: 0;         /* 余白削除 */
+    font-size: 20px;   /* 少し小さくして1行に収める */
+    color: var(--text-color);
+}
+
+/* ベルマーク (固定配置を解除して整形) */
+#bell-icon {
+    position: static;  /* 固定配置を解除 */
+    width: 36px;       /* 少し小さく */
+    height: 36px;
+    background-color: var(--primary-color);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: none;  /* フラットに */
+    transition: background-color 0.3s;
+}
+
+#bell-icon:hover {
+    transform: none;
+    background-color: var(--primary-dark);
+}
+
+/* リセットボタン (丸型アイコン化) */
+.reset-button {
+    position: static;  /* 固定配置を解除 */
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border-radius: 50%; /* 丸くする */
+    background-color: #f44336;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;   /* 矢印を大きく */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.3s;
+    font-family: sans-serif; /* 記号のズレ防止 */
+}
+
+.reset-button:hover {
+    background-color: #d32f2f;
+}
+
+/* スマホでの調整 */
+@media (max-width: 768px) {
+    .header-row {
+        margin-bottom: 15px;
+    }
+    h1 {
+        font-size: 16px; /* スマホでは文字サイズをさらに小さく */
+    }
+    #bell-icon, .reset-button {
+        width: 32px;
+        height: 32px;
+        font-size: 18px;
+    }
+}
+
+/* ==============================================
    2. スマホ専用設定 (画面幅768px以下の場合)
    ============================================== */
 @media (max-width: 768px) {
