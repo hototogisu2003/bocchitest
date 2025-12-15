@@ -89,13 +89,20 @@ h1 {
     width: 250px;
     height: 100%;
     background-color: #fff;
-    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    
+    /* ★修正：ここでは影(box-shadow)を消す */
+    box-shadow: none; 
+    
     z-index: 20000; /* 最前面 */
-    transition: left 0.3s ease;
+    transition: left 0.3s ease, box-shadow 0.3s ease; /* アニメーションに影も追加 */
     padding-top: 20px;
 }
+
 #side-menu.active {
     left: 0;
+    
+    /* ★修正：メニューが開いた時だけ影をつける */
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1); 
 }
 
 #menu-overlay {
