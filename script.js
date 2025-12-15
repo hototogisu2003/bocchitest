@@ -253,10 +253,9 @@ function calculate() {
         actualAttack = baseAttack + manualBonus;
         
         // ログ記録
-        breakdown.push({ name: "攻撃力 (表示ステ)", val: baseAttack.toLocaleString() });
+        breakdown.push({ name: "攻撃力", val: baseAttack.toLocaleString() });
         // 内訳表示もシンプルに入力欄の値のみを表示
-        if (manualBonus > 0) breakdown.push({ name: "加撃 (合計)", val: "+" + manualBonus.toLocaleString() });
-        breakdown.push({ name: "基礎攻撃力(合計)", val: actualAttack.toLocaleString() });
+        if (manualBonus > 0) breakdown.push({ name: "加撃", val: "+" + manualBonus.toLocaleString() });
     }
 
 
