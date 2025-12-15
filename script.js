@@ -1,3 +1,36 @@
+/* -------------------------------------------------------
+   サイドメニュー & モード切り替え
+------------------------------------------------------- */
+function toggleMenu() {
+    const menu = document.getElementById('side-menu');
+    const overlay = document.getElementById('menu-overlay');
+    
+    menu.classList.toggle('active');
+    overlay.classList.toggle('active');
+}
+
+function switchMainMode(mode) {
+    const appContainer = document.getElementById('app-container');
+    const manualContainer = document.getElementById('manual-container');
+    
+    // メニューを閉じる
+    toggleMenu();
+
+    if (mode === 'app') {
+        appContainer.style.display = 'block';
+        manualContainer.style.display = 'none';
+        // フッター再表示
+        const footer = document.getElementById('footer-result');
+        if(footer) footer.style.display = 'flex';
+    } else {
+        appContainer.style.display = 'none';
+        manualContainer.style.display = 'block';
+        // 説明書モードではフッター計算結果を隠す
+        const footer = document.getElementById('footer-result');
+        if(footer) footer.style.display = 'none';
+    }
+}
+
 // --- ウォールブースト倍率定義 ---
 const WALL_BOOST_DATA = {
     "1.5": { 1: 1.12, 2: 1.25, 3: 1.37, 4: 1.5 },
