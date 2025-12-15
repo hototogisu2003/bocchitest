@@ -18,7 +18,7 @@ body {
     font-family: 'Noto Sans JP', sans-serif;
     margin: 0;
     padding: 20px;
-    padding-bottom: 140px; /* 固定フッター用の余白 */
+    padding-bottom: 140px; /* フッター用余白 */
     font-size: 13px;
 }
 
@@ -29,10 +29,12 @@ body {
     padding: 20px 30px;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    position: relative; /* オーバーレイ用 */
+    overflow: hidden;   /* はみ出し防止 */
 }
 
 /* ==============================================
-   2. ヘッダーレイアウト (タイトル・ボタン類)
+   2. ヘッダーレイアウト (ハンバーガー対応)
    ============================================== */
 .header-row {
     display: flex;
@@ -41,6 +43,12 @@ body {
     margin-bottom: 20px;
     padding-bottom: 10px;
     border-bottom: 2px solid #eee;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* ハンバーガーとタイトルの間隔 */
 }
 
 .header-actions {
@@ -56,9 +64,118 @@ h1 {
     font-size: 20px;
 }
 
-/* --- リセットボタン & ベルマーク (共通アイコンスタイル) --- */
+/* ハンバーガーアイコン */
+.hamburger-menu {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+}
+.hamburger-menu svg {
+    fill: #555;
+    transition: fill 0.3s;
+}
+.hamburger-menu:hover svg {
+    fill: var(--primary-color);
+}
+
+/* --- サイドバーメニュー --- */
+#side-menu {
+    position: absolute;
+    top: 0;
+    left: -250px; /* 初期状態は画面外 */
+    width: 250px;
+    height: 100%;
+    background-color: #fff;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    z-index: 20000; /* 最前面 */
+    transition: left 0.3s ease;
+    padding-top: 20px;
+}
+#side-menu.active {
+    left: 0;
+}
+
+#menu-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 19999;
+    display: none; /* 初期非表示 */
+}
+#menu-overlay.active {
+    display: block;
+}
+
+.menu-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.menu-list li {
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    font-weight: bold;
+    color: #555;
+    transition: background 0.2s;
+}
+.menu-list li:hover {
+    background-color: #f0f0f0;
+    color: var(--primary-color);
+}
+.menu-close {
+    text-align: right;
+    padding: 0 20px 10px;
+    font-size: 24px;
+    cursor: pointer;
+    color: #999;
+}
+
+/* --- 説明書 (Manual) --- */
+.manual-content {
+    padding: 10px;
+    line-height: 1.6;
+}
+.manual-content h2 {
+    border-left: 5px solid var(--primary-color);
+    padding-left: 10px;
+    margin-top: 30px;
+    margin-bottom: 15px;
+    font-size: 18px;
+    color: var(--primary-dark);
+}
+.manual-content h3 {
+    margin-top: 20px;
+    font-size: 15px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 5px;
+    color: #444;
+}
+.manual-content ul, .manual-content ol {
+    margin: 10px 0 20px 20px;
+    padding: 0;
+}
+.manual-content li {
+    margin-bottom: 8px;
+}
+.manual-note {
+    background-color: #fffde7;
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+/* --- リセットボタン & ベルマーク (共通スタイル) --- */
 .reset-button, #bell-icon {
-    position: static; /* 固定配置を解除 */
+    position: static;
     width: 36px;
     height: 36px;
     border-radius: 50%;
@@ -71,7 +188,7 @@ h1 {
     border: none;
 }
 
-/* リセットボタン固有 */
+/* リセットボタン固有 (赤) */
 .reset-button {
     background-color: #f44336;
     color: white;
@@ -83,9 +200,10 @@ h1 {
     background-color: #d32f2f;
 }
 
-/* ベルマーク固有 */
+/* ベルマーク固有 (緑) */
 #bell-icon {
     background-color: var(--primary-color);
+    fill: #ffffff;
 }
 #bell-icon:hover {
     background-color: var(--primary-dark);
@@ -169,7 +287,19 @@ input[type="checkbox"] {
     margin: 0;
 }
 
-/* グリッドレイアウト (PC: 4列) */
+/* 加撃プリセット用グリッド (2列表示) */
+.preset-group {
+    margin-top: 8px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 10px;
+    background-color: #f9f9f9;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #eee;
+}
+
+/* グリッドレイアウト */
 .grid-4-col {
     display: grid;
     grid-template-columns: repeat(4, 1fr); 
@@ -241,7 +371,7 @@ input[type="checkbox"] {
 }
 
 /* ==============================================
-   4. UIコンポーネント (タブ・スイッチ・結果表示)
+   4. UIコンポーネント
    ============================================== */
 
 /* タブボタン */
@@ -391,30 +521,8 @@ input[type="checkbox"] {
     border-color: #1976d2 !important;
 }
 
-.preset-group {
-    margin-top: 8px;
-    display: grid;
-    grid-template-columns: 1fr 1fr; /* 1:1の2列にする */
-    gap: 8px 10px; /* 縦横の間隔 */
-    background-color: #f9f9f9;
-    padding: 8px;
-    border-radius: 4px;
-    border: 1px solid #eee;
-}
-
-/* スマホ表示での微調整 */
-@media (max-width: 768px) {
-    .preset-group {
-        gap: 6px 4px;
-    }
-    .preset-group .check-label {
-        font-size: 10px; /* 少し文字を小さくして収まりよくする */
-        white-space: nowrap; /* 折り返し防止 */
-    }
-}
-
 /* ==============================================
-   5. レスポンシブ設定 (スマホ・PC補正)
+   5. レスポンシブ設定
    ============================================== */
 
 /* スマホ (画面幅768px以下) */
@@ -427,6 +535,10 @@ input[type="checkbox"] {
         margin-bottom: 15px;
     }
     
+    .header-left {
+        gap: 10px;
+    }
+
     h1 {
         font-size: 16px;
     }
@@ -450,6 +562,12 @@ input[type="checkbox"] {
     .check-label {
         font-size: 11px;
         letter-spacing: -0.5px;
+    }
+    
+    /* 加撃プリセットのラベル */
+    .preset-group .check-label {
+        font-size: 10px;
+        white-space: nowrap;
     }
 
     input[type="number"], select {
