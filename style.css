@@ -2,43 +2,43 @@
     /* カラーパレット定義 */
     --primary-color: #8bc34a; /* メインカラー: 黄緑 */
     --primary-dark: #689f38;  /* 濃い緑（アクセント用） */
-    --bg-color: #f4f7f6;      /* ページ背景: 明るいグレー */
-    --container-bg: #ffffff;  /* コンテナ背景: 白 */
     --text-color: #333333;    /* 文字色: 濃いグレー */
     --border-color: #ddd;     /* 枠線 */
     --item-bg: #fafafa;       /* 各項目の背景 */
 }
 
 /* ==============================================
-   1. 基本設定
+   1. 基本設定 (枠なしフラットデザイン)
    ============================================== */
 body {
-    background-color: var(--bg-color);
+    background-color: #ffffff; /* 背景を白に */
     color: var(--text-color);
     font-family: 'Noto Sans JP', sans-serif;
     margin: 0;
-    padding: 20px;
-    padding-bottom: 140px; /* フッター用余白 */
+    padding: 0; /* 外側の余白を削除 */
     font-size: 13px;
+    overflow-x: hidden; /* 横スクロール防止 */
 }
 
 .container {
     max-width: 800px;
     margin: 0 auto;
-    background-color: var(--container-bg);
-    padding: 20px 30px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    position: relative; /* オーバーレイ用 */
-    overflow: hidden;   /* はみ出し防止 */
+    /* --- 枠（フレーム）の削除 --- */
+    background-color: transparent;
+    box-shadow: none;
+    border-radius: 0;
+    /* ------------------------ */
+    
+    padding: 15px 15px 140px 15px; /* 内側に余白とフッター用スペースを確保 */
+    min-height: 100vh;
 }
 
 /* ==============================================
-   2. ヘッダーレイアウト (ハンバーガー対応)
+   2. ヘッダーレイアウト
    ============================================== */
 .header-row {
     display: flex;
-    justify-content: space-between; /* 両端揃え */
+    justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
     padding-bottom: 10px;
@@ -48,7 +48,7 @@ body {
 .header-left {
     display: flex;
     align-items: center;
-    gap: 15px; /* ハンバーガーとタイトルの間隔 */
+    gap: 15px;
 }
 
 .header-actions {
@@ -81,39 +81,35 @@ h1 {
     fill: var(--primary-color);
 }
 
-/* --- サイドバーメニュー --- */
+/* --- サイドバーメニュー (修正: fixedで画面全体に固定) --- */
 #side-menu {
-    position: absolute;
+    position: fixed; /* ★重要: absoluteからfixedに変更 */
     top: 0;
-    left: -250px; /* 初期状態は画面外 */
+    left: -250px;
     width: 250px;
     height: 100%;
     background-color: #fff;
     
-    /* ★修正：ここでは影(box-shadow)を消す */
-    box-shadow: none; 
-    
-    z-index: 20000; /* 最前面 */
-    transition: left 0.3s ease, box-shadow 0.3s ease; /* アニメーションに影も追加 */
+    box-shadow: none;
+    z-index: 20000;
+    transition: left 0.3s ease, box-shadow 0.3s ease;
     padding-top: 20px;
 }
 
 #side-menu.active {
     left: 0;
-    
-    /* ★修正：メニューが開いた時だけ影をつける */
-    box-shadow: 2px 0 10px rgba(0,0,0,0.1); 
+    box-shadow: 2px 0 10px rgba(0,0,0,0.2); /* 開いた時だけ影をつける */
 }
 
 #menu-overlay {
-    position: absolute;
+    position: fixed; /* ★重要: absoluteからfixedに変更 */
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     background-color: rgba(0,0,0,0.5);
     z-index: 19999;
-    display: none; /* 初期非表示 */
+    display: none;
 }
 #menu-overlay.active {
     display: block;
@@ -146,7 +142,7 @@ h1 {
 
 /* --- 説明書 (Manual) --- */
 .manual-content {
-    padding: 10px;
+    padding: 5px;
     line-height: 1.6;
 }
 .manual-content h2 {
@@ -180,7 +176,7 @@ h1 {
     margin-bottom: 10px;
 }
 
-/* --- リセットボタン & ベルマーク (共通スタイル) --- */
+/* --- リセットボタン & ベルマーク --- */
 .reset-button, #bell-icon {
     position: static;
     width: 36px;
@@ -194,8 +190,6 @@ h1 {
     box-shadow: none;
     border: none;
 }
-
-/* リセットボタン固有 (赤) */
 .reset-button {
     background-color: #f44336;
     color: white;
@@ -206,8 +200,6 @@ h1 {
 .reset-button:hover {
     background-color: #d32f2f;
 }
-
-/* ベルマーク固有 (緑) */
 #bell-icon {
     background-color: var(--primary-color);
     fill: #ffffff;
@@ -281,10 +273,10 @@ input[type="number"]:focus, select:focus {
 }
 
 input:disabled, select:disabled {
-    background-color: #eee;
+    background-color: #f5f5f5;
     color: #999;
     cursor: not-allowed;
-    border-color: #ddd;
+    border-color: #eee;
 }
 
 input[type="checkbox"] {
@@ -294,7 +286,7 @@ input[type="checkbox"] {
     margin: 0;
 }
 
-/* 加撃プリセット用グリッド (2列表示) */
+/* 加撃プリセット用グリッド */
 .preset-group {
     margin-top: 8px;
     display: grid;
@@ -380,8 +372,6 @@ input[type="checkbox"] {
 /* ==============================================
    4. UIコンポーネント
    ============================================== */
-
-/* タブボタン */
 .tab-container {
     display: flex;
     justify-content: center;
@@ -411,7 +401,6 @@ input[type="checkbox"] {
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
-/* 攻撃モード切り替えスイッチ */
 .mode-switch-container {
     display: flex;
     justify-content: center;
@@ -447,7 +436,7 @@ input[type="checkbox"] {
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
-/* 結果表示ボックス (フッター固定) */
+/* 結果表示ボックス */
 .result-box {
     position: fixed;
     bottom: 0;
@@ -488,7 +477,6 @@ input[type="checkbox"] {
     line-height: 1.2;
 }
 
-/* 詳細エリア */
 #result-details {
     width: 90%;
     margin-top: 15px;
@@ -516,7 +504,6 @@ input[type="checkbox"] {
 .detail-name { color: #555; }
 .detail-val { font-weight: bold; color: #333; }
 
-/* 判定結果の色 */
 .judge-success {
     color: #d32f2f !important;
     background-color: #ffebee !important;
@@ -532,10 +519,10 @@ input[type="checkbox"] {
    5. レスポンシブ設定
    ============================================== */
 
-/* スマホ (画面幅768px以下) */
 @media (max-width: 768px) {
+    /* スマホで余白を微調整 */
     .container {
-        padding: 15px 10px;
+        padding: 10px 10px 140px 10px;
     }
 
     .header-row {
@@ -556,7 +543,6 @@ input[type="checkbox"] {
         font-size: 18px;
     }
 
-    /* スマホは2列 */
     .grid-4-col {
         grid-template-columns: repeat(2, 1fr) !important;
         gap: 6px;
@@ -571,7 +557,6 @@ input[type="checkbox"] {
         letter-spacing: -0.5px;
     }
     
-    /* 加撃プリセットのラベル */
     .preset-group .check-label {
         font-size: 10px;
         white-space: nowrap;
@@ -598,9 +583,8 @@ input[type="checkbox"] {
     }
 }
 
-/* PC (画面幅769px以上) - 強制4列 */
 @media (min-width: 769px) {
     .grid-4-col {
         grid-template-columns: repeat(4, 1fr) !important;
     }
-}
+    }
