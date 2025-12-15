@@ -12,22 +12,27 @@ function toggleMenu() {
 function switchMainMode(mode) {
     const appContainer = document.getElementById('app-container');
     const manualContainer = document.getElementById('manual-container');
-    
+    const contactContainer = document.getElementById('contact-container'); // ★追加
+    const footer = document.getElementById('footer-result');
+
     // メニューを閉じる
     toggleMenu();
 
+    // 一旦すべて非表示にする
+    appContainer.style.display = 'none';
+    manualContainer.style.display = 'none';
+    if(contactContainer) contactContainer.style.display = 'none';
+    if(footer) footer.style.display = 'none'; // フッターも一旦隠す
+
+    // 選ばれたモードだけ表示する
     if (mode === 'app') {
         appContainer.style.display = 'block';
-        manualContainer.style.display = 'none';
-        // フッター再表示
-        const footer = document.getElementById('footer-result');
-        if(footer) footer.style.display = 'flex';
-    } else {
-        appContainer.style.display = 'none';
+        if(footer) footer.style.display = 'flex'; // 計算機モードのみフッター表示
+    } else if (mode === 'manual') {
         manualContainer.style.display = 'block';
-        // 説明書モードではフッター計算結果を隠す
-        const footer = document.getElementById('footer-result');
-        if(footer) footer.style.display = 'none';
+    } else if (mode === 'contact') {
+        // ★追加: お問い合わせモード
+        if(contactContainer) contactContainer.style.display = 'block';
     }
 }
 
