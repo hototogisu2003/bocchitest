@@ -514,70 +514,85 @@ input[type="checkbox"] {
     background-color: #e3f2fd !important;
     border-color: #1976d2 !important;
 }
-
 /* ==============================================
-   5. レスポンシブ設定
+   5. レスポンシブ設定 (スマホ用・1列リスト表示)
    ============================================== */
 
 @media (max-width: 768px) {
-    /* スマホで余白を微調整 */
+    /* コンテナの余白調整 */
     .container {
         padding: 10px 10px 140px 10px;
     }
 
+    /* ヘッダー周り */
     .header-row {
         margin-bottom: 15px;
     }
-    
     .header-left {
         gap: 10px;
     }
-
     h1 {
         font-size: 16px;
     }
-    
     .reset-button, #bell-icon {
         width: 32px;
         height: 32px;
         font-size: 18px;
     }
 
+    /* ★修正1: グリッドを完全な1列にする */
     .grid-4-col {
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: 6px;
+        grid-template-columns: 1fr !important; /* 1列 */
+        gap: 8px;
     }
 
+    /* ★修正2: 各項目の中身を「横並び」にする */
     .grid-item {
-        padding: 8px 5px;
+        flex-direction: row; /* 横方向に並べる */
+        justify-content: space-between; /* 左と右に離す */
+        align-items: center; /* 上下中央揃え */
+        padding: 8px 10px;
+        min-height: 44px; /* タップしやすい高さ */
     }
 
+    /* ★修正3: 入力欄(セレクトボックス等)を右側に寄せてサイズ固定 */
+    .grid-item input[type="number"], 
+    .grid-item select {
+        width: 120px; /* 幅を指定 */
+        height: 34px;
+        padding: 4px;
+        font-size: 12px;
+        margin-left: 10px; /* ラベルとの間隔 */
+    }
+
+    /* チェックボックス付きラベルの調整 */
     .check-label {
-        font-size: 11px;
-        letter-spacing: -0.5px;
+        font-size: 13px;
+        letter-spacing: 0;
+        margin: 0;
+        flex: 1; /* 残りのスペースを埋める */
     }
     
+    /* ウォールブースト等の積み重ね要素の調整 */
+    .bottom-stack {
+        margin-top: 0;
+        width: 120px;
+    }
+
+    /* 加撃プリセット（ここは変更なし・2列のままが見やすい場合が多い） */
     .preset-group .check-label {
-        font-size: 10px;
-        white-space: nowrap;
+        font-size: 11px;
     }
 
-    input[type="number"], select {
-        padding: 4px;
-        height: 30px;
-        font-size: 12px;
-    }
-
+    /* 履歴ログと結果表示 */
     #history-log {
         width: 85%;
         right: 5%;
     }
-
     .result-box {
         padding: 8px 0;
         border-radius: 12px 12px 0 0;
     }
-    
     .result-value {
         font-size: 22px;
     }
