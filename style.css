@@ -514,8 +514,9 @@ input[type="checkbox"] {
     background-color: #e3f2fd !important;
     border-color: #1976d2 !important;
 }
+
 /* ==============================================
-   5. レスポンシブ設定 (スマホ用・1列リスト表示)
+   5. レスポンシブ設定 (スマホ用・コンパクト1列)
    ============================================== */
 
 @media (max-width: 768px) {
@@ -540,61 +541,69 @@ input[type="checkbox"] {
         font-size: 18px;
     }
 
-    /* ★修正1: グリッドを完全な1列にする */
+    /* グリッドを1列にし、隙間(gap)を狭くする */
     .grid-4-col {
-        grid-template-columns: 1fr !important; /* 1列 */
-        gap: 8px;
+        grid-template-columns: 1fr !important;
+        gap: 4px; /* ★修正: 8px -> 4px に狭めました */
     }
 
-    /* ★修正2: 各項目の中身を「横並び」にする */
+    /* 各行のレイアウト */
     .grid-item {
-        flex-direction: row; /* 横方向に並べる */
-        justify-content: space-between; /* 左と右に離す */
-        align-items: center; /* 上下中央揃え */
-        padding: 8px 10px;
-        min-height: 44px; /* タップしやすい高さ */
+        flex-direction: row; /* 横並び */
+        justify-content: space-between; /* 両端揃え */
+        align-items: center;
+        
+        /* ★修正: 上下の余白と高さを減らしてコンパクトに */
+        padding: 4px 8px; 
+        min-height: 36px; 
     }
 
-    /* ★修正3: 入力欄(セレクトボックス等)を右側に寄せてサイズ固定 */
+    /* 右側の入力欄(セレクトボックス等) */
     .grid-item input[type="number"], 
     .grid-item select {
-        width: 120px; /* 幅を指定 */
-        height: 34px;
-        padding: 4px;
+        width: 110px; /* 幅を少し調整 */
+        height: 30px; /* ★修正: 高さを少し低く */
+        padding: 2px 4px;
         font-size: 12px;
-        margin-left: 10px; /* ラベルとの間隔 */
+        margin-left: 10px;
     }
 
-    /* チェックボックス付きラベルの調整 */
+    /* チェックボックス付きラベル */
     .check-label {
-        font-size: 13px;
+        font-size: 12px; /* ★修正: 文字を少し小さく */
         letter-spacing: 0;
         margin: 0;
-        flex: 1; /* 残りのスペースを埋める */
+        flex: 1;
+        line-height: 1.3;
     }
     
-    /* ウォールブースト等の積み重ね要素の調整 */
+    /* ウォールブースト等の積み重ね要素 */
     .bottom-stack {
         margin-top: 0;
-        width: 120px;
+        width: 110px;
+    }
+    .bottom-stack select {
+        height: 28px; /* 積み重ね部分はさらに少し低く */
+        margin-bottom: 2px;
     }
 
-    /* 加撃プリセット（ここは変更なし・2列のままが見やすい場合が多い） */
+    /* 加撃プリセット（ここは2列のまま） */
     .preset-group .check-label {
         font-size: 11px;
     }
 
-    /* 履歴ログと結果表示 */
+    /* 履歴ログ */
     #history-log {
         width: 85%;
         right: 5%;
     }
+    /* 結果表示ボックス */
     .result-box {
-        padding: 8px 0;
+        padding: 6px 0;
         border-radius: 12px 12px 0 0;
     }
     .result-value {
-        font-size: 22px;
+        font-size: 20px;
     }
 }
 
