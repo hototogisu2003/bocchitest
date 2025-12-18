@@ -339,11 +339,20 @@
                         友情フィールド (x1.5)
                     </label>
                 </div>
+                
 
                 <div class="grid-item">
                     <label class="check-label">
+                        <input type="checkbox" id="chk_weak_killer" onchange="toggleInput('weak_killerRate', 'chk_weak_killer')">
+                        弱点キラー倍率
+                    </label>
+                    <input type="number" id="weak_killerRate" step="0.01" oninput="calculate()" disabled>
+                </div>
+                
+                <div class="grid-item">
+                    <label class="check-label">
                         <input type="checkbox" id="chk_killer" onchange="toggleInput('killerRate', 'chk_killer')">
-                        キラー倍率
+                        その他キラー倍率
                     </label>
                     <input type="number" id="killerRate" step="0.01" oninput="calculate()" disabled>
                 </div>
