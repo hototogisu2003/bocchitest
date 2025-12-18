@@ -763,3 +763,4 @@ function resetAll() {
 
 // 初期化実行
 switchAttackMode();
+updateStageUI();
