@@ -539,16 +539,16 @@
                     <div style="display: flex; flex-direction: column; gap: 5px;">
                         
                         <select id="stageTypeSelect" onchange="updateStageUI()">
-                            <option value="advantage" selected>有利</option>
-                            <option value="none">なし (等倍)</option>
+                            <option value="advantage">有利</option>
+                            <option value="none" selected>なし (等倍)</option>
                             <option value="disadvantage">不利</option>
-                            <option value="custom">個別入力</option>
+                            <option value="custom"> エレメント系 </option>
                         </select>
 
                         <select id="stageMagnitudeSelect" onchange="calculate()">
                             </select>
 
-                        <input type="number" id="customStageRate" placeholder="倍率 (例: 5.0)" step="0.0001" oninput="calculate()" style="display: none; border: 2px solid #8bc34a;">
+                        <input type="number" id="customStageRate" placeholder="倍率" step="0.0001" oninput="calculate()" style="display: none; border: 2px solid #8bc34a;">
 
                         <div id="group-super-balance" style="margin-top: 5px; padding-top: 5px; border-top: 1px dashed #ccc;">
                             <label class="check-label">
