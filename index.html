@@ -440,6 +440,13 @@
                 </div>
                 <div class="grid-item">
                     <label class="check-label">
+                        <input type="checkbox" id="chk_weakpoint" onchange="toggleInput('weakpointRate', 'chk_weakpoint')">
+                        弱点判定倍率
+                    </label>
+                    <input type="number" id="weakpointRate" step="0.01" oninput="calculate()" disabled>
+                </div>
+                <div class="grid-item">
+                    <label class="check-label">
                         <input type="checkbox" id="chk_hontai" onchange="toggleInput('hontaiRate', 'chk_hontai')">
                         本体倍率
                     </label>
