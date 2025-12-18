@@ -588,32 +588,39 @@ function calculate() {
     const magSelect = document.getElementById('stageMagnitudeSelect');
     const customInput = document.getElementById('customStageRate');
 
-    // ★修正: 新しいID(stageTypeSelect)が存在する場合のみ新ロジックで動くようにする
     if (typeSelect) {
         let stageBase = 1.0;
         let rateName = "属性倍率";
         const type = typeSelect.value;
 
-        // 値の取得
-        if (type === 'custom') {
-            stageBase = parseFloat(customInput.value) || 1.0;
-            rateName = "属性倍率(手動)";
-        } else if (type === 'none') {
+        if (type === 'none') {
             stageBase = 1.0;
             rateName = "属性倍率(なし)";
         } else {
             // 有利 or 不利
-            stageBase = parseFloat(magSelect.value) || 1.0;
-            
-            const typeText = typeSelect.options[typeSelect.selectedIndex].text;
-            const magText = magSelect.options[magSelect.selectedIndex].text.split(' ')[0];
-            rateName = `属性倍率(${typeText}・${magText})`;
+            // ★ここが変更点: customなら入力値、それ以外ならプルダウンの値
+            if (magSelect.value === 'custom') {
+                stageBase = parseFloat(customInput.value) || 1.0;
+                rateName = "属性倍率(手動)";
+            } else {
+                stageBase = parseFloat(magSelect.value) || 1.0;
+                
+                // ログ名作成
+                const typeText = typeSelect.options[typeSelect.selectedIndex].text;
+                let magText = "";
+                if (magSelect.selectedIndex >= 0) {
+                     // "通常 (x1.33)" -> "通常" だけ取り出す
+                     magText = "・" + magSelect.options[magSelect.selectedIndex].text.split(' ')[0];
+                }
+                rateName = `属性倍率(${typeText}${magText})`;
+            }
         }
 
         let stageMultiplier = stageBase;
 
         // 超バランス型の計算 (有利選択時のみ)
         if (type === 'advantage' && document.getElementById('chk_stageSpecial').checked) {
+            // 倍率1.0超えの場合のみ適用 (手動入力で1.0以下にした場合などを除外するため)
             if (stageBase > 1.0) {
                 let temp = ((stageBase - 1) / 0.33) * 0.596 + 1;
                 stageMultiplier = Math.round(temp * 100000) / 100000;
