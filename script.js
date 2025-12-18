@@ -554,7 +554,7 @@ let finalDamage = 0;
             breakdown.push({ name: `弱点 (x${Math.round(multi_weak_total*100)/100})`, val: `${dmg_weak_unit.toLocaleString()} × ${count_weak}hit` });
         }
         if(count_judge > 0) {
-            breakdown.push({ name: `判定 (x${rate_judge})`, val: `${dmg_judge_unit.toLocaleString()} × ${count_judge}hit` });
+            breakdown.push({ name: `弱点判定 (x${rate_judge})`, val: `${dmg_judge_unit.toLocaleString()} × ${count_judge}hit` });
         }
 
     } else {
