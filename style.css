@@ -612,23 +612,34 @@ input[type="checkbox"] {
 
 /* --- 履歴ログの閉じるボタン --- */
 .log-close-btn {
-    position: sticky; /* スクロールしても上部に張り付く設定 */
-    top: 0;           /* 一番上に固定 */
+    position: sticky;
+    top: 0;
+    z-index: 1000; /* 文字より手前に表示 */
+
+    /* ※もし隙間が残る場合は、ここの -15px を -20px などに強めてください */
+    margin-top: -15px;
+    margin-left: -15px;
+    margin-right: -15px;
+    
+    /* 広げた分、内側に余白を取ってボタン位置を調整 */
+    padding: 5px 15px;
+    
+    background-color: #ffffff; /* 不透明な白（透けないように） */
+    border-bottom: 1px solid #eee;
+    
     text-align: right;
-    font-size: 28px;  /* 大きくて押しやすく */
+    font-size: 24px;
     font-weight: bold;
     color: #999;
     cursor: pointer;
-    line-height: 1;
-    background-color: rgba(255, 255, 255, 1); /* 背景を白くして文字と被らないように */
-    padding: 0 5px 5px 0;
-    margin-bottom: 5px;
-    z-index: 100;
-    border-bottom: 1px solid #f0f0f0; /* 境界線 */
+    
+    /* 枠の角丸に合わせて上部を丸める（不要なら削除可） */
+    border-radius: 10px 10px 0 0;
 }
 
 .log-close-btn:hover {
-    color: #f44336; /* ホバー時は赤く */
+    color: #f44336;
+    background-color: #fffafa;
 }
 
 /* ==============================================
