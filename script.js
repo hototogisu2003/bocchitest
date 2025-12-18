@@ -601,10 +601,9 @@ function calculate() {
             rateName = "属性倍率(なし)";
         } else {
             // 有利 or 不利
-            // ★ここが変更点: customなら入力値、それ以外ならプルダウンの値
             if (magSelect.value === 'custom') {
                 stageBase = parseFloat(customInput.value) || 1.0;
-                rateName = "属性倍率(手動)";
+                rateName = "エレメント系";
             } else {
                 stageBase = parseFloat(magSelect.value) || 1.0;
                 
