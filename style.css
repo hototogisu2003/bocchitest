@@ -516,106 +516,70 @@ input[type="checkbox"] {
 }
 
 /* ==============================================
-   5. レスポンシブ設定 (スマホ用・超コンパクト)
+   5. レスポンシブ設定
    ============================================== */
 
 @media (max-width: 768px) {
-    /* コンテナの余白調整 */
+    /* スマホで余白を微調整 */
     .container {
-        padding: 5px 5px 140px 5px; /* 全体の余白も削減 */
+        padding: 10px 10px 140px 10px;
     }
 
-    /* ヘッダー周り */
     .header-row {
-        margin-bottom: 10px;
-        padding-bottom: 5px;
-    }
-    .header-left {
-        gap: 8px;
-    }
-    h1 {
-        font-size: 15px;
-    }
-    .reset-button, #bell-icon {
-        width: 28px;
-        height: 28px;
-        font-size: 16px;
-    }
-
-    /* グリッドの隙間を極限まで狭く */
-    .grid-4-col {
-        grid-template-columns: 1fr !important;
-        gap: 2px; /* ★修正: ほぼ隙間なし */
-    }
-
-    /* 各行のレイアウト */
-    .grid-item {
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        
-        /* ★修正: 上下の余白と高さを限界まで減らす */
-        padding: 2px 6px; 
-        min-height: 30px; 
-    }
-
-    /* 右側の入力欄(セレクトボックス等) */
-    .grid-item input[type="number"], 
-    .grid-item select {
-        width: 100px; /* 幅を少し狭く */
-        height: 26px; /* ★修正: 高さをかなり低く */
-        padding: 0 4px;
-        font-size: 11px; /* 文字も小さく */
-        margin-left: 8px;
-    }
-
-    /* チェックボックス付きラベル */
-    .check-label {
-        font-size: 11px; /* ★修正: 文字サイズ縮小 */
-        letter-spacing: -0.5px; /* 文字間を詰める */
-        margin: 0;
-        flex: 1;
-        line-height: 1.1;
+        margin-bottom: 15px;
     }
     
-    /* ウォールブースト等の積み重ね要素 */
-    .bottom-stack {
-        margin-top: 0;
-        width: 100px;
-        gap: 1px;
-    }
-    .bottom-stack select {
-        height: 24px; /* 積み重ね部分はさらに極小に */
-        font-size: 10px;
-        margin-bottom: 0;
+    .header-left {
+        gap: 10px;
     }
 
-    /* 加撃プリセット（ここはタップしやすさ重視で少し余裕を残す） */
-    .preset-group {
-        padding: 4px;
-        gap: 4px;
+    h1 {
+        font-size: 16px;
     }
-    .preset-group .check-label {
-        font-size: 10px;
-    }
-
-    /* 履歴ログ */
-    #history-log {
-        width: 90%;
-        right: 5%;
-        font-size: 11px;
-    }
-    /* 結果表示ボックス */
-    .result-box {
-        padding: 4px 0;
-        border-radius: 10px 10px 0 0;
-        border-top-width: 3px;
-    }
-    .result-value {
+    
+    .reset-button, #bell-icon {
+        width: 32px;
+        height: 32px;
         font-size: 18px;
     }
-    .result-label {
-        font-size: 14px;
+
+    .grid-4-col {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 6px;
+    }
+
+    .grid-item {
+        padding: 8px 5px;
+    }
+
+    .check-label {
+        font-size: 11px;
+        letter-spacing: -0.5px;
+    }
+    
+    .preset-group .check-label {
+        font-size: 10px;
+        white-space: nowrap;
+    }
+
+    input[type="number"], select {
+        padding: 4px;
+        height: 30px;
+        font-size: 12px;
+    }
+
+    #history-log {
+        width: 85%;
+        right: 5%;
+    }
+
+    .result-box {
+        padding: 8px 0;
+        border-radius: 12px 12px 0 0;
+    }
+    
+    .result-value {
+        font-size: 22px;
     }
 }
 
