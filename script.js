@@ -352,18 +352,35 @@ function toggleFruitDetail() {
 
 /* -------------------------------------------------------
    わくわくの実 個別選択の処理
-   element: クリックされたdiv要素
-   amount: 加算する数値 (同族Lなら2000など)
 ------------------------------------------------------- */
-function toggleFruit(amount, element) {
+function toggleFruit(element) {
     const input = document.getElementById('attackBonus');
     let currentVal = parseInt(input.value) || 0;
+    
+    // クリックされたボタンの加算値を取得
+    const amount = parseInt(element.getAttribute('data-val'));
 
-    // クラス 'selected' があれば解除（減算）、なければ付与（加算）
+    // 1. 同じグループ（行）の兄弟要素を確認し、既に選択されているものがあれば解除する
+    const parent = element.parentNode; // .fruit-buttons-row
+    const siblings = parent.querySelectorAll('.fruit-item');
+    
+    siblings.forEach(sibling => {
+        // 自分以外で、かつ「selected」クラスがついている場合
+        if (sibling !== element && sibling.classList.contains('selected')) {
+            // 解除処理
+            sibling.classList.remove('selected');
+            const siblingAmount = parseInt(sibling.getAttribute('data-val'));
+            currentVal -= siblingAmount; // その分の値を引く
+        }
+    });
+
+    // 2. クリックされたボタン自体の切り替え処理
     if (element.classList.contains('selected')) {
+        // 既に選択されていたら解除
         element.classList.remove('selected');
         currentVal -= amount;
     } else {
+        // 選択されていなければ選択
         element.classList.add('selected');
         currentVal += amount;
     }
