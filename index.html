@@ -376,18 +376,10 @@
                 
                 <div class="grid-item">
                     <label class="check-label">
-                        <input type="checkbox" id="chk_guardian" onchange="toggleInput('guardianSelect', 'chk_guardian')">
-                        守護獣
+                        <input type="checkbox" id="chk_guardian" onchange="toggleInput('guardianRate', 'chk_guardian')">
+                        守護獣倍率
                     </label>
-                    <select id="guardianSelect" onchange="calculate()" disabled>
-                        <option value="2.0"> x2.0(クシティ)</option>
-                        <option value="1.5"> x1.5(ムシカ・フォンフォン等)</option>
-                        <option value="1.3"> x1.3(オルトロス・ムシュフシュ)</option>
-                        <option value="1.25"> x1.25(レプリカ等)</option>
-                        <option value="1.2"> x1.2(陽太郎)</option>
-                        <option value="1.15"> x1.15(ボンド・ゴリアテ)</option>
-                        <option value="1.1"> x1.1(ナビ等)</option>
-                    </select>
+                    <input type="number" id="guardianRate" step="0.01" oninput="calculate()" disabled>
                 </div>
 
                 <div class="grid-item" data-mode="direct">
