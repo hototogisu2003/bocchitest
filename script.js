@@ -553,32 +553,45 @@ function calculate() {
         apply("特殊倍率", parseFloat(document.getElementById('specialRate').value) || 1.0);
     }
 
-    // ステージ倍率
-    const stageSelect = document.getElementById('stageEffectSelect');
+   // ステージ倍率
+    const typeSelect = document.getElementById('stageTypeSelect');
+    const magSelect = document.getElementById('stageMagnitudeSelect');
     const customInput = document.getElementById('customStageRate');
-    if (stageSelect) {
+
+    if (typeSelect) {
         let stageBase = 1.0;
         let rateName = "属性倍率";
-        
-        // セレクトボックスのテキストを取得して名前に反映（例: 属性効果超絶UP）
-        if (stageSelect.value === 'custom') {
+        const type = typeSelect.value;
+
+        // 値の取得
+        if (type === 'custom') {
             stageBase = parseFloat(customInput.value) || 1.0;
             rateName = "属性倍率(手動)";
+        } else if (type === 'none') {
+            stageBase = 1.0;
+            rateName = "属性倍率(なし)";
         } else {
-            stageBase = parseFloat(stageSelect.value) || 1.0;
-            // 選択中のテキストを取得 (例: "通常 (x1.33)" -> "通常")
-            const text = stageSelect.options[stageSelect.selectedIndex].text;
-            const label = text.split(' ')[0];
-            if (label !== "なし") {
-                rateName = "属性倍率(" + label + ")";
-            }
+            // 有利 or 不利 (詳細プルダウンから値を取得)
+            stageBase = parseFloat(magSelect.value) || 1.0;
+            
+            // ログ用の名前作成
+            const typeText = typeSelect.options[typeSelect.selectedIndex].text; // "有利"など
+            const magText = magSelect.options[magSelect.selectedIndex].text.split(' ')[0]; // "通常"など
+            rateName = `属性倍率(${typeText}・${magText})`;
         }
 
         let stageMultiplier = stageBase;
-        if (document.getElementById('chk_stageSpecial').checked && stageBase !== 1.0) {
-            let temp = ((stageBase - 1) / 0.33) * 0.596 + 1;
-            stageMultiplier = Math.round(temp * 100000) / 100000;
-            rateName = "超バランス型(" + rateName.replace("属性倍率", "").replace(/[()]/g, "") + ")";
+
+        // 超バランス型の計算 (有利選択時のみ)
+        if (type === 'advantage' && document.getElementById('chk_stageSpecial').checked) {
+            // 超バラ計算式: ((属性倍率 - 1) / 0.33) * 0.596 + 1
+            // ※属性倍率が1.0(等倍)以下の場合は計算崩れ防止等のため適用外とするのが一般的ですが
+            // ここではUI側で「有利」選択時のみ表示しているので、基本的には1.33以上が来る前提で計算します。
+            if (stageBase > 1.0) {
+                let temp = ((stageBase - 1) / 0.33) * 0.596 + 1;
+                stageMultiplier = Math.round(temp * 100000) / 100000;
+                rateName = "超バランス型(" + rateName.replace("属性倍率", "").replace(/[()]/g, "") + ")";
+            }
         }
         
         apply(rateName, stageMultiplier);
