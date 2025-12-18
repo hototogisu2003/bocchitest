@@ -488,6 +488,36 @@ function calculate() {
     }
 
     // === 共通 ===
+    if (document.getElementById('chk_aura').checked) {
+        apply("パワーオーラ" + getGradeSuffix('auraSelect'), parseFloat(document.getElementById('auraSelect').value) || 1.0);
+    }
+    if (document.getElementById('chk_hiyoko') && document.getElementById('chk_hiyoko').checked) {
+        apply("ヒヨコ", 1/3);
+    }
+    if (document.getElementById('chk_killer').checked) {
+        apply("その他キラー", parseFloat(document.getElementById('killerRate').value) || 1.0);
+    }
+    if (document.getElementById('chk_buff').checked) {
+        apply("バフ", parseFloat(document.getElementById('buffRate').value) || 1.0);
+    }
+    if (document.getElementById('chk_guardian').checked) {
+        apply("守護獣", parseFloat(document.getElementById('guardianRate').value) || 1.0);
+    }
+    if (document.getElementById('chk_other').checked) {
+        apply("その他", parseFloat(document.getElementById('otherRate').value) || 1.0);
+    }
+
+    if (document.getElementById('chk_emb1').checked) apply("紋章(対属性)", 1.25);
+    if (document.getElementById('chk_emb2').checked) {
+        const val = 1.10;
+        if (isMultiMode) {
+            rate_vs_weak = val;
+        } else {
+            apply("紋章(対弱)", val);
+        }
+    }
+    if (document.getElementById('chk_emb3').checked) apply("紋章(対将/兵)", 1.10);
+    if (document.getElementById('chk_emb4').checked) apply("紋章(守護獣)", 1.08);
 
 
     // 弱点キラー (弱点ヒット時のみ有効)
@@ -497,16 +527,6 @@ function calculate() {
             rate_weak_killer = val;
         } else {
             apply("弱点キラー", val);
-        }
-    }
-
-    // 紋章(対弱)
-    if (document.getElementById('chk_emb2').checked) {
-        const val = 1.10;
-        if (isMultiMode) {
-            rate_vs_weak = val;
-        } else {
-            apply("紋章(対弱)", val);
         }
     }
 
@@ -543,33 +563,7 @@ function calculate() {
         rate_body = val_body; // 複数モード: チェック有無に関わらず値を採用
     } else {
         if (document.getElementById('chk_hontai').checked) {
-            apply("本体倍率", val_body);
         }
-    }
-    if (document.getElementById('chk_aura').checked) {
-        apply("パワーオーラ" + getGradeSuffix('auraSelect'), parseFloat(document.getElementById('auraSelect').value) || 1.0);
-    }
-    if (document.getElementById('chk_hiyoko') && document.getElementById('chk_hiyoko').checked) {
-        apply("ヒヨコ", 1/3);
-    }
-    if (document.getElementById('chk_killer').checked) {
-        apply("その他キラー", parseFloat(document.getElementById('killerRate').value) || 1.0);
-    }
-    if (document.getElementById('chk_buff').checked) {
-        apply("バフ", parseFloat(document.getElementById('buffRate').value) || 1.0);
-    }
-    if (document.getElementById('chk_guardian').checked) {
-        apply("守護獣", parseFloat(document.getElementById('guardianRate').value) || 1.0);
-    }
-    if (document.getElementById('chk_other').checked) {
-        apply("その他", parseFloat(document.getElementById('otherRate').value) || 1.0);
-    }
-
-    if (document.getElementById('chk_emb1').checked) apply("紋章(対属性)", 1.25);
-    if (document.getElementById('chk_emb3').checked) apply("紋章(対将/兵)", 1.10);
-    if (document.getElementById('chk_emb4').checked) apply("紋章(守護獣)", 1.08);
-
-
     if (document.getElementById('chk_def').checked) {
         apply("防御ダウン倍率", parseFloat(document.getElementById('defRate').value) || 1.0);
     }
