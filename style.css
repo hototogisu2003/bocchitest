@@ -590,7 +590,7 @@ input[type="checkbox"] {
 @media (hover: hover) {
     .fruit-item:hover {
         /* 選択中(1.0)と区別するため、ホバー時は少しだけ薄くする */
-        opacity: 0.85; 
+        opacity: 0.6; 
         background-color: #f5f5f5;
     }
 }
