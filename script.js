@@ -391,9 +391,6 @@ function calculate() {
     if (document.getElementById('chk_weak').checked) {
         apply("弱点倍率", parseFloat(document.getElementById('weakRate').value) || 1.0);
     }
-    if (document.getElementById('chk_weakpoint').checked) {
-        apply("弱点判定倍率", parseFloat(document.getElementById('weakpointRate').value) || 1.0);
-    }
     if (document.getElementById('chk_hontai').checked) {
         apply("本体倍率", parseFloat(document.getElementById('hontaiRate').value) || 1.0);
     }
