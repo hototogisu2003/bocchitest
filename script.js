@@ -580,15 +580,6 @@ let finalDamage = 0;
             li.innerHTML = `<span class="detail-name">${item.name}</span><span class="detail-val">${item.val}</span>`;
             listElem.appendChild(li);
         });
-        
-        if (breakdown.length > 1) { 
-             const li = document.createElement('li');
-             li.className = 'detail-item';
-             li.style.borderTop = "2px solid #ddd";
-             li.style.marginTop = "5px";
-             li.innerHTML = `<span class="detail-name" style="color:#000;">合計倍率(概算)</span><span class="detail-val">x${Math.round(totalMultiplier * 100) / 100}</span>`;
-             listElem.appendChild(li);
-        }
     }
 
     checkOneshot();
