@@ -439,14 +439,34 @@
 
         <div class="category-section">
             <h3 class="category-title">敵倍率</h3>
-            <div class="grid-4-col">
-                <div class="grid-item">
-                    <label class="check-label">
-                        <input type="checkbox" id="chk_weak" onchange="toggleInput('weakRate', 'chk_weak')">
-                        弱点倍率
-                    </label>
-                    <input type="number" id="weakRate" value="3" step="0.01" oninput="calculate()" disabled>
-                </div>
+        <div class="grid-4-col">
+                    
+                    <div class="grid-item" style="grid-column: 1 / -1;"> <div style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap;">
+                            
+                            <label class="check-label" style="background-color: #e8f5e9; padding: 5px 10px; border-radius: 5px; border: 1px solid #8bc34a;">
+                                <input type="checkbox" id="chk_multi_mode" onchange="toggleMultiMode()">
+                                複数判定モード (全体攻撃・追撃)
+                            </label>
+
+                            <div id="multi-inputs" style="display: none; align-items: center; gap: 15px;">
+                                <div style="display: flex; align-items: center; gap: 5px;">
+                                    <span style="font-size: 12px; font-weight: bold;">弱点数:</span>
+                                    <input type="number" id="val_weak_cnt" value="1" oninput="calculate()" style="width: 60px;">
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 5px;">
+                                    <span style="font-size: 12px; font-weight: bold;">弱点判定数:</span>
+                                    <input type="number" id="val_judge_cnt" value="0" oninput="calculate()" style="width: 60px;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid-item">
+                        <label class="check-label">
+                            <input type="checkbox" id="chk_weak" onchange="toggleInput('weakRate', 'chk_weak')">
+                            弱点倍率
+                        </label>
+                        <input type="number" id="weakRate" value="3" step="0.01" oninput="calculate()" disabled>
+                    </div>
                 <div class="grid-item">
                     <label class="check-label">
                         <input type="checkbox" id="chk_weakpoint" onchange="toggleInput('weakpointRate', 'chk_weakpoint')">
