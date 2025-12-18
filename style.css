@@ -529,18 +529,19 @@ input[type="checkbox"] {
 
 #fruit-detail-container {
     margin-top: 8px;
-    background-color: #fff;
-    border: 1px solid #ddd;
+    /* background-color: #fff; ★削除: パネル全体の背景も透過させる */
+    /* border: 1px solid #ddd; ★削除: パネルの枠も削除 */
     border-radius: 6px;
-    padding: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    padding: 4px 0; /* 余白調整 */
+    /* box-shadow: 0 2px 5px rgba(0,0,0,0.05); ★削除: 影も削除 */
 }
 
 .fruit-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 4px;
-    margin-bottom: 8px; /* グループ間の余白 */
+    margin-bottom: 8px;
+    width: 100%; /* ★追加: 親要素いっぱいに広げる */
 }
 .fruit-grid:last-child {
     margin-bottom: 0;
@@ -550,26 +551,31 @@ input[type="checkbox"] {
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: #fafafa;
+    /* background-color: #fafafa; ★削除: グループの背景も削除 */
     border-radius: 4px;
-    padding: 4px;
-    border: 1px solid #eee;
+    padding: 2px 0;
+    /* border: 1px solid #eee; ★削除: グループの枠も削除 */
 }
 
 .fruit-label {
     font-size: 9px;
-    color: #555;
-    margin-bottom: 4px;
+    color: #666;
+    margin-bottom: 2px;
     font-weight: bold;
     text-align: center;
+    width: 100%;
+    background-color: #f5f5f5; /* ラベルにだけ薄い背景をつける */
+    padding: 2px 0;
+    border-radius: 2px;
 }
 
-/* ★新規追加: ボタンを横並びにするためのコンテナ */
+/* ボタンを横並びにするためのコンテナ */
 .fruit-buttons-row {
     display: flex;
-    flex-direction: row; /* 横並び */
+    flex-direction: row;
     gap: 4px;
     width: 100%;
+    padding: 2px; /* ボタン周りに少し隙間を */
 }
 
 .fruit-item {
@@ -577,38 +583,32 @@ input[type="checkbox"] {
     align-items: center;
     justify-content: center;
     gap: 2px;
-    flex: 1; /* 横幅を均等に分ける */
+    flex: 1;
     padding: 4px 0;
     cursor: pointer;
-    border: 1px solid #ddd; /* 枠線を追加してボタンっぽく */
-    background-color: #fff;
+    border: 1px solid transparent; /* ★変更: 透明な枠線 */
+    /* background-color: #fff; ★削除: 白背景を消す */
     border-radius: 3px;
     transition: all 0.2s;
-    opacity: 0.7;
+    opacity: 0.6; /* 少し薄くして未選択感を出す */
 }
 
 .fruit-item:hover {
-    background-color: #f5f5f5;
+    /* background-color: #f5f5f5; ★削除 */
     opacity: 1.0;
 }
 
 /* 選択状態 */
 .fruit-item.selected {
-    background-color: #e8f5e9;
-    border-color: var(--primary-color);
+    border-color: var(--primary-color); /* 枠線に色をつける */
     opacity: 1.0;
-    font-weight: bold;
-    box-shadow: 0 0 0 1px var(--primary-color); /* 選択枠を目立たせる */
+    box-shadow: 0 0 0 1px var(--primary-color);
+    background-color: rgba(139, 195, 74, 0.1); /* ★追加: ほんのり色を付けて選択感を出す */
 }
 
 .fruit-item img {
-    width: 18px;
-    height: 18px;
-}
-
-.fruit-item span {
-    font-size: 10px;
-    line-height: 1;
+    width: 20px; /* 少し大きめに調整 */
+    height: 20px;
 }
 
 /* ==============================================
