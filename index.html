@@ -140,15 +140,126 @@
                             <span style="font-size: 0.8rem;">加撃量</span>
                             <input type="number" id="attackBonus" oninput="calculate()" style="width: 120px;">
                             
+<input type="number" id="attackBonus" oninput="calculate()" style="width: 120px;">
+                            
+                            <button type="button" class="detail-toggle-btn" onclick="toggleFruitDetail()">
+                                ▼ 実を詳細選択
+                            </button>
+
+                            <div id="fruit-detail-container" style="display: none;">
+                                
+                                <div class="fruit-row-header">同族</div>
+                                <div class="fruit-grid">
+                                    <div class="fruit-group">
+                                        <div class="fruit-label">加撃</div>
+                                        <div class="fruit-item" onclick="toggleFruit(2000, this)">
+                                            <img src="特級L.png" alt="L">
+                                            <span>L</span>
+                                        </div>
+                                        <div class="fruit-item" onclick="toggleFruit(3000, this)">
+                                            <img src="特級EL.png" alt="EL">
+                                            <span>EL</span>
+                                        </div>
+                                    </div>
+                                    <div class="fruit-group">
+                                        <div class="fruit-label">加撃速</div>
+                                        <div class="fruit-item" onclick="toggleFruit(1000, this)">
+                                            <img src="特級L.png" alt="L">
+                                            <span>L</span>
+                                        </div>
+                                        <div class="fruit-item" onclick="toggleFruit(1500, this)">
+                                            <img src="特級EL.png" alt="EL">
+                                            <span>EL</span>
+                                        </div>
+                                    </div>
+                                    <div class="fruit-group">
+                                        <div class="fruit-label">加命撃</div>
+                                        <div class="fruit-item" onclick="toggleFruit(1000, this)">
+                                            <img src="特級L.png" alt="L">
+                                            <span>L</span>
+                                        </div>
+                                        <div class="fruit-item" onclick="toggleFruit(1500, this)">
+                                            <img src="特級EL.png" alt="EL">
+                                            <span>EL</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="fruit-row-header">撃種</div>
+                                <div class="fruit-grid">
+                                    <div class="fruit-group">
+                                        <div class="fruit-label">加撃</div>
+                                        <div class="fruit-item" onclick="toggleFruit(1000, this)">
+                                            <img src="特級L.png" alt="L">
+                                            <span>L</span>
+                                        </div>
+                                        <div class="fruit-item" onclick="toggleFruit(1500, this)">
+                                            <img src="特級EL.png" alt="EL">
+                                            <span>EL</span>
+                                        </div>
+                                    </div>
+                                    <div class="fruit-group">
+                                        <div class="fruit-label">加撃速</div>
+                                        <div class="fruit-item" onclick="toggleFruit(500, this)">
+                                            <img src="特級L.png" alt="L">
+                                            <span>L</span>
+                                        </div>
+                                        <div class="fruit-item" onclick="toggleFruit(750, this)">
+                                            <img src="特級EL.png" alt="EL">
+                                            <span>EL</span>
+                                        </div>
+                                    </div>
+                                    <div class="fruit-group">
+                                        <div class="fruit-label">加命撃</div>
+                                        <div class="fruit-item" onclick="toggleFruit(500, this)">
+                                            <img src="特級L.png" alt="L">
+                                            <span>L</span>
+                                        </div>
+                                        <div class="fruit-item" onclick="toggleFruit(750, this)">
+                                            <img src="特級EL.png" alt="EL">
+                                            <span>EL</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="fruit-row-header">戦型</div>
+                                <div class="fruit-grid">
+                                    <div class="fruit-group">
+                                        <div class="fruit-label">加撃</div>
+                                        <div class="fruit-item" onclick="toggleFruit(1000, this)">
+                                            <img src="特級L.png" alt="L">
+                                            <span>L</span>
+                                        </div>
+                                        <div class="fruit-item" onclick="toggleFruit(1500, this)">
+                                            <img src="特級EL.png" alt="EL">
+                                            <span>EL</span>
+                                        </div>
+                                    </div>
+                                    <div class="fruit-group">
+                                        <div class="fruit-label">加撃速</div>
+                                        <div class="fruit-item" onclick="toggleFruit(500, this)">
+                                            <img src="特級L.png" alt="L">
+                                            <span>L</span>
+                                        </div>
+                                        <div class="fruit-item" onclick="toggleFruit(750, this)">
+                                            <img src="特級EL.png" alt="EL">
+                                            <span>EL</span>
+                                        </div>
+                                    </div>
+                                    <div class="fruit-group">
+                                        <div class="fruit-label">加命撃</div>
+                                        <div class="fruit-item" onclick="toggleFruit(500, this)">
+                                            <img src="特級L.png" alt="L">
+                                            <span>L</span>
+                                        </div>
+                                        <div class="fruit-item" onclick="toggleFruit(750, this)">
+                                            <img src="特級EL.png" alt="EL">
+                                            <span>EL</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="preset-group">
-                                <label class="check-label">
-                                    <input type="checkbox" id="chk_9L" onchange="updateBonus(14000, this)">
-                                    9加撃L (+14,000)
-                                </label>
-                                <label class="check-label">
-                                    <input type="checkbox" id="chk_9EL" onchange="updateBonus(15400, this)">
-                                    9加撃EL (+15,400)
-                                </label>
                                 <label class="check-label">
                                     <input type="checkbox" id="chk_spot" onchange="updateBonus(2000, this)">
                                     スポット (+2,000)
