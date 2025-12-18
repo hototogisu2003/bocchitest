@@ -339,6 +339,41 @@ function updateBonus(amount, checkbox) {
 }
 
 /* -------------------------------------------------------
+   わくわくの実 詳細パネルの開閉
+------------------------------------------------------- */
+function toggleFruitDetail() {
+    const container = document.getElementById('fruit-detail-container');
+    if (container.style.display === 'none') {
+        container.style.display = 'block';
+    } else {
+        container.style.display = 'none';
+    }
+}
+
+/* -------------------------------------------------------
+   わくわくの実 個別選択の処理
+   element: クリックされたdiv要素
+   amount: 加算する数値 (同族Lなら2000など)
+------------------------------------------------------- */
+function toggleFruit(amount, element) {
+    const input = document.getElementById('attackBonus');
+    let currentVal = parseInt(input.value) || 0;
+
+    // クラス 'selected' があれば解除（減算）、なければ付与（加算）
+    if (element.classList.contains('selected')) {
+        element.classList.remove('selected');
+        currentVal -= amount;
+    } else {
+        element.classList.add('selected');
+        currentVal += amount;
+    }
+
+    // 値を更新して再計算
+    input.value = currentVal;
+    calculate();
+}
+
+/* -------------------------------------------------------
    計算メイン処理 (詳細ログ作成機能付きに書き換え)
 ------------------------------------------------------- */
 function calculate() {
