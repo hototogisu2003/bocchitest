@@ -370,8 +370,11 @@ function calculate() {
     if (document.getElementById('chk_hiyoko') && document.getElementById('chk_hiyoko').checked) {
         apply("ヒヨコ", 1/3);
     }
+    if (document.getElementById('chk_weak_killer').checked) {
+        apply("弱点キラー", parseFloat(document.getElementById('weak_killerRate').value) || 1.0);
+    }
     if (document.getElementById('chk_killer').checked) {
-        apply("キラー", parseFloat(document.getElementById('killerRate').value) || 1.0);
+        apply("その他キラー", parseFloat(document.getElementById('killerRate').value) || 1.0);
     }
     if (document.getElementById('chk_buff').checked) {
         apply("バフ", parseFloat(document.getElementById('buffRate').value) || 1.0);
