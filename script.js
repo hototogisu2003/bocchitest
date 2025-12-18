@@ -119,6 +119,18 @@ function switchTab(mode) {
 }
 
 /* -------------------------------------------------------
+   複数判定モードの表示切り替え
+------------------------------------------------------- */
+function toggleMultiMode() {
+    const isMulti = document.getElementById('chk_multi_mode').checked;
+    const inputs = document.getElementById('multi-inputs');
+    if (inputs) {
+        inputs.style.display = isMulti ? 'flex' : 'none';
+    }
+    calculate(); // 再計算
+}
+
+/* -------------------------------------------------------
    入力欄の有効/無効を切り替える関数
 ------------------------------------------------------- */
 function toggleInput(inputId, checkboxId) {
@@ -269,9 +281,19 @@ function calculate() {
         breakdown.push({ name: `友情コンボ威力 (×友撃${yuugekiSuffix})`, val: actualAttack.toLocaleString() });
     }
 
-    let totalMultiplier = 1.0;
+   // モード判定
+    const isMultiMode = document.getElementById('chk_multi_mode') && document.getElementById('chk_multi_mode').checked;
 
-    // ヘルパー関数: 倍率適用とログ記録
+    let totalMultiplier = 1.0; // 共通倍率（全体にかかる）
+    
+    // 部位ごとの個別倍率（MultiMode用）
+    let rate_weak_killer = 1.0; // 弱点キラー
+    let rate_vs_weak = 1.0;     // 紋章・対弱
+    let rate_weak = 1.0;        // 弱点倍率
+    let rate_weakpoint = 1.0;       // 弱点判定倍率
+    let rate_body = 1.0;        // 本体倍率
+
+    // ヘルパー関数
     const apply = (name, rate) => {
         if (rate !== 1.0 && rate !== 0) {
             totalMultiplier *= rate;
@@ -364,14 +386,60 @@ function calculate() {
     }
 
     // === 共通 ===
+// 弱点キラー
+    if (document.getElementById('chk_weak_killer').checked) {
+        const val = parseFloat(document.getElementById('weak_killerRate').value) || 1.0;
+        if (isMultiMode) {
+            rate_weak_killer = val; // ★変数に保存するだけ
+        } else {
+            apply("弱点キラー", val); // ★通常時は全体に乗算
+        }
+    }
+
+    //  紋章(対弱) 
+    if (document.getElementById('chk_emb2').checked) {
+        const val = 1.10;
+        if (isMultiMode) {
+            rate_vs_weak = val; // ★変数に保存
+        } else {
+            apply("紋章(対弱)", val); // ★通常処理
+        }
+    }
+
+    // 弱点倍率
+    if (document.getElementById('chk_weak').checked) {
+        const val = parseFloat(document.getElementById('weakRate').value) || 1.0;
+        if (isMultiMode) {
+            rate_weak = val;
+        } else {
+            apply("弱点倍率", val);
+        }
+    }
+
+    // 弱点判定倍率
+    if (document.getElementById('chk_weakpoint').checked) {
+        const val = parseFloat(document.getElementById('weakpointRate').value) || 1.0;
+        if (isMultiMode) {
+            rate_judge = val;
+        } else {
+            apply("弱点判定倍率", val);
+        }
+    }
+
+    //  本体倍率
+    if (document.getElementById('chk_hontai').checked) {
+        const val = parseFloat(document.getElementById('hontaiRate').value) || 1.0;
+        if (isMultiMode) {
+            rate_body = val;
+        } else {
+            apply("本体倍率", val);
+        }
+    }
     if (document.getElementById('chk_aura').checked) {
         apply("パワーオーラ" + getGradeSuffix('auraSelect'), parseFloat(document.getElementById('auraSelect').value) || 1.0);
     }
     if (document.getElementById('chk_hiyoko') && document.getElementById('chk_hiyoko').checked) {
         apply("ヒヨコ", 1/3);
-    }
-    if (document.getElementById('chk_weak_killer').checked) {
-        apply("弱点キラー", parseFloat(document.getElementById('weak_killerRate').value) || 1.0);
     }
     if (document.getElementById('chk_killer').checked) {
         apply("その他キラー", parseFloat(document.getElementById('killerRate').value) || 1.0);
@@ -387,19 +455,10 @@ function calculate() {
     }
 
     if (document.getElementById('chk_emb1').checked) apply("紋章(対属性)", 1.25);
-    if (document.getElementById('chk_emb2').checked) apply("紋章(対弱)", 1.10);
     if (document.getElementById('chk_emb3').checked) apply("紋章(対将/兵)", 1.10);
     if (document.getElementById('chk_emb4').checked) apply("紋章(守護獣)", 1.08);
 
-    if (document.getElementById('chk_weak').checked) {
-        apply("弱点倍率", parseFloat(document.getElementById('weakRate').value) || 1.0);
-    }
-    if (document.getElementById('chk_weakpoint').checked) {
-        apply("弱点判定倍率", parseFloat(document.getElementById('weakpointRate').value) || 1.0);
-    }
-    if (document.getElementById('chk_hontai').checked) {
-        apply("本体倍率", parseFloat(document.getElementById('hontaiRate').value) || 1.0);
-    }
+
     if (document.getElementById('chk_def').checked) {
         apply("防御ダウン倍率", parseFloat(document.getElementById('defRate').value) || 1.0);
     }
@@ -453,12 +512,49 @@ function calculate() {
     if (document.getElementById('chk_gimmick').checked) {
         apply("ギミック倍率", parseFloat(document.getElementById('gimmickRate').value) || 1.0);
     }
+let finalDamage = 0;
 
-    // --- 最終計算 (微小値加算方式) ---
-    const finalDamage = Math.floor((actualAttack * totalMultiplier) + 0.00001);
-    
+    if (isMultiMode) {
+        // --- 複数判定モードの計算 ---
+        
+        // 共通ダメージ（ベース）
+        const commonDamage = actualAttack * totalMultiplier;
+
+        // 1. 本体へのダメージ (1判定固定 * 本体倍率)
+        const dmg_body = Math.floor(commonDamage * rate_body);
+
+        // 2. 弱点へのダメージ (弱点数 * 弱点倍率 * 弱点キラー * 対弱)
+        const count_weak = parseFloat(document.getElementById('val_weak_cnt').value) || 0;
+        // 弱点用倍率を合成
+        const multi_weak_total = rate_weak * rate_weak_killer * rate_vs_weak;
+        const dmg_weak_unit = Math.floor(commonDamage * multi_weak_total);
+        const dmg_weak_total = dmg_weak_unit * count_weak;
+
+        // 3. 弱点判定へのダメージ (判定数 * 判定倍率) ※キラー・対弱は乗らない
+        const count_judge = parseFloat(document.getElementById('val_judge_cnt').value) || 0;
+        const dmg_judge_unit = Math.floor(commonDamage * rate_judge);
+        const dmg_judge_total = dmg_judge_unit * count_judge;
+
+        // 総和
+        finalDamage = dmg_body + dmg_weak_total + dmg_judge_total;
+
+        // ログへの追記 (内訳が見えるように)
+        breakdown.push({ name: "--- 複数判定内訳 ---", val: "" });
+        breakdown.push({ name: `本体 (x${rate_body})`, val: dmg_body.toLocaleString() });
+        if(count_weak > 0) {
+            breakdown.push({ name: `弱点 (x${Math.round(multi_weak_total*100)/100})`, val: `${dmg_weak_unit.toLocaleString()} × ${count_weak}hit` });
+        }
+        if(count_judge > 0) {
+            breakdown.push({ name: `判定 (x${rate_judge})`, val: `${dmg_judge_unit.toLocaleString()} × ${count_judge}hit` });
+        }
+
+    } else {
+        // --- 通常モード（既存） ---
+        finalDamage = Math.floor((actualAttack * totalMultiplier) + 0.00001);
+    }
+
+    // 結果表示（既存コードと同じ）
     currentFinalDamage = finalDamage;
-
     const resultElem = document.getElementById('result');
     if (resultElem) resultElem.innerText = currentFinalDamage.toLocaleString();
 
