@@ -564,6 +564,7 @@ function calculate() {
     } else {
         if (document.getElementById('chk_hontai').checked) {
         }
+    }
     if (document.getElementById('chk_def').checked) {
         apply("防御ダウン倍率", parseFloat(document.getElementById('defRate').value) || 1.0);
     }
