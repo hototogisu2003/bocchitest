@@ -607,8 +607,8 @@ input[type="checkbox"] {
 }
 
 .fruit-item img {
-    width: 20px; /* 少し大きめに調整 */
-    height: 20px;
+    width: 40px; /* 少し大きめに調整 */
+    height: 40px;
 }
 
 /* ==============================================
