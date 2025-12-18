@@ -1,3 +1,73 @@
+// --- 属性倍率データの定義 ---
+const STAGE_ATTR_DATA = {
+    advantage: {
+        label: "有利",
+        options: [
+            { name: "通常 (x1.33)", val: 1.33 },
+            { name: "属性効果UP (x1.5016)", val: 1.5016 },
+            { name: "属性効果超UP (x1.99)", val: 1.99 },
+            { name: "属性効果超絶UP (x2.9998)", val: 2.9998 }
+        ]
+    },
+    disadvantage: {
+        label: "不利",
+        options: [
+            { name: "通常 (x0.66)", val: 0.66 },
+            { name: "属性効果UP (x0.4832)", val: 0.4832 },
+            { name: "属性効果超UP (x0.3)", val: 0.30 },
+            { name: "属性効果超絶UP (x0.3)", val: 0.30 },
+        ]
+    }
+};
+
+/* -------------------------------------------------------
+   属性倍率UIの更新 (タイプ選択変更時に発火)
+------------------------------------------------------- */
+function updateStageUI() {
+    const typeSelect = document.getElementById('stageTypeSelect');
+    const magSelect = document.getElementById('stageMagnitudeSelect');
+    const customInput = document.getElementById('customStageRate');
+    const superBalanceArea = document.getElementById('group-super-balance');
+
+    if (!typeSelect || !magSelect) return;
+
+    const type = typeSelect.value;
+
+    // 1. カスタム入力の表示切り替え
+    if (type === 'custom') {
+        customInput.style.display = 'block';
+        magSelect.style.display = 'none';
+        if(superBalanceArea) superBalanceArea.style.display = 'none';
+    } else if (type === 'none') {
+        customInput.style.display = 'none';
+        magSelect.style.display = 'none';
+        if(superBalanceArea) superBalanceArea.style.display = 'none';
+    } else {
+        // 有利 or 不利
+        customInput.style.display = 'none';
+        magSelect.style.display = 'block';
+        
+        // 2. 倍率詳細プルダウンの生成
+        magSelect.innerHTML = ""; // クリア
+        const data = STAGE_ATTR_DATA[type];
+        if (data) {
+            data.options.forEach(opt => {
+                const option = document.createElement('option');
+                option.value = opt.val;
+                option.text = opt.name;
+                magSelect.appendChild(option);
+            });
+        }
+
+        // 3. 超バランス型の表示制御 (有利のときのみ表示)
+        if (superBalanceArea) {
+            superBalanceArea.style.display = (type === 'advantage') ? 'block' : 'none';
+        }
+    }
+
+    calculate();
+}
+
 /* -------------------------------------------------------
    サイドメニュー & モード切り替え
 ------------------------------------------------------- */
@@ -158,75 +228,6 @@ function toggleStageInput() {
         }
         calculate();
     }
-}
-
-// --- 属性倍率データの定義 ---
-const STAGE_ATTR_DATA = {
-    advantage: {
-        label: "有利",
-        options: [
-            { name: "通常 (x1.33)", val: 1.33 },
-            { name: "効果UP (x1.5016)", val: 1.5016 },
-            { name: "超UP (x1.99)", val: 1.99 },
-            { name: "超絶UP (x2.9998)", val: 2.9998 }
-        ]
-    },
-    disadvantage: {
-        label: "不利",
-        options: [
-            { name: "通常 (x0.66)", val: 0.66 },
-            { name: "効果UP (x0.50)", val: 0.50 },
-            { name: "超UP (x0.33)", val: 0.33 }
-            // 不利に超絶UPは存在しないため除外
-        ]
-    }
-};
-
-/* -------------------------------------------------------
-   属性倍率UIの更新 (タイプ選択変更時に発火)
-------------------------------------------------------- */
-function updateStageUI() {
-    const typeSelect = document.getElementById('stageTypeSelect');
-    const magSelect = document.getElementById('stageMagnitudeSelect');
-    const customInput = document.getElementById('customStageRate');
-    const superBalanceArea = document.getElementById('group-super-balance');
-
-    const type = typeSelect.value;
-
-    // 1. カスタム入力の表示切り替え
-    if (type === 'custom') {
-        customInput.style.display = 'block';
-        magSelect.style.display = 'none';
-        // カスタム時は超バラ計算は不明なので隠す（または無効化）
-        if(superBalanceArea) superBalanceArea.style.display = 'none';
-    } else if (type === 'none') {
-        customInput.style.display = 'none';
-        magSelect.style.display = 'none';
-        if(superBalanceArea) superBalanceArea.style.display = 'none';
-    } else {
-        // 有利 or 不利
-        customInput.style.display = 'none';
-        magSelect.style.display = 'block';
-        
-        // 2. 倍率詳細プルダウンの生成
-        magSelect.innerHTML = ""; // クリア
-        const data = STAGE_ATTR_DATA[type];
-        if (data) {
-            data.options.forEach(opt => {
-                const option = document.createElement('option');
-                option.value = opt.val;
-                option.text = opt.name;
-                magSelect.appendChild(option);
-            });
-        }
-
-        // 3. 超バランス型の表示制御 (有利のときのみ表示)
-        if (superBalanceArea) {
-            superBalanceArea.style.display = (type === 'advantage') ? 'block' : 'none';
-        }
-    }
-
-    calculate();
 }
 
 /* -------------------------------------------------------
