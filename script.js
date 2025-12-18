@@ -466,9 +466,8 @@ function calculate() {
         }
 
         if (document.getElementById('chk_friendsoko') && document.getElementById('chk_friendsoko').checked) {
-             const sokoVal = document.getElementById('sokoSelect') ? document.getElementById('sokoSelect').value : 1.0;
-             // 底力のIDと共用しているので、sokoSelectから等級名を取得
-             apply("友情底力" + getGradeSuffix('sokoSelect'), parseFloat(sokoVal) || 1.0);
+             const sokoVal = document.getElementById('friendsokoSelect') ? document.getElementById('friendsokoSelect').value : 1.0;
+             apply("友情底力" + getGradeSuffix('friendsokoSelect'), parseFloat(sokoVal) || 1.0);
         }
 
         if (document.getElementById('chk_fcritical') && document.getElementById('chk_fcritical').checked) {
