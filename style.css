@@ -610,6 +610,27 @@ input[type="checkbox"] {
     object-fit: contain;
 }
 
+/* --- 履歴ログの閉じるボタン --- */
+.log-close-btn {
+    position: sticky; /* スクロールしても上部に張り付く設定 */
+    top: 0;           /* 一番上に固定 */
+    text-align: right;
+    font-size: 28px;  /* 大きくて押しやすく */
+    font-weight: bold;
+    color: #999;
+    cursor: pointer;
+    line-height: 1;
+    background-color: rgba(255, 255, 255, 0.95); /* 背景を白くして文字と被らないように */
+    padding: 0 5px 5px 0;
+    margin-bottom: 5px;
+    z-index: 100;
+    border-bottom: 1px solid #f0f0f0; /* 境界線 */
+}
+
+.log-close-btn:hover {
+    color: #f44336; /* ホバー時は赤く */
+}
+
 /* ==============================================
    5. レスポンシブ設定
    ============================================== */
