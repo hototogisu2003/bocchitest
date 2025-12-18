@@ -6,7 +6,8 @@ const STAGE_ATTR_DATA = {
             { name: "通常 (x1.33)", val: 1.33 },
             { name: "属性効果UP (x1.5016)", val: 1.5016 },
             { name: "属性効果超UP (x1.99)", val: 1.99 },
-            { name: "属性効果超絶UP (x2.9998)", val: 2.9998 }
+            { name: "属性効果超絶UP (x2.9998)", val: 2.9998 },
+            { name: "エレメント系", val: "custom" } // ★ここに追加
         ]
     },
     disadvantage: {
