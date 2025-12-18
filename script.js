@@ -564,10 +564,7 @@ function calculate() {
         const type = typeSelect.value;
 
         // 値の取得
-        if (type === 'custom') {
-            stageBase = parseFloat(customInput.value) || 1.0;
-            rateName = "属性倍率(手動)";
-        } else if (type === 'none') {
+        } if (type === 'none') {
             stageBase = 1.0;
             rateName = "属性倍率(なし)";
         } else {
