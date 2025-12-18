@@ -386,53 +386,62 @@ function calculate() {
     }
 
     // === 共通 ===
-// 弱点キラー
+
+
+    // 弱点キラー (弱点ヒット時のみ有効)
     if (document.getElementById('chk_weak_killer').checked) {
         const val = parseFloat(document.getElementById('weak_killerRate').value) || 1.0;
         if (isMultiMode) {
-            rate_weak_killer = val; // ★変数に保存するだけ
+            rate_weak_killer = val;
         } else {
-            apply("弱点キラー", val); // ★通常時は全体に乗算
+            apply("弱点キラー", val);
         }
     }
 
-    //  紋章(対弱) 
+    // 紋章(対弱)
     if (document.getElementById('chk_emb2').checked) {
         const val = 1.10;
         if (isMultiMode) {
-            rate_vs_weak = val; // ★変数に保存
+            rate_vs_weak = val;
         } else {
-            apply("紋章(対弱)", val); // ★通常処理
+            apply("紋章(対弱)", val);
         }
     }
 
     // 弱点倍率
-    if (document.getElementById('chk_weak').checked) {
-        const val = parseFloat(document.getElementById('weakRate').value) || 1.0;
-        if (isMultiMode) {
-            rate_weak = val;
-        } else {
-            apply("弱点倍率", val);
+    // 常に値を取得する (デフォルト3.0)
+    const val_weak = parseFloat(document.getElementById('weakRate').value) || 3.0;
+    
+    if (isMultiMode) {
+        rate_weak = val_weak; // 複数モード: チェック有無に関わらず値を採用
+    } else {
+        // 通常モード: チェックがある場合のみ適用
+        if (document.getElementById('chk_weak').checked) {
+            apply("弱点倍率", val_weak);
         }
     }
 
     // 弱点判定倍率
-    if (document.getElementById('chk_weakpoint').checked) {
-        const val = parseFloat(document.getElementById('weakpointRate').value) || 1.0;
-        if (isMultiMode) {
-            rate_judge = val;
-        } else {
-            apply("弱点判定倍率", val);
+    // 常に値を取得する (デフォルト1.0)
+    const val_judge = parseFloat(document.getElementById('weakpointRate').value) || 1.0;
+
+    if (isMultiMode) {
+        rate_judge = val_judge; // 複数モード: チェック有無に関わらず値を採用
+    } else {
+        if (document.getElementById('chk_weakpoint').checked) {
+            apply("弱点判定倍率", val_judge);
         }
     }
 
-    //  本体倍率
-    if (document.getElementById('chk_hontai').checked) {
-        const val = parseFloat(document.getElementById('hontaiRate').value) || 1.0;
-        if (isMultiMode) {
-            rate_body = val;
-        } else {
-            apply("本体倍率", val);
+    // 本体倍率
+    // 常に値を取得する (デフォルト1.0)
+    const val_body = parseFloat(document.getElementById('hontaiRate').value) || 1.0;
+
+    if (isMultiMode) {
+        rate_body = val_body; // 複数モード: チェック有無に関わらず値を採用
+    } else {
+        if (document.getElementById('chk_hontai').checked) {
+            apply("本体倍率", val_body);
         }
     }
     if (document.getElementById('chk_aura').checked) {
