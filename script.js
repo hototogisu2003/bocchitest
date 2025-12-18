@@ -34,22 +34,18 @@ function updateStageUI() {
 
     const type = typeSelect.value;
 
-    // 1. カスタム入力の表示切り替え
-    if (type === 'custom') {
-        customInput.style.display = 'block';
+    if (type === 'none') {
+        // 「なし」の場合: 2段目と入力欄を隠す
         magSelect.style.display = 'none';
-        if(superBalanceArea) superBalanceArea.style.display = 'none';
-    } else if (type === 'none') {
         customInput.style.display = 'none';
-        magSelect.style.display = 'none';
         if(superBalanceArea) superBalanceArea.style.display = 'none';
     } else {
-        // 有利 or 不利
-        customInput.style.display = 'none';
+        // 「有利/不利」の場合: 2段目を表示
         magSelect.style.display = 'block';
         
-        // 2. 倍率詳細プルダウンの生成
-        magSelect.innerHTML = ""; // クリア
+        // --- プルダウン生成 ---
+        const currentVal = magSelect.value; // 値を一時保存
+        magSelect.innerHTML = "";
         const data = STAGE_ATTR_DATA[type];
         if (data) {
             data.options.forEach(opt => {
@@ -59,13 +55,45 @@ function updateStageUI() {
                 magSelect.appendChild(option);
             });
         }
+        
+        // 以前の値があれば復元、なければ先頭(通常)を選択
+        if (currentVal && Array.from(magSelect.options).some(o => o.value === currentVal)) {
+            magSelect.value = currentVal;
+        }
 
-        // 3. 超バランス型の表示制御 (有利のときのみ表示)
+        // --- 超バランス型の表示制御 ---
         if (superBalanceArea) {
             superBalanceArea.style.display = (type === 'advantage') ? 'block' : 'none';
         }
     }
 
+    // 2段目の状態に合わせて入力欄の表示/非表示を更新
+    handleStageMagnitudeChange(); 
+}
+
+/* -------------------------------------------------------
+   ★新規: 倍率詳細プルダウン変更時の処理
+   「個別入力」が選ばれた時だけ入力欄を出す
+------------------------------------------------------- */
+function handleStageMagnitudeChange() {
+    const typeSelect = document.getElementById('stageTypeSelect');
+    const magSelect = document.getElementById('stageMagnitudeSelect');
+    const customInput = document.getElementById('customStageRate');
+
+    // 「なし」選択中、または要素がない場合は何もしない
+    if (!typeSelect || typeSelect.value === 'none') {
+        customInput.style.display = 'none';
+        calculate();
+        return;
+    }
+
+    // 「個別入力(custom)」が選ばれているか判定
+    if (magSelect.value === 'custom') {
+        customInput.style.display = 'block';
+    } else {
+        customInput.style.display = 'none';
+    }
+    
     calculate();
 }
 
