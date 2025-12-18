@@ -620,7 +620,7 @@ input[type="checkbox"] {
     color: #999;
     cursor: pointer;
     line-height: 1;
-    background-color: rgba(255, 255, 255, 0.95); /* 背景を白くして文字と被らないように */
+    background-color: rgba(255, 255, 255, 1); /* 背景を白くして文字と被らないように */
     padding: 0 5px 5px 0;
     margin-bottom: 5px;
     z-index: 100;
